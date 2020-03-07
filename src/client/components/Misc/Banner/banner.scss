@@ -1,0 +1,35 @@
+
+$font-stack:    Helvetica, sans-serif;
+$primary-color: #333;
+
+h1 {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color: chocolate;
+}
+
+.banner {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    background-color: darkgreen;
+}
+
+.banner-header {
+    flex: 3;
+}
+
+.banner-link {
+    flex: 1;
+}
+
+.main-tab {
+  font: $font-stack;
+  color: $primary-color;
+}
+
+.random-paragraph {
+  color: yellow;
+  font-weight: bold;
+  font-size: 24pt;
+}

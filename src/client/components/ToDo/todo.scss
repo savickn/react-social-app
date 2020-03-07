@@ -1,0 +1,45 @@
+
+
+.task {
+  &::before {
+    font-family: 'Glyphicons Halflings';
+    content: "\e013";
+    //content: url('../../../shared/markAsRead.png')
+  }
+
+  &::after {
+    font-family: 'Glyphicons Halflings';
+    content: "\e014";
+    //content: url('../../../shared/trash.png')
+  }
+}
+
+.pendingTask {
+
+}
+
+.completeTask { 
+
+}
+
+
+
+
+.todo-layout {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+    border: 1px solid black;
+}
+
+.todo-title {
+    flex: 1;
+    font-size: 20pt;
+    border-bottom: 3px solid black; 
+}
+
+.todo-content {
+    flex: 3;
+}

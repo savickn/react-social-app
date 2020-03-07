@@ -1,0 +1,24 @@
+
+
+/* testing if CSS modules works */
+.modularGreenText {
+  color: green;
+}
+
+/* testing if SASS works */
+
+$font-stack:    Helvetica, sans-serif;
+$primary-color: #634b0f;
+
+.sass { 
+  color: $primary-color;
+}
+
+/* testing application of postcss-cssnext */
+@custom-media --only-small-screen (width <= 500px);
+
+@media (--only-small-screen) {
+  .postcss {
+    color: yellow;
+  }
+}

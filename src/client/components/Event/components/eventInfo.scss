@@ -1,0 +1,95 @@
+
+
+.eventContainer {
+  margin-bottom: 10px;
+}
+
+.eventGrid {
+  padding: 5px;
+  background-color: white;
+  height: 33vh; // basically set size of element relative to page
+
+  display: grid;
+  grid-template-columns: 25%;
+  grid-template-rows: 20% 20% 38% 22%;
+  grid-row-gap: 2px;
+  grid-template-areas: 
+    "details details details thumbnail"
+    "details details details thumbnail"
+    "desc desc desc desc"
+    "people . . btn";
+}
+
+.eventDetails {
+  grid-area: details;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.eventImage {
+  grid-area: thumbnail;
+}
+
+.eventDescription {
+  grid-area: desc;
+  overflow: hidden;
+}
+
+.attendees {
+  grid-area: people;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.btnAttend {
+  grid-area: btn;
+}
+
+
+
+
+
+
+// represents an entire EventInfo component
+.flexTab {
+  height: 25vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+// represents the 'Details' section within the EventInfo component
+.flex-details {
+  display: flex;
+  flex-direction: row;
+
+  .flex-time {
+    flex: 3;
+  }
+
+  .flex-image {
+    flex: 1;
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  } 
+}
+
+.flex-description {
+
+}
+
+.flex-interactions {
+  display: flex;
+  flex-direction: row;
+}
+
+
+
+

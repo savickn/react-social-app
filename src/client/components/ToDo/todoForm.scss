@@ -1,0 +1,23 @@
+
+.task {
+  &::before {
+    font-family: 'Glyphicons Halflings';
+    content: "\e012";
+    //content: url('../../../shared/markAsRead.png')
+  }
+
+  &::after {
+    font-family: 'Glyphicons Halflings';
+    content: "\e011";
+    //content: url('../../../shared/trash.png')
+  }
+}
+
+
+.todoHeader {
+  color: blueviolet;
+}
+
+.todoForm {
+    
+}

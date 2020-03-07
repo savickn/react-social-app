@@ -1,0 +1,44 @@
+
+.flex-gallery {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+
+.flex-gallery-element {
+  margin: 5px;
+  width: 300px;
+  height: 300px;
+  //color: #cac67b
+}
+
+.grid-gallery {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(auto-fill, 120px);
+  grid-row-gap: .5em;
+  grid-column-gap: 1em;
+}
+
+
+/*.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  justify-content: space-between;
+}
+
+.gallery-wrapper {
+  flex-grow: 1;
+  flex-basis: 125px;
+  max-width: 300px;
+  margin: 5px;
+}
+
+.gallery-elem {
+  height: 100%;
+  width: 100%;
+}*/

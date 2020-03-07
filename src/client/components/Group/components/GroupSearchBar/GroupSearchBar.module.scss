@@ -1,0 +1,25 @@
+
+/* Flex Outline */
+
+.flex-search-bar {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: stretch;
+  padding: 5px;
+}
+
+.location-input {
+  font-size: 1.2em;
+  padding: 5px;
+}
+
+.toggle-display-type {
+
+}
+
+.inline {
+  display: inline;
+  padding: 0px 5px;
+}
