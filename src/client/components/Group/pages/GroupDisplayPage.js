@@ -16,6 +16,7 @@ import { createMembership, deleteMembership } from '../MembershipActions';
 
 import { getGroupById } from '../GroupReducer';
 import { getCurrentUser } from '../../User/AccountReducer';
+import { getMembership } from '../MembershipReducer';
 
 import noImg from '../../../../shared/no_image.jpg';
 
@@ -35,15 +36,36 @@ export class GroupDisplayPage extends React.Component {
 
   /* Component logic */
 
+  /* OLD
   getRole(group, userId) {
     //console.log('getrole --> ', group, userId);
     if(group && matchByObjectId(group.admins, userId)) return 'admin';
     if(group && matchByObjectId(group.members, userId)) return 'member';
     return 'none';
+  }*/
+
+  // returns object with 'isAdmin/isMember/isNone'
+  getRole() {
+    let roles = {
+      isNone: true,
+      isMember: false,
+      isAdmin: false, 
+    };
+    
+    if(this.props.membership ) {
+      roles.isMember = true;
+
+      if(this.props.membership.role === 'Admin') {
+        roles.isAdmin = true;
+      }
+    }
+
+    return roles;
   }
 
-  /* event handlers */
+  /* Event Handlers */
 
+  // change display picture
   handleImageChange = (formData) => {
     //console.log('group --> ', this.props.group);
     formData.append('albumId', this.props.group.albums[0]);
@@ -88,6 +110,8 @@ export class GroupDisplayPage extends React.Component {
       //const alteredGroup = {...this.props.group};
       //alteredGroup.members.push({user: this.props.currentUser._id, group: this.props.group._id});
       this.props.dispatch(createMembership(this.props.group._id, this.props.currentUser._id));
+    } else {
+      console.log('Already a member!'); 
     }
   }
 
@@ -109,8 +133,9 @@ export class GroupDisplayPage extends React.Component {
     //this.props.dispatch(updateGroup(alteredGroup));
   }
 
-  /* UI logic */
+  /* UI Logic */
 
+  // ?????
   getJoinLeaveButton = (isNone) => {
     return isNone ?
     <NavItem eventKey={4}>
@@ -122,16 +147,17 @@ export class GroupDisplayPage extends React.Component {
     </NavDropdown>
   }
 
+  /* Render Logic */
+
   render() {
     if(!this.props.group) return(<div></div>);
 
     const dp = this.props.group.displayPicture ? this.props.group.displayPicture.path : this.state.altImg;
-    const role = this.getRole(this.props.group, this.props.currentUser._id);
-    const isMember = role === 'member';
-    const isAdmin = role === 'admin';
-    const isNone = role === 'none';
 
-    console.log('role --> ', role);
+
+    //const role = this.getRole(this.props.group, this.props.currentUser._id);
+    const { isAdmin, isMember, isNone } = this.getRole();
+
     console.log('groupDisplay state --> ', this.state);
     return (
       <React.Fragment>
@@ -177,6 +203,7 @@ export class GroupDisplayPage extends React.Component {
 function mapStateToProps(state, props) {
   return {
     currentUser: getCurrentUser(state),
+    membership: getMembership(state), 
     group: getGroupById(state, props.match.params.groupId),
   };
 };

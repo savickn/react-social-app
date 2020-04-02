@@ -27,6 +27,14 @@ const EventSchema = new Schema({
     type: Number,
     default: 0,
   },
+  slots: { // represents the total number of people that can attend the event
+    type: Number, 
+    default: 9999, 
+  }, 
+  inviteOnly: {
+    type: Boolean,
+    default: false, 
+  }, 
   
   /* MODEL RELATIONSHIPS */
   attendees: [{
@@ -41,6 +49,7 @@ const EventSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User',
   }],
+
   creator: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -67,6 +76,24 @@ const EventSchema = new Schema({
 EventSchema.virtual('date').get(function() {
   return this.startTime.getDay();
 })
+
+
+/* Validations */
+
+// do not allow a User to attend twice
+// WORKING, but could potential fail if the duplicate already exists
+EventSchema
+  .path('attendees')
+  .validate((attendees) => {
+    let setSize = new Set(attendees.map(a => a.toString())).size;
+    let arrSize = attendees.length;
+    //console.log('set --> ', set, '\n arr --> ', arr);
+    return setSize === arrSize;
+  }, 'You are already attending this event!')
+
+
+
+
 
 /* Middleware */
 

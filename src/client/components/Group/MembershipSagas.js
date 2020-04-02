@@ -2,7 +2,10 @@
 import { 
   CREATE_MEMBERSHIP,
   DELETE_MEMBERSHIP, 
-  FETCH_MEMBERSHIPS_REQUEST, FETCH_MEMBERSHIPS_SUCCESS, FETCH_MEMBERSHIPS_FAILURE, fetchMembershipsFailure, 
+  FETCH_MEMBERSHIPS_REQUEST, FETCH_MEMBERSHIPS_SUCCESS, FETCH_MEMBERSHIPS_FAILURE, 
+  FETCH_MEMBERSHIP_REQUEST, FETCH_MEMBERSHIP_SUCCESS, FETCH_MEMBERSHIP_FAILURE, 
+  fetchMembershipSuccess, fetchMembershipFailure, 
+  fetchMembershipsSuccess, fetchMembershipsFailure,
 } from './MembershipActions';
 
 
@@ -30,6 +33,12 @@ const fetchMembershipsAjax = (query) => {
     .catch(err => { throw err; })
 }
 
+const fetchMembershipAjax = (query) => {
+  return axios.get(`/api/memberships/lookup`, { query })
+    .then(res => res.data)
+    .catch(err => { throw err; })
+}
+
 /* FETCH MEMBERSHIPS */
 
 export function* fetchMembershipsWatcher() {
@@ -42,6 +51,23 @@ function* fetchMembershipsHandler(action) {
     yield put(fetchMembershipsSuccess(response.memberships));
   } catch(error) {
     yield put(fetchMembershipsFailure(error));
+  }
+}
+
+/* FETCH MEMBERSHIP */
+
+export function* fetchMembershipWatcher() {
+  yield takeLatest(FETCH_MEMBERSHIP_REQUEST, fetchMembershipHandler);
+}
+
+export function* fetchMembershipHandler(action) {
+  try {
+    const res = yield call(fetchMembership, action.query);
+    console.log('fetchMembership success --> ', res);
+    yield put(fetchMembershipsSuccess(res));
+  } catch(err) {
+    console.log('fetchMembership err --> ', err);
+    yield put(fetchMembershipFailure(err));
   }
 }
 
@@ -80,6 +106,7 @@ function* deleteMembershipHandler(action) {
 export default [
   fork(createMembershipWatcher), 
   fork(deleteMembershipWatcher),
+  fork(fetchMembershipWatcher), 
 ]
 
 

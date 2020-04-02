@@ -35,7 +35,7 @@ export const searchEvents = (req, res) => {
     if(err) return handleError(res, err);
     Event.find(query)
       .skip(offset)
-      .limit(pageSize)
+      .limit(Number.parseInt(pageSize))
       .populate('creator attendees notGoing waitlist', '_id name displayPicture')
       //.populate('group')
       .exec(function(err, events) {
@@ -46,7 +46,9 @@ export const searchEvents = (req, res) => {
   });
 }
 
-// used to retrieve a single Event entry
+/*
+** used to retrieve a single Event instance
+*/ 
 export const getEvent = (req, res) => {
   Event.findById(req.params.id)
     .populate('creator attendees notGoing waitlist', '_id name displayPicture')
@@ -56,6 +58,9 @@ export const getEvent = (req, res) => {
     });
 }
 
+/*
+** create new Event
+*/
 export const addEvent = (req, res) => {
   if (!req.body.title || !req.body.description || !req.body.location || !req.body.start || !req.body.end || !req.body.creator || !req.body.group) {
     return res.status(500).end('Invalid request body arguments!');
@@ -71,15 +76,31 @@ export const addEvent = (req, res) => {
   });
 }
 
+/*
+** Update an event
+*/
 export const updateEvent = (req, res) => {
   console.log('updating Event --> ', req.body);
-  Event.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true, runValidators: true }, (err, Event) => {
+
+  let updateObj = {};
+
+  /* Update Attendees */
+  if(req.body.attendee) {
+
+  }
+
+  
+
+  Event.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true, runValidators: true }, (err, evt) => {
     if(err) return handleError(res, err);
-    console.log('updatedEvent --> ', Event);
-    return res.status(200).json({ Event });
+    console.log('updatedEvent --> ', evt);
+    return res.status(200).json({ event: evt });
   })
 }
 
+/*
+** delete Event
+*/
 export const deleteEvent = (req, res) => {
   Event.findOneAndRemove({ _id: req.params.id }, (err, res) => {
     if (err) return handleError(res, err);
@@ -88,5 +109,6 @@ export const deleteEvent = (req, res) => {
 }
 
 function handleError(res, err) {
+  console.log('event handleError --> ', err);
   return res.status(500).send(err);
 }

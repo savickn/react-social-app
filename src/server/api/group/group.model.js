@@ -46,10 +46,10 @@ const GroupSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User',
   }],*/
-  admins: [{
+  /*admins: [{
     type: Schema.Types.ObjectId, 
     ref: 'Membership', 
-  }], 
+  }], */
   members: [{
     type: Schema.Types.ObjectId, 
     ref: 'Membership', 
@@ -135,7 +135,7 @@ GroupSchema.virtual('rating').get(function() {
 })
 
 GroupSchema.virtual('memberCount').get(function() {
-  return this.admins.length + this.members.length;
+  return this.members.length;
 })
 
 GroupSchema.virtual('distance').get(function(myLocation) {

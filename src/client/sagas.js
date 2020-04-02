@@ -9,6 +9,7 @@ import EventSagas from './components/Event/EventSagas';
 import MembershipSagas from './components/Group/MembershipSagas';
 import InviteSagas from './components/Event/InviteSagas';
 import UploadSagas from './components/Upload/UploadSagas';
+import CommentSagas from './components/Comment/CommentSagas';
 
 //import { watchIncrementAsync } from './components/TestApp/TestSagas';
 //import { addUserWatcher } from './components/User/UserSagas';
@@ -31,6 +32,7 @@ export default function* rootSaga() {
     ...MembershipSagas, 
     ...InviteSagas, 
     ...UploadSagas, 
+    ...CommentSagas, 
   ])
 }
 

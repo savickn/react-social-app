@@ -14,6 +14,7 @@ const options = {
 
 const ModalWizardPage = loadable(() => import('./components/Prototypes/ModalWizardTestPage'), options)
 const StylesTest = loadable(() => import('./components/Prototypes/StylesTestPage'), options);
+const CommentTest = loadable(() => import('./components/Comment//components/CommentHub'), options);
 
 const AdminPage = loadable(() => import('./components/App/components/Admin/AdminPage'), options);
 const ToDoHub = loadable(() => import('./components/ToDo/todoHub'), options);
@@ -42,6 +43,7 @@ export default (
     <ProtectedRoute path='/todos' component={ToDoHub} />
     <ProtectedRoute path="/modalwizard" component={ModalWizardPage} role='admin' />
     <ProtectedRoute path="/stylesTest" component={StylesTest} role='admin' />
+    <ProtectedRoute path="/commentTest" component={CommentTest} role='admin' />
   </Switch>
 )
 

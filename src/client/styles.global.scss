@@ -5,6 +5,15 @@
   box-sizing: border-box;
 }
 
+.foreground {
+  background-color: #ffffff;
+}
+
+.background {
+  background-color: lighten(lightgray, 13%);
+}
+
+
 .click-cursor {
   cursor: pointer;
 }

@@ -31,8 +31,8 @@ const createEventAjax = (event) => {
   .catch(err => { throw err; })
 }
 
-const updateEventAjax = (event) => {
-  return axios.put(`api/events/${event._id}`, event)
+const updateEventAjax = (id, data) => {
+  return axios.put(`api/events/${id}`, data)
   .then(res => res.data)
   .catch(err => { throw err; })
 }
@@ -69,7 +69,7 @@ function* fetchEventsHandler(action) {
     const response = yield call(fetchEventsAjax, action.query);
     yield put(fetchEventsSuccess(response.events, response.count));
   } catch (err) {
-    console.log('Err --> ', err);
+    console.log('searchEvents err --> ', err);
     yield put(fetchEventsFailure(err));
   }
 }
@@ -85,7 +85,7 @@ function* createEventHandler(action) {
     const response = yield call(createEventAjax, action.eventData);
     yield put(createEventSuccess(response.event));
   } catch (err) {
-    console.log('Err --> ', err);
+    console.log('createEvent err --> ', err);
     yield put(createEventFailure(err));
   }
 }
@@ -98,10 +98,11 @@ export function* updateEventWatcher() {
 
 function* updateEventHandler(action) {
   try {
-    const response = yield call(updateEventAjax, action.eventData);
+    const { id, data } = action.payload;
+    const response = yield call(updateEventAjax, id, data);
     yield put(updateEventSuccess(response.event));
   } catch (err) {
-    console.log('Err --> ', err);
+    console.log('updateEvent err --> ', err);
     yield put(updateEventFailure(err));
   } 
 }
@@ -117,7 +118,7 @@ function* deleteEventHandler(action) {
     const response = yield call(deleteEventAjax, action.id);
     yield put(deleteEventSuccess(response.eventId));
   } catch (err) {
-    console.log('Err --> ', err);
+    console.log('deleteEvent err --> ', err);
     yield put(deleteEventFailure(err));
   }
 }

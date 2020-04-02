@@ -1,8 +1,8 @@
 
 import Membership from './membership.model';
 
-/* returns collection of Memberships based on req.query (or returns all Memberships by default)
-*
+/* 
+* returns collection of Memberships based on req.query (or returns all Memberships by default)
 */
 export const searchMemberships = (req, res) => {
   const query = {};
@@ -13,6 +13,26 @@ export const searchMemberships = (req, res) => {
     return res.status(200).json({ memberships });  
   })
 }
+
+/* 
+** returns single Membership instance via groupId and userId
+*/
+
+export const getMembership = (req, res) => {
+  if(!req.query.groupId || !req.query.userId) return res.status(501).send('Invalid request arguments!');
+
+  const { groupId, userId, } = req.query;
+
+  Membership
+    .findOne({ group: groupId, user: userId, })
+    .then((membership) => {
+      return res.status(200).json({ membership });
+    })
+    .catch((err) => {
+      return res.status(501).send(err);
+    })
+}
+
 
 /* Must provide following args in req.body:
 * groupId

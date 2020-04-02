@@ -13,6 +13,8 @@ class AdminPage extends React.Component {
         <Link to="/todos"> Todos </Link> <br />
         <Link to="/modalwizard">Modal Wizard</Link> <br />
         <Link to="/stylesTest">Styles</Link> <br />
+
+        <Link to="/commentTest">Comment Test</Link>
         
       </div>
     );

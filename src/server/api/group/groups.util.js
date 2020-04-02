@@ -6,6 +6,7 @@
 
 
 export const handleError = (res, err) => {
+  console.log('handleError --> ', err);
   return res.status(500).send(err);
 }
 

@@ -6,6 +6,7 @@ import styles from './GroupListItem.module.scss';
 
 //import bgImg from '../../group-bk.jpeg';
 import bgImg from '../../../../../shared/nophoto.png';
+//import bgImg from '../../../../../shared/missing_avatar.png';
 //import bgImg from '../../../../../shared/no-image-icon.png';
 
 function GroupListItem(props) {

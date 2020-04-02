@@ -6,8 +6,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClock, faDollarSign, faMap, faCalender, faLocationArrow } from '@fortawesome/free-solid-svg-icons'
 
 import UserInfoPanel from '../../User/components/UserInfoPanel';
+import CommentHub from '../../Comment/components/CommentHub';
 
-import { getEventRequest } from '../EventActions';
+
+import { getCurrentUser } from '../../User/AccountReducer';
+import { getEventRequest, updateEventRequest } from '../EventActions';
 import { getGroupById } from '../../Group/GroupReducer';
 import { getEventById } from '../EventReducer';
 
@@ -41,22 +44,40 @@ class EventPage extends React.Component {
   formatDate = (start, end) => {
     let state = {};
 
-    const sDate = new Date(start);
-    const eDate = new Date(end);
-    const monthName = getMonthName(sDate.getMonth());
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    const monthName = getMonthName(startDate.getMonth());
     const abbr = monthName.substring(0, 3);
 
-    state['starttime'] = `${sDate.getHours()}:${sDate.getMinutes()}`;
-    state['endtime'] = `${eDate.getHours()}:${eDate.getMinutes()}`;
-    state['day'] = `${sDate.getDate()}`;
+    state['starttime'] = `${startDate.getHours()}:${startDate.getMinutes()}`;
+    state['endtime'] = `${endDate.getHours()}:${endDate.getMinutes()}`;
+    state['day'] = `${startDate.getDate()}`;
     state['month'] = `${monthName}`;
     state['monthAbbr'] = abbr;
-    state['year'] = `${sDate.getFullYear()}`;
-    state['date'] = `${monthName} ${sDate.getDate()}, ${sDate.getFullYear()}`; // e.g. March 10th, 2010
+    state['year'] = `${startDate.getFullYear()}`;
+    state['date'] = `${monthName} ${startDate.getDate()}, ${startDate.getFullYear()}`; // e.g. March 10th, 2010
     console.log(state);
     return state;
   }
 
+  /* Event Handlers */
+
+  // used to validate whether a User is eligible to attend the Event... should probably be performed server-side
+  validateInvite = () => {
+    
+  }
+
+
+  // determines whether to show/hide Attend button
+  canAttend = () => {
+    return true;
+  }
+
+  // used to add a User to the list of Attendees
+  attendEvent = () => {
+    const attendees = [...this.props.evt.attendees, this.props.currentUser._id];
+    this.props.dispatch(updateEventRequest(this.props.evt._id, {attendees}));
+  } 
 
   /* UI logic */
   
@@ -68,6 +89,8 @@ class EventPage extends React.Component {
     return this.props.evt.image;
   }
 
+  /* Render Logic */
+
   render() {
     const { evt } = this.props;
     if(!evt) return <div></div> 
@@ -75,20 +98,21 @@ class EventPage extends React.Component {
     const hasImage = this.hasImage();
     const hasPrice = this.hasPrice();
 
+    const canAttend = this.canAttend();
+
     const status = this.getEventStatus(evt.start, evt.end);
     const date = this.formatDate(evt.start, evt.end);
 
     return (
-      <div>
-        <div className={styles.eventBanner}>
+      <div className='eventPage background'>
+        <div className={`foreground ${styles.eventHeader}`}>
           <div className={styles.date}>
             <span className={styles.num}>{date.day}</span>
             <span className={styles.abbr}>{date.monthAbbr}</span>
           </div>
           <div className={styles.info}>
-            <div>{status} Meetup</div>
+            <div>{status}</div>
             <div>{evt.title}</div>
-            <div>Hosted By: {evt.creator.name}</div>
             <div>From: {evt.group.name}</div> 
           </div>
           <div className={styles.status}>{evt.attendees.length} people are attending</div>
@@ -106,8 +130,10 @@ class EventPage extends React.Component {
             <div>
               <h2>Attendees</h2>
               <div className={styles.attendeesContainer}>
+                <div>Show All</div>
                 {this.props.evt.attendees.slice(0, 8).map(a => {
-                  return <UserInfoPanel image={'sdfsdf'} name={'sdfsdf'} role={'sdfsdf'} />
+                  console.log(a);
+                  return <UserInfoPanel image={a.displayPicture} name={a.name} role={'sdfsdf'} />
                 })}
               </div>
             </div>
@@ -115,10 +141,9 @@ class EventPage extends React.Component {
               <h2>Photos</h2>
               <div>photos here</div>
             </div>
-            <div>
+            <div className='comments'>
               <h2>Comments</h2>
-              <div>comments here</div>
-              <div>comment form here</div>
+              <CommentHub parentId={this.props.evt._id} />
             </div>
           </div>
 
@@ -138,6 +163,20 @@ class EventPage extends React.Component {
             <div>map</div>
           </div>
         </div>
+
+        <div className={`foreground ${styles.eventFooter}`}>
+          <div className='dateTime'>
+            <span>{date.date} {date.starttime} </span>
+            <div>{evt.title}</div>
+          </div>
+          <div className='priceAndOpenSlots'>
+            12 Open Slots
+          </div>
+          { canAttend ? 
+            <button onClick={this.attendEvent}>Attend</button>
+            : null
+          }
+        </div>
       </div>
     )
   }
@@ -148,6 +187,15 @@ class EventPage extends React.Component {
             <div><FontAwesomeIcon icon={faDollarSign} /> <span className='left-padded'> price </span></div>
             <div><FontAwesomeIcon icon={faMap} /> <span className='left-padded'> location </span></div>
             */
+
+/*
+<div className={styles.info}>
+            <div>{status} Meetup</div>
+            <div>{evt.title}</div>
+            <div>Hosted By: {evt.creator.name}</div>
+            <div>From: {evt.group.name}</div> 
+          </div>*/
+
 
 EventPage.propTypes = {
   evt: PropTypes.object.isRequired,  
@@ -164,6 +212,7 @@ const mapStateToProps = (state, props) => {
   return {
     evt: getEventById(state, props.match.params.eventId),
     //group: getGroupById(state, props.evt.group), 
+    currentUser: getCurrentUser(state), 
   };
 }
 

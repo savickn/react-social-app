@@ -1,6 +1,5 @@
 
 import mongoose from 'mongoose';
-
 const Schema = mongoose.Schema;
 
 // represents a User's membership in a Group
@@ -13,6 +12,16 @@ export const MembershipSchema = new Schema({
     type: Schema.Types.ObjectId, 
     ref: 'User', 
   }, 
+  role: {
+    type: String,
+    enum: ['Admin', 'Member'], 
+    required: true, 
+  },
+  // used for private groups that require acceptance
+  /*verified: {
+
+  },*/ 
+
 });
 
 /* Middleware */

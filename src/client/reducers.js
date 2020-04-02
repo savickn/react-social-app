@@ -10,6 +10,7 @@ import events from './components/Event/EventReducer';
 import memberships from './components/Group/MembershipReducer';
 import invites from './components/Event/InviteReducer';
 import upload from './components/Upload/UploadReducer';
+import comments from './components/Comment/CommentReducer';
 
 //import wizard
 import alerts from './components/Alert/alertReducer';
@@ -31,6 +32,7 @@ let reducers = {
   invites,
   memberships, 
   upload, 
+  comments, 
 };
 
 export default reducers;

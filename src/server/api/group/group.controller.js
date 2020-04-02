@@ -18,7 +18,7 @@ export const searchGroups = (req, res) => {
   //const distance = req.query.distance;
   //const keywords = req.query.keywords || '';
 
-  const pageSize = req.query.pageSize || 5; // used for pagination
+  const pageSize = Number.parseInt(req.query.pageSize) || 5; // used for pagination
   const page = req.query.currentPage - 1 || 0; // used to set 'offset' for pagination
   const offset = page * pageSize;
 
@@ -33,7 +33,7 @@ export const searchGroups = (req, res) => {
       .populate('displayPicture')
       .sort('-memberCount name')
       .exec(function(err, groups) {
-        if(err) return handleError(res, err)
+        if(err) return handleError(res, err);
         return res.status(200).header('total-groups', count).json({ groups, count });
       });
   });

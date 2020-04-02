@@ -15,7 +15,7 @@ function UserInfoPanel(props) {
   const dpImage = props.image || anonUser;
 
   return <div className={styles.panelContainer}>
-    <img src={dpImage} alt='user-image' />
+    <img src={dpImage} height='100' width='100' alt='user-image' />
     <div>{props.name}</div>
     <div>{props.role}</div>
   </div>

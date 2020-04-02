@@ -108,10 +108,13 @@ export function fetchEventsFailure(errors) {
 
 /* UPDATE EVENT */
 
-export function updateEventRequest(eventData) {
+export function updateEventRequest(id, data) {
   return {
     type: UPDATE_EVENT_REQUEST,
-    eventData,
+    payload: {
+      id,
+      data, 
+    }
   }
 }
 
