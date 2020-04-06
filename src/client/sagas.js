@@ -2,7 +2,6 @@
 import TodoSagas from './components/ToDo/todoSagas';
 import AccountSagas from './components/User/AccountSagas';
 import UserSagas from './components/User/UserSagas';
-import AlertSagas from './components/Alert/alertSagas';
 import GroupSagas from './components/Group/GroupSagas';
 import AlbumSagas from './components/Album/AlbumSagas';
 import EventSagas from './components/Event/EventSagas';
@@ -10,6 +9,9 @@ import MembershipSagas from './components/Group/MembershipSagas';
 import InviteSagas from './components/Event/InviteSagas';
 import UploadSagas from './components/Upload/UploadSagas';
 import CommentSagas from './components/Comment/CommentSagas';
+import ProfileSagas from './components/Profile/ProfileSagas';
+
+import AlertSagas from './components/Utilities/Alert/alertSagas';
 
 //import { watchIncrementAsync } from './components/TestApp/TestSagas';
 //import { addUserWatcher } from './components/User/UserSagas';
@@ -33,6 +35,7 @@ export default function* rootSaga() {
     ...InviteSagas, 
     ...UploadSagas, 
     ...CommentSagas, 
+    ...ProfileSagas, 
   ])
 }
 

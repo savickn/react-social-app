@@ -1,7 +1,6 @@
 
 import {
-  UPLOAD_ALBUM_REQUEST, UPLOAD_PROFILE_REQUEST,
-  UPLOAD_SUCCESS, UPLOAD_FAILURE,  
+  UPLOAD_REQUEST, UPLOAD_SUCCESS, UPLOAD_FAILURE,  
 } from './UploadActions';
 
 const initialState = {
@@ -11,9 +10,7 @@ const initialState = {
 
 const UploadReducer = (state = initialState, action) => {
   switch(action.type) {
-    case UPLOAD_PROFILE_REQUEST:
-      return initialState;
-    case UPLOAD_ALBUM_REQUEST:
+    case UPLOAD_REQUEST:
       return initialState;
     case UPLOAD_SUCCESS:
       return {

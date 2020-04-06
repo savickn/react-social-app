@@ -15,31 +15,21 @@ import { takeLatest, put, call, fork, select } from 'redux-saga/effects';
 
 /* API CALLS */
 
-const createMembershipAjax = (groupId, userId) => {
-  return axios.post(`/api/memberships`, { groupId, userId })
-    .then(res => res.data)
-    .catch(err => { throw err; })
-}
-
-const deleteMembershipAjax = (id) => {
-  return axios.delete(`/api/memberships/${id}`)
-    .then(res => res.data)
-    .catch(err => { throw err; })
-} 
-
-const fetchMembershipsAjax = (query) => {
-  return axios.get('/api/memberships', { query })
-    .then(res => res.data)
-    .catch(err => { throw err; })
-}
-
 const fetchMembershipAjax = (query) => {
   return axios.get(`/api/memberships/lookup`, { query })
     .then(res => res.data)
     .catch(err => { throw err; })
 }
 
-/* FETCH MEMBERSHIPS */
+/* SEARCH MEMBERSHIPS */
+
+const fetchMembershipsAjax = (query) => {
+  return axios.get('/api/memberships', { 
+    params: query,  
+  })
+    .then(res => res.data)
+    .catch(err => { throw err; })
+}
 
 export function* fetchMembershipsWatcher() {
   yield takeLatest(FETCH_MEMBERSHIPS_REQUEST, fetchMembershipsHandler);
@@ -73,6 +63,12 @@ export function* fetchMembershipHandler(action) {
 
 /* CREATE MEMBERSHIP */
 
+const createMembershipAjax = (groupId, userId) => {
+  return axios.post(`/api/memberships`, { groupId, userId })
+    .then(res => res.data)
+    .catch(err => { throw err; })
+}
+
 export function* createMembershipWatcher() {
   yield takeLatest(CREATE_MEMBERSHIP, createMembershipHandler);
 }
@@ -80,13 +76,21 @@ export function* createMembershipWatcher() {
 function* createMembershipHandler(action) {
   try {
     const response = yield call(createMembershipAjax, action.payload.groupId, action.payload.userId);
+    console.log('createMembership res --> ', res);
     //yield put(fetchGroupSuccess(group));
   } catch(error) {
+    console.error('createMembership err --> ', error);
     //yield put(fetchGroupError(error));
   }
 }
 
 /* DELETE MEMBERSHIP */
+
+const deleteMembershipAjax = (id) => {
+  return axios.delete(`/api/memberships/${id}`)
+    .then(res => res.data)
+    .catch(err => { throw err; })
+} 
 
 export function* deleteMembershipWatcher() {
   yield takeLatest(DELETE_MEMBERSHIP, deleteMembershipHandler);
@@ -97,16 +101,18 @@ function* deleteMembershipHandler(action) {
     const response = yield call(deleteMembershipAjax, action.id);
     //yield put(fetchGroupSuccess(group));
   } catch(error) {
+    console.error('deleteMembership err --> ', err);
     //yield put(fetchGroupError(error));
   }
 }
 
-/* export Watchers */
+/* exports */
 
 export default [
   fork(createMembershipWatcher), 
   fork(deleteMembershipWatcher),
-  fork(fetchMembershipWatcher), 
+  fork(fetchMembershipsWatcher),
+  fork(fetchMembershipWatcher),  
 ]
 
 

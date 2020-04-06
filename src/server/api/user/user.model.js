@@ -46,6 +46,8 @@ export const UserSchema = new Schema({
   interests: [{
     type: String
   }],
+
+  /* Relationships */
   groups: [{
     type: Schema.Types.ObjectId,
     ref: 'Membership',
@@ -54,7 +56,7 @@ export const UserSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Event',
   }],
-  displayPicture: {
+  profile: {
     type: Schema.Types.ObjectId,
     ref: 'Profile'
   }, 
@@ -100,13 +102,6 @@ UserSchema
       return outcome;
     });
 }, 'The specified email address is already in use.');
-
-// validate that length of displayPicture is only 1
-UserSchema
-  .path('displayPicture')
-  .validate((dpArr) => {
-    return dpArr.length <= 1;
-  })
 
 
 
@@ -171,7 +166,7 @@ UserSchema
 
 // Public profile information
 UserSchema
-  .virtual('profile')
+  .virtual('public')
   .get(function() {
     return {
       'name': this.name,

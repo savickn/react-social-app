@@ -6,8 +6,8 @@ import { connect } from 'react-redux';
 import EventList from '../components/eventList';
 import EventInfo from '../components/eventInfo';
 import EventForm from '../components/eventForm';
-import Modal from '../../Modal/modal';
-import PaginationScroll from '../../PaginationScroll/PaginationScroll';
+import Modal from '../../Utilities/Modal/modal';
+import PaginationScroll from '../../Utilities/PaginationScroll/PaginationScroll';
 
 import { createEventRequest, fetchEventsRequest, clearCollection } from '../EventActions';
 import { getEvents, getEventCount } from '../EventReducer';

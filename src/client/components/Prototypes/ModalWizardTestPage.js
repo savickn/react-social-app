@@ -1,9 +1,9 @@
 
 import React from 'react';
 
-import Modal from '../Modal/modal';
-import WizardHub from '../Wizard/wizard';
-import WizardPage from '../Wizard/page';
+import Modal from '../Utilities/Modal/modal';
+import WizardHub from '../Utilities/Wizard/wizard';
+import WizardPage from '../Utilities/Wizard/page';
 import Inner from './InnerWizardComponent';
 
 class ModalWizardPage extends React.Component {

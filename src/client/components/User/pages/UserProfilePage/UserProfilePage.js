@@ -4,63 +4,25 @@ import Helmet from 'react-helmet';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import Upload from '../../../Upload/upload';
+//import Upload from '../../../Upload/components/upload';
+import Profile from '../../../Profile/Profile';
 
-import { uploadProfileRequest } from '../../../Upload/UploadActions';
+import { uploadRequest } from '../../../Upload/UploadActions';
 import { updateUserRequest } from '../../UserActions';
 
 import { getUploadStatus, getUploadErrors } from '../../../Upload/UploadReducer';
 import { getCurrentUser } from '../../AccountReducer';
 
-import noDp from '../../anon_user.png';
 import styles from './UserProfilePage.scss';
 
 export class UserProfilePage extends React.Component {
 
-
-
-  /* Component logic */
-
-  // update profile picture
-  changePhoto = (formData) => {
-    /*if(typeof window != undefined) {
-      const fr = new FileReader();
-      const files = [];
-      for(let x of formData.values()) {
-        console.log(x);
-        files.push(x);
-      }
-
-      fr.addEventListener('load', () => {
-        console.log('dataurl --> ', fr.result);
-        this.setState({altImg: fr.result});
-      });
-      fr.readAsDataURL(files[0]);
-    }*/
-
-    this.props.dispatch(uploadProfileRequest(formData));
-
-
-    /*axios.post('/api/pictures/', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    }).then((res) => {
-      console.log('userPhoto upload res --> ', res);
-      let updatedUser = Object.assign({}, this.props.user, { displayPicture: res.data.picture._id });
-      console.log('updatedUser --> ', updatedUser);
-      this.props.dispatch(updateUserRequest(updatedUser));
-    }).catch((err) => {
-      console.log('userPhoto upload err --> ', err);
-    })*/
-  }
-
   /* UI logic */
 
-  getDisplayPicture = () => {
+  /*getDisplayPicture = () => {
     if(!this.props.currentUser.displayPicture || this.props.currentUser.displayPicture.length < 1) return noDp;
     return this.props.currentUser.displayPicture[0];
-  }
+  }*/
 
   getInterests = () => {
     const interests = this.props.currentUser.interests;
@@ -76,10 +38,10 @@ export class UserProfilePage extends React.Component {
   render() {
     if(!this.props.currentUser) return <div></div>; // should prob redirect instead
 
-    const dp = this.getDisplayPicture();
+    //const dp = this.getDisplayPicture();
 
-    console.log('profilePage props --> ', this.props);
-    console.log('profilePage dp --> ', dp);
+    //console.log('profilePage props --> ', this.props);
+    //console.log('profilePage dp --> ', dp);
 
     return (
       <div className={styles.profileContainer}>
@@ -102,12 +64,11 @@ export class UserProfilePage extends React.Component {
         </div>
         <div className={styles.profileSidebar}>
           <div className={styles.displayPictureContainer}>
-            <Upload handleUpload={this.changePhoto}>
-              <div className={styles.dp}>
-                <img src={dp}/>
-                <button>Change your photo</button>
-              </div>
-            </Upload>
+            <Profile 
+              profileId={this.props.currentUser.profile} 
+              imageableId={this.props.currentUser._id} 
+              imageableType='User'
+            />
           </div>
           <div className={styles.interests}>
             <h2>Interests</h2>

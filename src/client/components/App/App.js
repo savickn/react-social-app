@@ -10,8 +10,8 @@ import routes from '../../routes';
 import DevTools from '../../util/devTools';
 import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
-import Alert from '../Alert/alert';
-import Spinner from '../Spinner/spinkit';
+import Alert from '../Utilities/Alert/alert';
+import Spinner from '../Utilities/Spinner/spinkit';
 
 //import { switchLanguage } from '../../modules/Intl/IntlActions';
 import { logOut } from '../User/AccountActions';

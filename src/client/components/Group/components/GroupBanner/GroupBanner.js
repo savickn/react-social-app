@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Nav, NavItem } from 'react-bootstrap';
 
-import ImageUpload from '../../../Upload/upload';
+import Profile from '../../../Profile/Profile';
 
 class GroupBanner extends React.Component {
 
@@ -12,9 +12,7 @@ class GroupBanner extends React.Component {
     return (
       <div>
         <div className='col1'>
-          <ImageUpload handleUpload={this.props.handleImageChange}>
-            <img src={dp} width='200' height='200' />
-          </ImageUpload>
+          <Profile profileId={this.props.profileId} imageableId={this.props.groupId} imageableType='Group' />
         </div>
         <div className='col2'>
           <h2>{this.props.groupName}</h2>

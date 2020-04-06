@@ -3,7 +3,7 @@ import {
   CHANGE_CURRENT_PAGE, CHANGE_PER_PAGE, 
 } from './PaginationActions';
 
-import { updateByObjectId, removeByObjectId, matchByObjectId, } from '../../util/utilFuncs';
+import { updateByObjectId, removeByObjectId, matchByObjectId, } from '../../../util/utilFuncs';
 
 /* should structure pages as shown below
 {

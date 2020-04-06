@@ -1,12 +1,48 @@
 
-import { uploadSuccess, uploadFailure,  } from './UploadActions';
-import { UPLOAD_ALBUM_REQUEST, UPLOAD_PROFILE_REQUEST, } from './UploadActions';
+import { uploadSuccess, uploadFailure, UPLOAD_REQUEST,  } from './UploadActions';
 
 import axios from '../../util/axiosCaller';
 
 import { takeLatest, call, put, fork } from 'redux-saga/effects';
 
-/* AJAX Requests */
+/* UPLOAD IMAGE */
+
+const upload = (data) => {
+  return axios.post('/api/pictures/', data, {
+    headers: {
+      'Content-Type': 'multipart/form-data', 
+    }
+  })
+    .then(res => res.data)
+    .catch(err => { throw err; })
+}
+
+export function* uploadImageWatcher() {
+  yield takeLatest(UPLOAD_REQUEST, uploadImageHandler);
+}
+
+export function* uploadImageHandler(action) {
+  try {
+    const res = yield call(upload, action.data);
+    console.log('uploadImage res --> ', res);
+    yield put(uploadSuccess());
+  } catch(err) {
+    console.log('uploadImage err --> ', err);
+    yield put(uploadFailure(err))
+  }
+}
+
+/* EXPORTS */
+
+export default [
+  fork(uploadImageWatcher), 
+]
+
+
+
+/* OLD
+
+//import { UPLOAD_ALBUM_REQUEST, UPLOAD_PROFILE_REQUEST, } from './UploadActions';
 
 // only uploads the image (does not interact with database)
 export const uploadImage = (formData) => {
@@ -41,7 +77,6 @@ export const uploadAlbum = (formData) => {
     .catch(err => { throw err; })
 }
 
-/* Upload to Profile */
 
 export function* uploadProfileWatcher() {
   yield takeLatest(UPLOAD_PROFILE_REQUEST, uploadProfileHandler);
@@ -49,6 +84,8 @@ export function* uploadProfileWatcher() {
 
 function* uploadProfileHandler(action) {
   try {
+    
+
     const response = yield call(uploadProfile, action.formData);
     console.log('uploadProfile res --> ', response);
     yield put(uploadSuccess());
@@ -56,8 +93,6 @@ function* uploadProfileHandler(action) {
     yield put(uploadFailure(error));
   }
 }
-
-/* Upload to Album */
 
 export function* uploadAlbumWatcher() {
   yield takeLatest(UPLOAD_ALBUM_REQUEST, uploadAlbumHandler);
@@ -73,9 +108,4 @@ function* uploadAlbumHandler(action) {
   }
 }
 
-
-export default [
-  fork(uploadProfileWatcher), 
-  fork(uploadAlbumWatcher), 
-]
-
+*/

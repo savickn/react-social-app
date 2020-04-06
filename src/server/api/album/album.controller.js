@@ -34,7 +34,7 @@ export const searchAlbums = (req, res) => {
 export const getAlbum = (req, res) => {
   Album.findById(req.params.id, (err, album) => {
     if(err) return handleError(res, err);
-    return res.status(200).json({album});
+    return res.status(200).json({ album });
   }) 
 }
 
@@ -50,20 +50,9 @@ export const addAlbum = (req, res) => {
   });
 }
 
-// used to update an Album resource (e.g. 'PUT /albums/123')
-// only 'name' can be updated
-export const updateAlbum = (req, res) => {
-  console.log('updating album --> ', req.body);
-  Album.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true, runValidators: true }, (err, album) => {
-    if(err) return handleError(res, err);
-    console.log('updatedAlbum --> ', album);
-    return res.status(200).json({ album });
-  });
-}
-
 // used to delete an Album resource (e.g. 'DELETE /albums/123')
 export const deleteAlbum = (req, res) => {
-  Album.findOneAndRemove({ _id: req.params.id }, (err, res) => {
+  Album.findByIdAndRemove(req.params.id, (err, r) => {
     if (err) return handleError(res, err);
     return res.status(204).end();
   });

@@ -36,14 +36,6 @@ export class GroupDisplayPage extends React.Component {
 
   /* Component logic */
 
-  /* OLD
-  getRole(group, userId) {
-    //console.log('getrole --> ', group, userId);
-    if(group && matchByObjectId(group.admins, userId)) return 'admin';
-    if(group && matchByObjectId(group.members, userId)) return 'member';
-    return 'none';
-  }*/
-
   // returns object with 'isAdmin/isMember/isNone'
   getRole() {
     let roles = {
@@ -53,6 +45,7 @@ export class GroupDisplayPage extends React.Component {
     };
     
     if(this.props.membership ) {
+      roles.isNone = false;
       roles.isMember = true;
 
       if(this.props.membership.role === 'Admin') {
@@ -60,6 +53,7 @@ export class GroupDisplayPage extends React.Component {
       }
     }
 
+    console.log('getRoles --> ', roles);
     return roles;
   }
 
@@ -104,17 +98,18 @@ export class GroupDisplayPage extends React.Component {
     this.props.dispatch(updateGroup(alteredGroup));
   }
 
-  // should change to create Request object instead eventually
+  // used to join the Group by creating a new Membership
+  /* should change to support Request objects eventually */
   handleJoinGroup = (isNone) => {
     if(isNone) {
-      //const alteredGroup = {...this.props.group};
-      //alteredGroup.members.push({user: this.props.currentUser._id, group: this.props.group._id});
+      // also add some server-side protection against this!!!
       this.props.dispatch(createMembership(this.props.group._id, this.props.currentUser._id));
     } else {
-      console.log('Already a member!'); 
+      console.log('You are already a member of this group!'); 
     }
   }
 
+  // 
   handleLeaveGroup = () => {
     const membershipId = this.props.group.members.filter(m => {
       return m.user === this.props.currentUser._id;
@@ -161,8 +156,9 @@ export class GroupDisplayPage extends React.Component {
     console.log('groupDisplay state --> ', this.state);
     return (
       <React.Fragment>
-        <GroupBanner groupName={this.props.group.name} location={this.props.group.location} memberCount={this.props.group.memberCount}
-          displayPicture={dp} admins={this.props.group.admins} isMember={isMember} handleImageChange={this.handleImageChange}/>
+        <GroupBanner groupId={this.props.group._id} groupName={this.props.group.name} location={this.props.group.location} 
+          memberCount={this.props.group.memberCount} displayPicture={dp} admins={this.props.group.admins} isMember={isMember} 
+          profileId={this.props.group.profile} handleImageChange={this.handleImageChange} />
         <Navbar>
           <Nav>
             <LinkContainer to={`/groups/${this.props.group._id}`}>
@@ -216,6 +212,14 @@ GroupDisplayPage.propTypes = {
 export default connect(mapStateToProps)(GroupDisplayPage);
 
 
+
+  /* OLD
+  getRole(group, userId) {
+    //console.log('getrole --> ', group, userId);
+    if(group && matchByObjectId(group.admins, userId)) return 'admin';
+    if(group && matchByObjectId(group.members, userId)) return 'member';
+    return 'none';
+  }*/
 
 
 /* OLD 

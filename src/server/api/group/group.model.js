@@ -30,7 +30,7 @@ const GroupSchema = new Schema({
   }],
 
   /* model relationships */
-  displayPicture: {
+  profile: {
     type: Schema.Types.ObjectId,
     ref: 'Profile'
   }, 

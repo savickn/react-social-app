@@ -7,11 +7,11 @@ import base64 from 'crypto-js/enc-base64';
 import GroupList from '../components/GroupList';
 import GroupCreateWidget from '../components/GroupCreateWidget/GroupCreateWidget';
 import GroupSearchBar from '../components/GroupSearchBar/GroupSearchBar';
-import Pagination from '../../Pagination/Pagination';
-import PaginationRedux from '../../Pagination/PaginationRedux';
-import Modal from '../../Modal/modal';
-import WizardHub from '../../Wizard/wizard';
-import WizardPage from '../../Wizard/page';
+import Pagination from '../../Utilities/Pagination/Pagination';
+import PaginationRedux from '../../Utilities/Pagination/PaginationRedux';
+import Modal from '../../Utilities/Modal/modal';
+import WizardHub from '../../Utilities/Wizard/wizard';
+import WizardPage from '../../Utilities/Wizard/page';
 import AlbumCreateWidget from '../../Album/CreateAlbumWidget';
 
 import { createGroup, fetchGroups } from '../GroupActions';

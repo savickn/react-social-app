@@ -21,42 +21,36 @@ export const MembershipSchema = new Schema({
   /*verified: {
 
   },*/ 
-
 });
 
 /* Middleware */
 
 // creates Group's reference to Membership
 MembershipSchema.pre('save', function(next) {
-  console.log('addmembership pre-save --> ', this);
-  mongoose.model('Group').findByIdAndUpdate(this.group, { $addToSet: { members: this._id }}, (err, group) => {
-    if(err) return next(err);
-    next();
-  });
+  mongoose.model('Group').findByIdAndUpdate(this.group, { $addToSet: { members: this._id }}, { new: true })
+    .then(group => next())
+    .catch(err => next(err))
 })
 
 // creates User's reference to Membership
 MembershipSchema.pre('save', function(next) {
-  mongoose.model('User').findByIdAndUpdate(this.user, { $addToSet: { groups: this._id }}, (err, user) => {
-    if(err) return next(err);
-    next();
-  })
+  mongoose.model('User').findByIdAndUpdate(this.user, { $addToSet: { groups: this._id }}, { new: true })
+    .then(user => next())
+    .catch(err => next(err))
 })
 
 // deletes Group's reference to Membership
 MembershipSchema.pre('remove', (next) => {
-  mongoose.model('Group').findByIdAndUpdate(this.group, { $pull: { members: this._id }}, (err, group) => {
-    if(err) return next(err);
-    next();
-  })
+  mongoose.model('Group').findByIdAndUpdate(this.group, { $pull: { members: this._id }}, { new: true })
+    .then(group => next())
+    .catch(err => next(err))
 })
 
 // deletes User's reference to Membership
 MembershipSchema.pre('remove', (next) => {
-  mongoose.model('User').findByIdAndUpdate(this.user, { $pull: { groups: this._id }}, (err, user) => {
-    if(err) return next(err);
-    next();
-  })
+  mongoose.model('User').findByIdAndUpdate(this.user, { $pull: { groups: this._id }}, { new: true })
+    .then(user => next())
+    .catch(err => next(err))
 })
 
 MembershipSchema.set('toJSON', { virtuals: true });

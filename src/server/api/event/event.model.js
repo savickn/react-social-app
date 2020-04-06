@@ -64,10 +64,15 @@ const EventSchema = new Schema({
   /* EXTRA FEATURES */
   /*comments: [{
 
-  }],
-  photos: [{
-
-  }]*/
+  }],*/
+  profile: {
+    type: Schema.Types.ObjectId,
+    ref: 'Profile', 
+  }, 
+  albums: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Album', 
+  }], 
 });
 
 /* VIRTUALS */
@@ -96,6 +101,8 @@ EventSchema
 
 
 /* Middleware */
+
+
 
 
 

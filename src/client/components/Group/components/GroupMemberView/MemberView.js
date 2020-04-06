@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import UserIcon from '../../../User/components/UserIcon';
+import UserInfoPanel from '../../../User/components/UserInfoPanel';
 
 import { fetchMembershipsRequest } from '../../MembershipActions';
 import { getMemberships } from '../../MembershipReducer';
@@ -21,15 +21,12 @@ class GroupMemberView extends React.Component {
   // query Users api by passing GroupId (can use 'select' in Saga to cancel API call if Users in Redux store)
   componentWillMount() {
     const groupId = this.props.match.params.groupId;
-    this.props.dispatch(fetchMembershipsRequest({ groupId }));
+    this.props.dispatch(fetchMembershipsRequest({ group: groupId }));
   }
 
   /* Component logic */
 
-  getUsersByType = (type) => {
-    return type === 'admins' ? this.props.admins : this.props.members;
-  }
-
+  // used to query specific groups of users (e.g. Normal vs. Admin users)
   changeViewType = (value) => {
     this.setState({ viewType: value }, () => {
       // re-query server
@@ -46,6 +43,7 @@ class GroupMemberView extends React.Component {
   
   render() {
     if(!this.props.members) return <div></div>;
+    console.log(this.props.members);
 
     return (
       <div className='container'>
@@ -58,8 +56,8 @@ class GroupMemberView extends React.Component {
 
             <div className={styles.memberList}>
               {
-                this.props.members.map((user) => {
-                  return <UserIcon _id={user._id} name={user.name} displayPicture={user.displayPicture} />;
+                this.props.members.map((m) => {
+                  return <UserInfoPanel name={null} role={m.role} />;
                 })
               }
             </div>

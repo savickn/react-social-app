@@ -21,5 +21,3 @@ App.propTypes = {
   history: PropTypes.object.isRequired
 }
 
-
-

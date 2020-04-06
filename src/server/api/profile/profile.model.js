@@ -1,55 +1,42 @@
 
 import mongoose from 'mongoose';
-
 const Schema = mongoose.Schema;
 
+// represents a Profile picture
 export const ProfileSchema = new Schema({
-  filename: {
-    type: String,
-    required: true
-  },
-  contentType: {
-    type: String,
-    match: [/image\/(jpeg|jpg|png)/, "This file's format is incorrect."],
-    required: true
-  },
-  size: {
-    type: Number,
-    max: 2000000, //2 MB
-    required: true
-  },
-  path: { // path relative to public/static directory
-    type: String,
-    required: true
-  },
-  imageableType: {
+  image: {
+    type: Schema.Types.ObjectId,
+    ref: 'Picture', 
+  }, 
+  imageableType: { //parentType
     type: String, 
     required: true,
   },
-  imageableId: {
+  imageableId: { //parentId
     type: Schema.Types.ObjectId, 
     required: true, 
   }, 
 });
 
-/* Validations */
-
-
-
 /* Middleware */
 
-ProfileSchema.pre('save', (next) => {
-  mongoose.model(this.imageableType).findByIdAndUpdate(this.imageableId, { $set: { displayPicture: this._id }}, (err, update) => {
-    if(err) return next(err);
-    next();
-  })
+// data consistency... update Profile field of ImageableType (e.g. User, Group, Event)
+ProfileSchema.pre('save', function(next) {
+  mongoose.model(this.imageableType)
+    .findByIdAndUpdate(this.imageableId, { $set: { profile: this._id }})
+    .then(res => next())
+    .catch(err => {
+      console.log('Profile pre-save err --> ', err);
+      next(err)
+    })
 })
 
-ProfileSchema.pre('remove', (next) => {
-  mongoose.model(this.imageableType).findByIdAndUpdate(this.imageableId, { $unset: { displayPicture: this._id }}, (err, r) => {
-    if(err) return next(err);
-    next();
-  })
+// data consistency... update Profile field of ImageableType (e.g. User, Group, Event)
+ProfileSchema.pre('remove', function(next) {
+  mongoose.model(this.imageableType)
+    .findByIdAndUpdate(this.imageableId, { $unset: { profile: this._id }})
+    .then(res => next())
+    .catch(err => next(err))
 })
 
 

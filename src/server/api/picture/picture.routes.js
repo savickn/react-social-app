@@ -26,7 +26,7 @@ router.get('/:id', controller.getPicture);
 router.post('/profile', upload.single('avatar'), controller.saveImageToDisk);
 router.post('/profile1', upload.single('avatar'), controller.createProfile);
 
-router.post('/', fileUploadMiddleware(), controller.createLocal);
+router.post('/', fileUploadMiddleware(), /*controller.createLocal*/ controller.createPicture);
 router.delete('/:id', controller.deletePicture);
 
 export default router;
@@ -35,3 +35,27 @@ export default router;
 // old
 //const multiparty = require('connect-multiparty');
 //const multipartyMiddleware = multiparty();
+
+
+
+
+
+/*
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const destination = path.resolve(config.root, 'src/server/public/Profiles');
+    mkdirp(destination, (err) => {
+      cb(err, destination);
+    });
+  },
+  filename: function (req, file, cb) {
+    console.log('multer upload file --> ', file);
+    const strArr = file.originalname.split('.');
+    cb(null, strArr[0] + path.extname(file.originalname))
+  }
+})
+
+const upload = multer({ storage: storage })
+const router = new Router();
+*/

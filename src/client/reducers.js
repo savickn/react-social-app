@@ -11,11 +11,12 @@ import memberships from './components/Group/MembershipReducer';
 import invites from './components/Event/InviteReducer';
 import upload from './components/Upload/UploadReducer';
 import comments from './components/Comment/CommentReducer';
+import profiles from './components/Profile/ProfileReducer';
 
 //import wizard
-import alerts from './components/Alert/alertReducer';
-import modal from './components/Modal/modalReducer';
-import page from './components/Pagination/PaginationReducer';
+import alerts from './components/Utilities/Alert/alertReducer';
+import modal from './components/Utilities/Modal/modalReducer';
+import page from './components/Utilities/Pagination/PaginationReducer';
 
 // return list of Reducers which will be combined via 'combineReducers'
 let reducers = {
@@ -33,6 +34,7 @@ let reducers = {
   memberships, 
   upload, 
   comments, 
+  profiles, 
 };
 
 export default reducers;

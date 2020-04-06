@@ -12,10 +12,12 @@ class UploadComponent extends React.Component {
   *  maxFileSize={5242880}
   */
 
+  // event handler for image change
   handleChange = (e) => {
     this.props.multiple ? this.changeMultiple(e) : this.changeSingle(e);
   }
 
+  // for upload of individual images
   changeSingle = (e) => {
     const files = Array.from(e.target.files);
     const formData = new FormData();
@@ -28,6 +30,7 @@ class UploadComponent extends React.Component {
     this.props.handleUpload(formData);
   }
 
+  // for upload of multiple images
   changeMultiple = (e) => {
     const files = Array.from(e.target.files);
     const formData = new FormData();
@@ -41,6 +44,8 @@ class UploadComponent extends React.Component {
 
     this.props.handleUpload(formData);
   }
+
+  /* Render Logic */
   
   render() {
     const icon = this.props.children ? this.props.children : <FontAwesomeIcon icon={faImage} color='#3B5998' size='10x' />;

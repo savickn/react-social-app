@@ -8,23 +8,23 @@ const permissionStates = [
 ];
 
 export const AlbumSchema = new Schema({
+  author: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
   name: {
     type: String,
     required: true,
   },
-  thumbnail: {
+  thumbnail: { // the display picture of the Album
     type: Schema.Types.ObjectId,
     ref: 'Picture',
   }, 
   pictures: [{
     type: Schema.Types.ObjectId,
     ref: 'Picture', 
-  }],
-  authorId: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  },
+  }], 
   // used to decide who can view/add to/remove from the album
   permissions: {
     type: String,
@@ -36,16 +36,15 @@ export const AlbumSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User',
   }],
-  // contains CollectionName (e.g. Group/User) of object that owns this Album
-  imageableType: { 
+
+  imageableType: { // parent (e.g. Group/User/Event)
     type: String,
     required: true
-  },
-  // contains ObjectId of object that owns this image
+  },  
   imageableId: {
   	type: Schema.Types.ObjectId,
     required: true
-  }
+  }, 
 });
 
 /*
@@ -60,25 +59,21 @@ export const AlbumSchema = new Schema({
 // data consistency
 // used to create Album reference in ImageableType object
 AlbumSchema.pre('save', function(next) {
-  console.log('album pre-save --> ', this);
   mongoose.model(this.imageableType)
-    .findByIdAndUpdate(this.imageableId, { $push: { albums: this._id } }, function(err, res) {
-      if(err) return next(err);
-      next();
-    });
+    .findByIdAndUpdate(this.imageableId, { $push: { albums: this._id } })
+    .then(res => next())
+    .catch(err => next(err))
 })
-
 
 // data consistency 
 // used to remove Album reference in ImageableType object
 AlbumSchema.pre('remove', function(next) {
-  console.log('album pre-remove --> ', this);
   mongoose.model(this.imageableType)
-    .findByIdAndUpdate(this.imageableId, { $pull: { albums: this._id } }, function(err, res) {
-      if(err) return next(err);
-      next();
-    })
+    .findByIdAndUpdate(this.imageableId, { $pull: { albums: this._id } })
+    .then(res => next())
+    .catch(err => next(err))
 })
+
 /*
 // data consistency by removing Picture if Album is deleted
 // NOTE: add validation to ensure User has permission to delete the Album
@@ -90,7 +85,6 @@ AlbumSchema.pre('remove', function(next, done) {
       done();
     });
 });*/
-
 
 
 

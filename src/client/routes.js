@@ -5,7 +5,7 @@ import loadable from '@loadable/component';
 import Spinner from 'react-spinkit';
 
 
-import ProtectedRoute from './components/ProtectedRoute/protectedRoute';
+import ProtectedRoute from './components/Utilities/ProtectedRoute/protectedRoute';
 
 const options = {
   fallback: <Spinner name='circle' />,
