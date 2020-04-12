@@ -24,6 +24,7 @@ export const InviteSchema = new Schema({
     required: true, 
   },
 
+  
 });
 
 /* Middleware */
