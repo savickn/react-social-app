@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-// represents a User's invitation to an Event
+// represents a User's attendence status for an Event
 export const InviteSchema = new Schema({
   event: {
     type: Schema.Types.ObjectId, 
@@ -13,6 +13,17 @@ export const InviteSchema = new Schema({
     type: Schema.Types.ObjectId, 
     ref: 'User', 
   }, 
+
+
+  attending: { // can be true/false
+    type: Boolean,
+    required: true, 
+  },
+  waitlist: { // can be true/false
+    type: Boolean,
+    required: true, 
+  },
+
 });
 
 /* Middleware */

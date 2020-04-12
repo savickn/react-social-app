@@ -6,7 +6,8 @@ import styles from './UserInfoPanel.scss';
 
 import anonUser from '../anon_user.png';
 
-/* used to show Attendees in Event list... must have
+/* 
+* used to show Attendees in Event list... must have
 * imagePath
 * name
 * role in group

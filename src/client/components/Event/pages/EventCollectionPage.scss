@@ -8,6 +8,8 @@
 }
 
 .banner {
+  padding: 0px 0px 15px 0px;
+
   display: grid;
   grid-template-columns: 25%;
 }
@@ -31,7 +33,7 @@
 
 // container for both the Sidebar and EventList
 .listAndSidebar {
-  padding: 5px 0px 5px 0px;
+  padding: 25px 0px 25px 0px;
 
   display: grid;
   grid-template-columns: 20% 80%;
@@ -40,6 +42,11 @@
 
 // represents only the Sidebar
 .sortingSidebar {
+  height: fit-content;
+
+  padding: 5px;
+  border-radius: 5px;
+
   grid-column: 1;
   background-color: white;
 
@@ -49,8 +56,11 @@
   align-items: stretch;
 
   .sidebarElem {
-    padding: 3px 0px 3px 0px;
+    padding: 5px 0px 5px 0px;
     cursor: pointer;
+
+    display: flex;
+    justify-content: space-between;
 
     &.selected {
       background-color: lighten(lightgreen, 10%);

@@ -12,11 +12,11 @@ import { matchByObjectId } from '../../../util/utilFuncs';
 import GroupBanner from '../components/GroupBanner/GroupBanner';
 
 import { fetchGroup, updateGroup } from '../GroupActions';
-import { createMembership, deleteMembership } from '../MembershipActions';
+import { fetchMembershipRequest, createMembership, deleteMembership } from '../MembershipActions';
 
 import { getGroupById } from '../GroupReducer';
 import { getCurrentUser } from '../../User/AccountReducer';
-import { getMembership } from '../MembershipReducer';
+import { myMembership } from '../MembershipReducer';
 
 import noImg from '../../../../shared/no_image.jpg';
 
@@ -25,39 +25,134 @@ export class GroupDisplayPage extends React.Component {
     super(props);
     this.state = {
       altImg: noImg,
-      role: 'none'
+      role: null, 
     }
   }
 
-  componentWillMount() {
-    //console.log('match --> ', this.props.match);
-    this.props.dispatch(fetchGroup(this.props.match.params.groupId));
+  componentDidMount() {
+    const groupId = this.props.match.params.groupId;
+    this.props.dispatch(fetchGroup(groupId));
+    this.props.dispatch(fetchMembershipRequest(groupId, this.props.currentUser._id));
+    this.setRole();
   }
 
-  /* Component logic */
-
-  // returns object with 'isAdmin/isMember/isNone'
-  getRole() {
-    let roles = {
-      isNone: true,
-      isMember: false,
-      isAdmin: false, 
-    };
-    
-    if(this.props.membership ) {
-      roles.isNone = false;
-      roles.isMember = true;
-
-      if(this.props.membership.role === 'Admin') {
-        roles.isAdmin = true;
-      }
+  componentDidUpdate(prevProps, prevState) {
+    if(prevProps.membership !== this.props.membership) {
+      console.log('props.membership updated!')
+      this.setRole();
     }
-
-    console.log('getRoles --> ', roles);
-    return roles;
   }
 
-  /* Event Handlers */
+                                      /* State Logic */
+
+  // sets currentUser's role in this.state (e.g. 'admin/member/none')
+  setRole() {
+    console.log('setRole props --> ', this.props);
+    const membership = this.props.membership;
+    const role = membership ? membership.role : 'none';
+    console.log('setRole --> ', role);
+    this.setState({ role });
+  }
+
+                                      /* Image Handlers */
+
+
+  // used to create new album (either empty or with pictures)
+  handleCreateAlbum = (name, authorId, permissionType, pictures=[]) => {
+    this.props.dispatch(updateGroup(alteredGroup));
+  }
+
+                                    /* Membership Handlers */
+
+  // used to join the Group by creating a Membership
+  /* should change to support Request objects eventually */
+  handleJoinGroup = (isNone) => {
+    if(isNone) {
+      // also add some server-side protection against this!!!
+      this.props.dispatch(createMembership(this.props.group._id, this.props.currentUser._id));
+    } else {
+      console.log('You are already a member of this group!'); 
+    }
+  }
+
+  // used to leave a Group by deleting a Membership
+  handleLeaveGroup = () => {
+    const id = this.props.membership._id;
+    console.log('handleLeave memberId --> ', id);
+    this.props.dispatch(deleteMembership(id));
+  }
+
+  /* Render Logic */
+
+  render() {
+    if(!this.props.group) return(<div></div>);
+
+    console.log('groupDisplay state --> ', this.state);
+
+    const dp = this.props.group.displayPicture ? this.props.group.displayPicture.path : this.state.altImg;
+
+    const isNone = this.state.role === 'none';
+    const isMember = this.state.role === 'member';
+
+    return (
+      <React.Fragment>
+        <GroupBanner groupId={this.props.group._id} groupName={this.props.group.name} location={this.props.group.location} 
+          memberCount={this.props.group.memberCount} admins={this.props.group.admins} profileId={this.props.group.profile} />
+        <Navbar>
+          <Nav>
+            <LinkContainer to={`/groups/${this.props.group._id}`}>
+              <NavItem eventKey={1}>About</NavItem>
+            </LinkContainer>
+            <LinkContainer to={`/groups/${this.props.group._id}/events`}>
+              <NavItem eventKey={1}>Events</NavItem>
+            </LinkContainer>
+            <LinkContainer to={`/groups/${this.props.group._id}/members`}>
+              <NavItem eventKey={2}>Members</NavItem>
+            </LinkContainer>
+            <LinkContainer to={`/groups/${this.props.group._id}/settings`}>
+              <NavItem eventKey={3}>Settings</NavItem>
+            </LinkContainer>
+            {isNone ?
+              <NavItem eventKey={4}>
+                <button className='btn btn-default' onClick={() => this.handleJoinGroup(isNone)}>Join Group</button>
+              </NavItem>
+              : 
+              <NavDropdown eventKey={4} title="You're a member!" id="basic-nav-dropdown">
+                <MenuItem eventKey={4.1} onClick={() => this.handleLeaveGroup()}>Leave Group</MenuItem>
+              </NavDropdown>
+            }
+          </Nav>
+        </Navbar>
+        <Switch>
+          <Route exact path="/groups/:groupId" component={HomeView} />
+          <Route path="/groups/:groupId/members" component={MemberView} /> 
+          <Route path="/groups/:groupId/events" render={(props) =>
+            <EventView {...props} groupId={this.props.group._id} groupDp={noImg} /> 
+          } />
+        </Switch>
+      </React.Fragment>
+    );
+  }
+}
+
+function mapStateToProps(state, props) {
+  return {
+    currentUser: getCurrentUser(state),
+    membership: myMembership(state), 
+    group: getGroupById(state, props.match.params.groupId),
+  };
+};
+
+GroupDisplayPage.propTypes = {
+  currentUser: PropTypes.object.isRequired,
+  group: PropTypes.object.isRequired,
+};
+
+export default connect(mapStateToProps)(GroupDisplayPage);
+
+
+
+/* OLD
 
   // change display picture
   handleImageChange = (formData) => {
@@ -92,44 +187,10 @@ export class GroupDisplayPage extends React.Component {
       console.log(err);
     })
   }
+  */
 
-  // used to create new album (either empty or with pictures)
-  handleCreateAlbum = (name, authorId, permissionType, pictures=[]) => {
-    this.props.dispatch(updateGroup(alteredGroup));
-  }
 
-  // used to join the Group by creating a new Membership
-  /* should change to support Request objects eventually */
-  handleJoinGroup = (isNone) => {
-    if(isNone) {
-      // also add some server-side protection against this!!!
-      this.props.dispatch(createMembership(this.props.group._id, this.props.currentUser._id));
-    } else {
-      console.log('You are already a member of this group!'); 
-    }
-  }
-
-  // 
-  handleLeaveGroup = () => {
-    const membershipId = this.props.group.members.filter(m => {
-      return m.user === this.props.currentUser._id;
-    })[0];
-    console.log('handleLeave memberId --> ', membershipId);
-
-    this.props.dispatch(deleteMembership(membershipId));
-    
-    /*const userId = this.props.currentUser._id;
-    const alteredGroup = {...this.props.group};
-    alteredGroup.members = alteredGroup.members.filter((elem) => {
-      if(!elem === userId || !elem._id === userId) {
-        return elem;
-      }
-    });*/
-    //this.props.dispatch(updateGroup(alteredGroup));
-  }
-
-  /* UI Logic */
-
+/* OLD
   // ?????
   getJoinLeaveButton = (isNone) => {
     return isNone ?
@@ -141,76 +202,53 @@ export class GroupDisplayPage extends React.Component {
       <MenuItem eventKey={4.3} onClick={() => this.handleLeaveGroup()}>Leave Group</MenuItem>
     </NavDropdown>
   }
+*/
 
-  /* Render Logic */
+ /* OLD
+ handleLeaveGroup = () => {
+    
+    
+  const membershipId = this.props.group.members.filter(m => {
+    return m.user === this.props.currentUser._id;
+  })[0];
+  console.log('handleLeave memberId --> ', membershipId);
 
-  render() {
-    if(!this.props.group) return(<div></div>);
+  this.props.dispatch(deleteMembership(membershipId));
+  
+  const userId = this.props.currentUser._id;
+  const alteredGroup = {...this.props.group};
+  alteredGroup.members = alteredGroup.members.filter((elem) => {
+    if(!elem === userId || !elem._id === userId) {
+      return elem;
+    }
+  });
+  //this.props.dispatch(updateGroup(alteredGroup));
+}*/
 
-    const dp = this.props.group.displayPicture ? this.props.group.displayPicture.path : this.state.altImg;
 
+/*
+// returns object with 'isAdmin/isMember/isNone'
+  getRole() {
+    let roles = {
+      isNone: true,
+      isMember: false,
+      isAdmin: false, 
+    };
+    
+    if(this.props.membership ) {
+      roles.isNone = false;
+      roles.isMember = true;
 
-    //const role = this.getRole(this.props.group, this.props.currentUser._id);
-    const { isAdmin, isMember, isNone } = this.getRole();
+      if(this.props.membership.role === 'Admin') {
+        roles.isAdmin = true;
+      }
+    }
 
-    console.log('groupDisplay state --> ', this.state);
-    return (
-      <React.Fragment>
-        <GroupBanner groupId={this.props.group._id} groupName={this.props.group.name} location={this.props.group.location} 
-          memberCount={this.props.group.memberCount} displayPicture={dp} admins={this.props.group.admins} isMember={isMember} 
-          profileId={this.props.group.profile} handleImageChange={this.handleImageChange} />
-        <Navbar>
-          <Nav>
-            <LinkContainer to={`/groups/${this.props.group._id}`}>
-              <NavItem eventKey={1}>About</NavItem>
-            </LinkContainer>
-            <LinkContainer to={`/groups/${this.props.group._id}/events`}>
-              <NavItem eventKey={1}>Events</NavItem>
-            </LinkContainer>
-            <LinkContainer to={`/groups/${this.props.group._id}/members`}>
-              <NavItem eventKey={2}>Members</NavItem>
-            </LinkContainer>
-            <LinkContainer to={`/groups/${this.props.group._id}/settings`}>
-              <NavItem eventKey={3}>Settings</NavItem>
-            </LinkContainer>
-            {isNone ?
-              <NavItem eventKey={4}>
-                <button className='btn btn-default' onClick={() => this.handleJoinGroup(isNone)}>Join Group</button>
-              </NavItem>
-              : 
-              <NavDropdown eventKey={4} title="You're a member!" id="basic-nav-dropdown">
-                <MenuItem eventKey={4.1} onClick={() => this.handleLeaveGroup()}>Leave Group</MenuItem>
-              </NavDropdown>
-            }
-          </Nav>
-        </Navbar>
-        <Switch>
-          <Route exact path="/groups/:groupId" component={HomeView} />
-          <Route path="/groups/:groupId/members" component={MemberView} /> 
-          <Route path="/groups/:groupId/events" render={(props) =>
-            <EventView {...props} groupId={this.props.group._id} /> 
-          } />
-        </Switch>
-      </React.Fragment>
-    );
+    console.log('getRoles --> ', roles);
+    return roles;
   }
-}
 
-function mapStateToProps(state, props) {
-  return {
-    currentUser: getCurrentUser(state),
-    membership: getMembership(state), 
-    group: getGroupById(state, props.match.params.groupId),
-  };
-};
-
-GroupDisplayPage.propTypes = {
-  currentUser: PropTypes.object.isRequired,
-  group: PropTypes.object.isRequired,
-};
-
-export default connect(mapStateToProps)(GroupDisplayPage);
-
+  */
 
 
   /* OLD

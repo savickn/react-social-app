@@ -8,7 +8,7 @@ export const searchMemberships = (req, res) => {
   console.log('searchMemberships req.query --> ', req.query);
   
   Membership.find(req.query)
-    .populate('user', 'name')
+    .populate('user')
     .then(memberships => res.status(200).json({ memberships }))
     .catch(err => {
       console.log('searchMemberships err --> ', err);
@@ -26,8 +26,7 @@ export const getMembership = (req, res) => {
 
   const { groupId, userId, } = req.query;
 
-  Membership
-    .findOne({ group: groupId, user: userId, })
+  Membership.findOne({ group: groupId, user: userId, })
     .then(membership => res.status(200).json({ membership }))
     .catch((err) => {
       console.log('getMembership err --> ', err);
@@ -38,21 +37,27 @@ export const getMembership = (req, res) => {
 /* 
 ** create new Membership using 'groupId' and 'userId'
 */
-export const addMembership = (req, res) => {
-  if(!req.body.groupId || !req.body.userId) {
+export const addMembership = async (req, res) => {
+  const { groupId, userId, role } = req.body;
+
+  if(!groupId || !userId) {
     return res.status(501).send('Invalid request arguments!');
   }
   
   const data = {
-    group: req.body.groupId, 
-    user: req.body.userId, 
-    role: req.body.role || 'Member', 
+    group: groupId, 
+    user: userId, 
+    role: role || 'member', 
   };
+
+  // working
+  let exists = await Membership.findOne({ group: groupId, user: userId, });
+  if(exists) return res.status(500).send('Already a member!');
 
   // add verification steps if necessary
 
   Membership.create(data)
-    .then(res => res.status(201).json({ membership }))
+    .then(membership => res.status(201).json({ membership }))
     .catch(err => {
       console.error('createMembership err --> ', err);
       return res.status(500).send(err);
@@ -62,14 +67,25 @@ export const addMembership = (req, res) => {
 /* 
 ** delete a Membership
 */
-export const removeMembership = (req, res) => {
+export const removeMembership = async (req, res) => {
+  try {
+    const membership = await Membership.findById(req.params.id);
+    await membership.remove();
+    return res.status(203).end()
+  } catch(err) {
+    console.log('removeMembership err --> ', err);
+      return res.status(500).send(err);
+  }
+} 
+
+
+/*
   Membership.findByIdAndRemove(req.params.id)
-    .then(res => res.status(203).end())
+    .then(r => res.status(203).end())
     .catch(err => {
       console.log('removeMembership err --> ', err);
       return res.status(500).send(err);
     });
-} 
-
+    */
 
 

@@ -1,28 +1,44 @@
 
-import { FETCH_MEMBERSHIPS_REQUEST, FETCH_MEMBERSHIPS_SUCCESS, FETCH_MEMBERSHIPS_FAILURE, FETCH_MEMBERSHIP_REQUEST, FETCH_MEMBERSHIP_SUCCESS, FETCH_MEMBERSHIP_FAILURE } from './MembershipActions';
+import { 
+  CREATE_MEMBERSHIP_SUCCESS,
+  DELETE_MEMBERSHIP_SUCCESS, 
+  SEARCH_MEMBERSHIPS_REQUEST, SEARCH_MEMBERSHIPS_SUCCESS, SEARCH_MEMBERSHIPS_FAILURE, 
+  FETCH_MEMBERSHIP_REQUEST, FETCH_MEMBERSHIP_SUCCESS, FETCH_MEMBERSHIP_FAILURE,
+} from './MembershipActions';
 
 const initialState = {
   status: 'idle',
   data: [],
-  userMembership: null,
+  myMembership: null,
   errors: null, 
 }
 
 const MembershipReducer = (state = initialState, action) => {
   switch(action.type) {
-    case FETCH_MEMBERSHIPS_REQUEST:
+    case CREATE_MEMBERSHIP_SUCCESS:
+      return {
+        ...state, 
+        myMembership: action.membership,
+      };
+    case DELETE_MEMBERSHIP_SUCCESS:
+      return {
+        ...state,
+        myMembership: null, 
+      };
+
+    case SEARCH_MEMBERSHIPS_REQUEST:
       return {
         ...state, 
         status: 'fetching',
         errors: null,  
       };
-    case FETCH_MEMBERSHIPS_SUCCESS:
+    case SEARCH_MEMBERSHIPS_SUCCESS:
       return {
         ...state, 
         status: 'idle', 
         data: action.memberships, 
       };
-    case FETCH_MEMBERSHIPS_FAILURE:
+    case SEARCH_MEMBERSHIPS_FAILURE:
       return {
         ...state, 
         status: 'error', 
@@ -39,7 +55,7 @@ const MembershipReducer = (state = initialState, action) => {
       return {
         ...state,
         status: 'idle',
-        userMembership: action.membership, 
+        myMembership: action.membership, 
       }
     case FETCH_MEMBERSHIP_FAILURE:
       return {
@@ -57,7 +73,8 @@ const MembershipReducer = (state = initialState, action) => {
   if(ms.group === groupId && ms.user === userId) return ms;
 })[0];*/
 
-export const getMembership = (state) => state.memberships.userMembership;
+export const myMembership = (state) => state.memberships.myMembership;
+
 export const getMemberships = (state) => state.memberships.data;
 export const getErrors = (state) => state.memberships.errors;
 export const getStatus = (state) => state.memberships.status;

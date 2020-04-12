@@ -24,7 +24,9 @@ class Profile extends React.Component {
   }
 
   componentDidMount() {
-    this.props.dispatch(fetchProfileRequest(this.props.profileId));
+    if(this.props.profileId) {
+      this.props.dispatch(fetchProfileRequest(this.props.profileId));
+    }
   }
 
   /* API Requests */

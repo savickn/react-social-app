@@ -27,6 +27,23 @@ const EventSchema = new Schema({
     type: Number,
     default: 0,
   },
+
+  /* REFERENCES */
+  creator: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+  group: {
+    type: Schema.Types.ObjectId,
+    ref: 'Group',
+    required: true,
+  },
+  /*comments: [{
+
+  }],*/
+  
+  /* ATTENDANCE */
   slots: { // represents the total number of people that can attend the event
     type: Number, 
     default: 9999, 
@@ -35,8 +52,6 @@ const EventSchema = new Schema({
     type: Boolean,
     default: false, 
   }, 
-  
-  /* MODEL RELATIONSHIPS */
   attendees: [{
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -50,21 +65,7 @@ const EventSchema = new Schema({
     ref: 'User',
   }],
 
-  creator: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  },
-  group: {
-    type: Schema.Types.ObjectId,
-    ref: 'Group',
-    required: true,
-  },
-
-  /* EXTRA FEATURES */
-  /*comments: [{
-
-  }],*/
+  /* IMAGES */
   profile: {
     type: Schema.Types.ObjectId,
     ref: 'Profile', 

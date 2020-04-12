@@ -14,7 +14,7 @@ export const MembershipSchema = new Schema({
   }, 
   role: {
     type: String,
-    enum: ['Admin', 'Member'], 
+    enum: ['admin', 'member'], 
     required: true, 
   },
   // used for private groups that require acceptance
@@ -22,6 +22,9 @@ export const MembershipSchema = new Schema({
 
   },*/ 
 });
+
+/* Validations */
+
 
 /* Middleware */
 
@@ -40,14 +43,14 @@ MembershipSchema.pre('save', function(next) {
 })
 
 // deletes Group's reference to Membership
-MembershipSchema.pre('remove', (next) => {
+MembershipSchema.pre('remove', function(next) {
   mongoose.model('Group').findByIdAndUpdate(this.group, { $pull: { members: this._id }}, { new: true })
     .then(group => next())
     .catch(err => next(err))
 })
 
 // deletes User's reference to Membership
-MembershipSchema.pre('remove', (next) => {
+MembershipSchema.pre('remove', function(next) {
   mongoose.model('User').findByIdAndUpdate(this.user, { $pull: { groups: this._id }}, { new: true })
     .then(user => next())
     .catch(err => next(err))

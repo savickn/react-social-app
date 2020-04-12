@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import UserInfoPanel from '../../../User/components/UserInfoPanel';
 
-import { fetchMembershipsRequest } from '../../MembershipActions';
+import { searchMembershipsRequest } from '../../MembershipActions';
 import { getMemberships } from '../../MembershipReducer';
 
 import styles from './MemberView.scss';
@@ -21,7 +21,7 @@ class GroupMemberView extends React.Component {
   // query Users api by passing GroupId (can use 'select' in Saga to cancel API call if Users in Redux store)
   componentWillMount() {
     const groupId = this.props.match.params.groupId;
-    this.props.dispatch(fetchMembershipsRequest({ group: groupId }));
+    this.props.dispatch(searchMembershipsRequest({ group: groupId }));
   }
 
   /* Component logic */
@@ -42,8 +42,9 @@ class GroupMemberView extends React.Component {
   /* UI logic */
   
   render() {
-    if(!this.props.members) return <div></div>;
-    console.log(this.props.members);
+    const { members } = this.props;
+    if(!members) return <div></div>;
+    console.log('memberView members --> ', members);
 
     return (
       <div className='container'>
@@ -55,9 +56,8 @@ class GroupMemberView extends React.Component {
             </div>
 
             <div className={styles.memberList}>
-              {
-                this.props.members.map((m) => {
-                  return <UserInfoPanel name={null} role={m.role} />;
+              { members && members.map((m) => {
+                  return <UserInfoPanel name={m.user.name} role={m.role} />;
                 })
               }
             </div>

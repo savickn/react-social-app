@@ -3,40 +3,41 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
+import DateUtil from '../../../util/DateUtil';
+
 import styles from './eventInfo.scss';
 
 // used to display a summary of an Event (e.g. only important details)
 // NOTE: meant to be embedded within another page (e.g. via list)
 class EventInfo extends React.Component {
-  
-  /* class logic */
 
-  formatDate = () => {
+  /* Event Handlers */
 
-  }
-
-  /* event handlers */
-
-  attendEvent = (se) => {
+  attendEvent = (e) => {
     console.log('attend event');
+    this.props.handleAttend();
   }
 
-  /* UI Methods */
+  /* Render Logic */
 
   render() {
-    console.log('eventInfo props --> ', this.props);
     if(!this.props.evt) return <div></div>
-    const { evt } = this.props;
+    const { evt, profileImg } = this.props;
+
+    const dp = evt.profile ? evt.profile.image.path : profileImg;
+
+    const startDate = new Date(evt.start);
 
     return (
         <Link className={`${styles.eventContainer} unstyled-link`} to={`/events/${evt._id}`} >
           <div className={styles.eventGrid}>
             <div className={styles.eventDetails}>
-              <div>{evt.title}</div>
+              <div>{startDate.toDateString()}</div>
+              <div className={styles.titleText}>{evt.title}</div>
               <div>{evt.location}</div>
             </div>
             <div className={styles.eventImage}>
-              Image Here
+              <img src={dp} />
             </div>
             <div className={styles.eventDescription}>
               {evt.description}
@@ -56,6 +57,8 @@ class EventInfo extends React.Component {
 
 EventInfo.propTypes = {
   evt: PropTypes.object.isRequired,
+  profileImg: PropTypes.string.isRequired, 
+  handleAttend: PropTypes.func.isRequired, 
 };
 
 export default EventInfo;

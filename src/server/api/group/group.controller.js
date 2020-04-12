@@ -46,7 +46,7 @@ export const getGroup = (req, res) => {
     .populate('displayPicture')
     .exec((err, group) => {
       if(err) return handleError(res, err);
-      console.log('getGroup --> ', group);
+      //console.log('getGroup --> ', group);
       return res.status(200).json({group});
   });
 }

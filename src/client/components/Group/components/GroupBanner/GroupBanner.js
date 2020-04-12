@@ -7,8 +7,6 @@ import Profile from '../../../Profile/Profile';
 class GroupBanner extends React.Component {
 
   render() {
-    const dp = this.props.displayPicture;
-    console.log('dp --> ', dp);
     return (
       <div>
         <div className='col1'>
@@ -18,7 +16,6 @@ class GroupBanner extends React.Component {
           <h2>{this.props.groupName}</h2>
           <div>Location: {this.props.location}</div>
           <div>Members: {this.props.memberCount}</div>
-          <div>IsMember: {this.props.isMember}</div>
         </div>
       </div>
     );
@@ -26,14 +23,12 @@ class GroupBanner extends React.Component {
 }
 
 GroupBanner.propTypes = {
-  displayPicture: PropTypes.string.isRequired,
   groupName: PropTypes.string.isRequired,
   location: PropTypes.string.isRequired,
   memberCount: PropTypes.number.isRequired,
-  admins: PropTypes.arrayOf(PropTypes.shape({
+  /*admins: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string.isRequired,
-  })).isRequired,
-  isMember: PropTypes.bool.isRequired,
+  })).isRequired,*/
 }
 
 export default GroupBanner;

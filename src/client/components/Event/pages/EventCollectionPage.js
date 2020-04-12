@@ -3,7 +3,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import EventList from '../components/eventList';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCircle } from '@fortawesome/free-solid-svg-icons'
+
+
 import EventInfo from '../components/eventInfo';
 import EventForm from '../components/eventForm';
 import Modal from '../../Utilities/Modal/modal';
@@ -94,9 +97,9 @@ class EventCollectionPage extends React.Component {
 
                                   /* Styling logic */
 
-  styleSidebarElement = (text) => {
+  /*styleSidebarElement = (text) => {
     return this.state.searchMode === text ? `${styles.sidebarElem} ${styles.selected}` : styles.sidebarElem;
-  }
+  }*/
 
   styleListSelector = (text) => {
     return this.state.listMode === text ? `minimal-btn selected` : 'minimal-btn unselected';
@@ -115,6 +118,8 @@ class EventCollectionPage extends React.Component {
   render() {
     console.log('eventCollectionState --> ', this.state);
 
+    const { searchMode } = this.state;
+
     return (
       <div className={styles.eventsContainer}>
         <div className={styles.banner}>
@@ -126,12 +131,21 @@ class EventCollectionPage extends React.Component {
         </div>
 
 
-        <div className={`${styles.fullWidthBackground} full-width`}>
+        <div className={`background full-width`}>
           <div className={`${styles.listAndSidebar} container`}>
             <div className={styles.sortingSidebar}>
-              <div className={this.styleSidebarElement('Upcoming')} onClick={this.changeSearchMode}>Upcoming</div>
-              <div className={this.styleSidebarElement('Past')} onClick={this.changeSearchMode}>Past</div>
-              <div className={this.styleSidebarElement('Proposed')} onClick={this.changeSearchMode}>Proposed</div>
+              <div className={styles.sidebarElem} onClick={this.changeSearchMode}>
+                <span>Upcoming </span>
+                { searchMode === 'Upcoming' &&
+                  <FontAwesomeIcon icon={faCircle} color='lightgreen' />
+                }
+              </div>
+              <div className={styles.sidebarElem} onClick={this.changeSearchMode}>
+                <span>Past </span>
+                { searchMode === 'Past' && 
+                  <FontAwesomeIcon icon={faCircle} color='lightgreen' />
+                }
+              </div>
             </div>
 
             <div className={styles.eventList}>
@@ -158,6 +172,7 @@ class EventCollectionPage extends React.Component {
 
 EventCollectionPage.propTypes = {
   groupId: PropTypes.string.isRequired, 
+  groupDp: PropTypes.string.isRequired, 
 };
 
 const mapStateToProps = (state, props) => {

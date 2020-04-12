@@ -1,29 +1,20 @@
 
 import { 
-  CREATE_MEMBERSHIP,
-  DELETE_MEMBERSHIP, 
-  FETCH_MEMBERSHIPS_REQUEST, FETCH_MEMBERSHIPS_SUCCESS, FETCH_MEMBERSHIPS_FAILURE, 
-  FETCH_MEMBERSHIP_REQUEST, FETCH_MEMBERSHIP_SUCCESS, FETCH_MEMBERSHIP_FAILURE, 
+  CREATE_MEMBERSHIP, createMembershipSuccess, 
+  DELETE_MEMBERSHIP, deleteMembershipSuccess, 
+  SEARCH_MEMBERSHIPS_REQUEST, 
+  FETCH_MEMBERSHIP_REQUEST,
   fetchMembershipSuccess, fetchMembershipFailure, 
-  fetchMembershipsSuccess, fetchMembershipsFailure,
+  searchMembershipsSuccess, searchMembershipsFailure,
 } from './MembershipActions';
-
 
 import axios from '../../util/axiosCaller';
 import { takeLatest, put, call, fork, select } from 'redux-saga/effects';
 
 
-/* API CALLS */
-
-const fetchMembershipAjax = (query) => {
-  return axios.get(`/api/memberships/lookup`, { query })
-    .then(res => res.data)
-    .catch(err => { throw err; })
-}
-
 /* SEARCH MEMBERSHIPS */
 
-const fetchMembershipsAjax = (query) => {
+const searchMembershipsAjax = (query) => {
   return axios.get('/api/memberships', { 
     params: query,  
   })
@@ -31,20 +22,28 @@ const fetchMembershipsAjax = (query) => {
     .catch(err => { throw err; })
 }
 
-export function* fetchMembershipsWatcher() {
-  yield takeLatest(FETCH_MEMBERSHIPS_REQUEST, fetchMembershipsHandler);
+export function* searchMembershipsWatcher() {
+  yield takeLatest(SEARCH_MEMBERSHIPS_REQUEST, searchMembershipsHandler);
 }
 
-function* fetchMembershipsHandler(action) {
+function* searchMembershipsHandler(action) {
   try {
-    const response = yield call(fetchMembershipsAjax, action.query);
-    yield put(fetchMembershipsSuccess(response.memberships));
+    const response = yield call(searchMembershipsAjax, action.query);
+    yield put(searchMembershipsSuccess(response.memberships));
   } catch(error) {
-    yield put(fetchMembershipsFailure(error));
+    yield put(searchMembershipsFailure(error));
   }
 }
 
 /* FETCH MEMBERSHIP */
+
+const fetchMembershipAjax = (query) => {
+  return axios.get(`/api/memberships/lookup`, { 
+    params: query
+   })
+    .then(res => res.data)
+    .catch(err => { throw err; })
+}
 
 export function* fetchMembershipWatcher() {
   yield takeLatest(FETCH_MEMBERSHIP_REQUEST, fetchMembershipHandler);
@@ -52,9 +51,9 @@ export function* fetchMembershipWatcher() {
 
 export function* fetchMembershipHandler(action) {
   try {
-    const res = yield call(fetchMembership, action.query);
+    const res = yield call(fetchMembershipAjax, action.query);
     console.log('fetchMembership success --> ', res);
-    yield put(fetchMembershipsSuccess(res));
+    yield put(fetchMembershipSuccess(res.membership));
   } catch(err) {
     console.log('fetchMembership err --> ', err);
     yield put(fetchMembershipFailure(err));
@@ -64,7 +63,7 @@ export function* fetchMembershipHandler(action) {
 /* CREATE MEMBERSHIP */
 
 const createMembershipAjax = (groupId, userId) => {
-  return axios.post(`/api/memberships`, { groupId, userId })
+  return axios.post(`/api/memberships`, { groupId, userId, })
     .then(res => res.data)
     .catch(err => { throw err; })
 }
@@ -75,9 +74,9 @@ export function* createMembershipWatcher() {
 
 function* createMembershipHandler(action) {
   try {
-    const response = yield call(createMembershipAjax, action.payload.groupId, action.payload.userId);
+    const res = yield call(createMembershipAjax, action.payload.groupId, action.payload.userId);
     console.log('createMembership res --> ', res);
-    //yield put(fetchGroupSuccess(group));
+    yield put(createMembershipSuccess(res.membership));
   } catch(error) {
     console.error('createMembership err --> ', error);
     //yield put(fetchGroupError(error));
@@ -98,8 +97,8 @@ export function* deleteMembershipWatcher() {
 
 function* deleteMembershipHandler(action) {
   try {
-    const response = yield call(deleteMembershipAjax, action.id);
-    //yield put(fetchGroupSuccess(group));
+    const res = yield call(deleteMembershipAjax, action.id);
+    yield put(deleteMembershipSuccess(action.id));
   } catch(error) {
     console.error('deleteMembership err --> ', err);
     //yield put(fetchGroupError(error));
@@ -111,7 +110,7 @@ function* deleteMembershipHandler(action) {
 export default [
   fork(createMembershipWatcher), 
   fork(deleteMembershipWatcher),
-  fork(fetchMembershipsWatcher),
+  fork(searchMembershipsWatcher),
   fork(fetchMembershipWatcher),  
 ]
 

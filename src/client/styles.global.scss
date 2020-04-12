@@ -10,7 +10,7 @@
 }
 
 .background {
-  background-color: lighten(lightgray, 13%);
+  background-color: lighten(lightgray, 14%);
 }
 
 
@@ -49,9 +49,9 @@
 .minimal-btn {
   font-size: 14pt;
   border: lightgray solid 2px;
-  border-radius: 2px;
+  border-radius: 3px;
   cursor: pointer;
-  padding: 2px 12px 3px 12px;
+  padding: 5px 12px 5px 12px;
   text-decoration: none;
 
   &.unselected {
@@ -73,7 +73,9 @@ span.left-padded {
   padding-left: 5px;
 }
 
+
 // span that is positioned as far right as possible
+// 
 span.pull-right {
 
 }

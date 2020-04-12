@@ -35,7 +35,7 @@ function* loginHandler(action) {
   try {
     yield put({ type: "LOG_IN_REQUEST" });
     const loginResponse = yield call(login, action.credentials);
-    console.log('login response --> ', loginResponse);
+    //console.log('login response --> ', loginResponse);
     yield call(setAuthToken, loginResponse.token); // used to set Auth token in localStorage and set Auth header
     yield put({type: 'TOKEN_AUTH'});
     yield put({type: 'NEW_ALERT', alert: { type: 'success', message: 'You are logged in!' }});
@@ -60,7 +60,7 @@ export function* authHandler(action) {
   try {
     yield put({ type: "LOG_IN_REQUEST" });
     const getMeResponse = yield call(getMe);
-    console.log('getMe response --> ', getMeResponse);
+    //console.log('getMe response --> ', getMeResponse);
     yield put({ type: "LOG_IN_SUCCESS", user: getMeResponse });
   } catch (error) {
     yield call(removeAuthToken);

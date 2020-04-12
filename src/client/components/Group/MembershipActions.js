@@ -1,10 +1,13 @@
 
 export const CREATE_MEMBERSHIP = 'CREATE_MEMBERSHIP';
-export const DELETE_MEMBERSHIP = 'DELETE_MEMBERSHIP';
+export const CREATE_MEMBERSHIP_SUCCESS = 'CREATE_MEMBERSHIP_SUCCESS';
 
-export const FETCH_MEMBERSHIPS_REQUEST = 'FETCH_MEMBERSHIPS_REQUEST';
-export const FETCH_MEMBERSHIPS_SUCCESS = 'FETCH_MEMBERSHIPS_SUCCESS';
-export const FETCH_MEMBERSHIPS_FAILURE = 'FETCH_MEMBERSHIPS_FAILURE';
+export const DELETE_MEMBERSHIP = 'DELETE_MEMBERSHIP';
+export const DELETE_MEMBERSHIP_SUCCESS = 'DELETE_MEMBERSHIP_SUCCESS';
+
+export const SEARCH_MEMBERSHIPS_REQUEST = 'SEARCH_MEMBERSHIPS_REQUEST';
+export const SEARCH_MEMBERSHIPS_SUCCESS = 'SEARCH_MEMBERSHIPS_SUCCESS';
+export const SEARCH_MEMBERSHIPS_FAILURE = 'SEARCH_MEMBERSHIPS_FAILURE';
 
 export const FETCH_MEMBERSHIP_REQUEST = 'FETCH_MEMBERSHIP_REQUEST';
 export const FETCH_MEMBERSHIP_SUCCESS = 'FETCH_MEMBERSHIP_SUCCESS';
@@ -12,23 +15,23 @@ export const FETCH_MEMBERSHIP_FAILURE = 'FETCH_MEMBERSHIP_FAILURE';
 
 /* SEARCHING */
 
-export const fetchMembershipsRequest = (query) => {
+export const searchMembershipsRequest = (query) => {
   return {
-    type: FETCH_MEMBERSHIPS_REQUEST, 
+    type: SEARCH_MEMBERSHIPS_REQUEST, 
     query, 
   }
 }
 
-export const fetchMembershipsSuccess = (memberships) => {
+export const searchMembershipsSuccess = (memberships) => {
   return {
-    type: FETCH_MEMBERSHIPS_SUCCESS, 
+    type: SEARCH_MEMBERSHIPS_SUCCESS, 
     memberships, 
   }
 }
 
-export const fetchMembershipsFailure = (errors) => {
+export const searchMembershipsFailure = (errors) => {
   return {
-    type: FETCH_MEMBERSHIPS_FAILURE, 
+    type: SEARCH_MEMBERSHIPS_FAILURE, 
     errors, 
   }
 }
@@ -72,11 +75,26 @@ export const createMembership = (groupId, userId) => {
   }
 }
 
+export const createMembershipSuccess = (membership) => {
+  return {
+    type: CREATE_MEMBERSHIP_SUCCESS,
+    membership, 
+  }
+}
+
+
 /* DELETION */
 
 export const deleteMembership = (id) => {
   return {
     type: DELETE_MEMBERSHIP,
+    id, 
+  }
+}
+
+export const deleteMembershipSuccess = (id) => {
+  return {
+    type: DELETE_MEMBERSHIP_SUCCESS,
     id, 
   }
 }

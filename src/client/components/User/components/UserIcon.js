@@ -6,6 +6,7 @@ import styles from './UserIcon.scss';
 
 import anonUser from '../anon_user.png';
 
+// very basic icon class that shows the Profile picture of a User (for use in lists/etc)
 class UserIcon extends React.Component {
   render() {
     return (

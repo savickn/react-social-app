@@ -16,7 +16,6 @@ export const searchEvents = (req, res) => {
       query['end'] = { $lt: now };
       break;
   }
-  // add query support for 'Proposed'
 
   console.log('query --> ', query);
 
@@ -37,6 +36,10 @@ export const searchEvents = (req, res) => {
       .skip(offset)
       .limit(Number.parseInt(pageSize))
       .populate('creator attendees notGoing waitlist', '_id name displayPicture')
+      .populate({
+        path: 'profile', 
+        populate: { path: 'image' }
+      })
       //.populate('group')
       .exec(function(err, events) {
         if(err) return handleError(res, err)
