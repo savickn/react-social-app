@@ -4,8 +4,10 @@ import * as controller from './invite.controller';
 
 const router = new Router();
 
-router.post('/', controller.addInvite);
-router.delete('/:id', controller.removeInvite);
+router.get('/', controller.searchInvites);
+router.post('/', controller.createInvite);
+router.put('/:id', controller.updateInvite);
+router.delete('/:id', controller.deleteInvite);
 
 export default router;
 

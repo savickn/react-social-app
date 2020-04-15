@@ -1,6 +1,22 @@
 
+                                                    /* CONTAINER */
 
-/* INFO + SIDEBAR */
+// container for the entire page
+.eventPage {
+  width: 100vw;
+  position: relative;
+  left: calc(-50vw + 50%);
+}
+
+
+                                                        /* BODY */
+
+// container for the Event body
+.eventBody {
+  width: 100vw;
+  position: relative;
+  left: calc(-50vw + 50%);
+}
 
 .flexEvent {
   display: flex;
@@ -33,8 +49,121 @@
 }
 
 
-/* BANNER */
+//
+.eventGroupSidebar {
+  /*position: sticky;
+  right: -1px;
+  top: -10%;*/
+}
 
+//
+.eventLocationSidebar {
+  /*position: sticky;
+  right: -1px;
+  bottom: -10%;*/
+}
+
+
+                                                    /* HEADER */
+
+.eventHeader {
+  padding-top: 15px;
+  padding-bottom: 15px;
+
+  position: sticky;
+  top: -1px;
+}
+
+.flexHeader {
+  display: flex;
+  justify-content: flex-start;
+
+  .date {
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    border: lightgray solid 2px;
+    background-color: lighten(lightgray, 15%);
+    border-radius: 5px;
+    text-decoration: none;
+
+    .num {
+      color: red;
+      font-weight: bold;
+    }
+  }
+
+  .info {
+    padding-left: 10px;
+
+    .title {
+      font-size: large;
+      font-weight: 600;
+    }
+  }
+}
+
+
+                                                  /* FOOTER */
+
+.eventFooter {
+  position: sticky;
+  bottom: -1px;
+}
+
+.flexFooter {
+  padding-top: 10px;
+  padding-bottom: 10px;
+
+  display: flex;
+  justify-content: space-around;
+
+  div {
+    flex: auto;
+  }
+}
+
+
+
+
+
+
+                                                    /* RESPONSIVENESS */
+
+
+@media(max-width: 800px) {
+  .eventBanner {
+    grid-template-columns: 5% 5% 55% 30% 5%;
+  }
+}
+
+
+/* Attendees */
+
+.attendeesContainer {
+  display: grid;
+  grid-template-columns: 25%;
+  grid-column-gap: 10px;
+  grid-template-rows: 50% 50%;
+  grid-template-areas: 
+    "i1 i2 i3 i4"
+    "i5 i6 i7 i8";
+
+  
+
+}
+
+
+
+
+/* OLD */
+
+// using CSS-GRID
+
+/*
 .eventHeader {
   display: grid;
   grid-template-columns: 15% 5% 45% 20% 15%;
@@ -46,6 +175,9 @@
   padding-bottom: 5px;
   //padding-left: 15vw;
   //padding-right: 15vw;
+
+  position: sticky;
+  top: -1px;
 
   .date {
     padding: 5px;
@@ -74,29 +206,4 @@
     grid-area: status;
   }
 }
-
-@media(max-width: 800px) {
-  .eventBanner {
-    grid-template-columns: 5% 5% 55% 30% 5%;
-  }
-}
-
-
-/* Attendees */
-
-.attendeesContainer {
-  display: grid;
-  grid-template-columns: 25%;
-  grid-column-gap: 10px;
-  grid-template-rows: 50% 50%;
-  grid-template-areas: 
-    "i1 i2 i3 i4"
-    "i5 i6 i7 i8";
-
-  
-
-}
-
-
-
-
+*/

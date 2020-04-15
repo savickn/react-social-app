@@ -7,16 +7,22 @@ import { faClock, faDollarSign, faMap, faCalender, faLocationArrow } from '@fort
 
 import UserInfoPanel from '../../User/components/UserInfoPanel';
 import CommentHub from '../../Comment/components/CommentHub';
+import AlbumHub from '../../Album/components/AlbumHub';
+
+import { createInviteRequest, searchInviteRequest } from '../InviteActions';
+import { getEventRequest, updateEventRequest } from '../EventActions';
 
 
 import { getCurrentUser } from '../../User/AccountReducer';
-import { getEventRequest, updateEventRequest } from '../EventActions';
 import { getGroupById } from '../../Group/GroupReducer';
 import { getEventById } from '../EventReducer';
+import { getAttendees } from '../InviteReducer';
 
 import { getMonthName } from '../../../util/utilFuncs';
 
 import styles from './EventDisplayPage.scss';
+
+import noImg from '../../../../shared/no-image-icon.png';
 
 // used to display a single Event in complete detail (on separate page)
 class EventPage extends React.Component {
@@ -27,7 +33,14 @@ class EventPage extends React.Component {
   }
   
   componentWillMount() {
-    this.props.dispatch(getEventRequest(this.props.match.params.eventId));
+    const eventId = this.props.match.params.eventId;
+    this.props.dispatch(getEventRequest(eventId));
+    // query invites
+    const query = {
+      event: eventId,
+      attending: true,
+    }
+    this.props.dispatch(searchInviteRequest(query));
   }
 
   /* Component Logic */
@@ -35,8 +48,8 @@ class EventPage extends React.Component {
   // used to determine if current event is Past/Ongoing/Upcoming
   getEventStatus = (start, end) => {
     // if canceled return canceled
-    if(Date.now() < start) return 'Upcoming';
-    if(Date.now() > end) return 'Complete';
+    if(Date.now() < new Date(start)) return 'Upcoming';
+    if(Date.now() > new Date(end)) return 'Complete';
     return 'Happening Now';
   }
 
@@ -70,14 +83,36 @@ class EventPage extends React.Component {
 
   // determines whether to show/hide Attend button
   canAttend = () => {
-    return true;
+    const userArr = this.props.attendees.map((a) => a.user._id);
+    console.log(userArr);
+
+    return !userArr.includes(this.props.currentUser._id);
   }
 
   // used to add a User to the list of Attendees
-  attendEvent = () => {
+  // OLD
+  /*attendEvent = () => {
     const attendees = [...this.props.evt.attendees, this.props.currentUser._id];
     this.props.dispatch(updateEventRequest(this.props.evt._id, {attendees}));
-  } 
+  } */
+
+  attendEvent = (e) => {
+    const { evt, currentUser } = this.props;
+
+    const invite = {
+      event: evt._id,
+      user: currentUser._id, 
+      issueType: 'User',
+      accepted: true, 
+      verified: !evt.inviteOnly, // either automatically verify... or send to verification queue 
+
+      attending: true, // for testing purposes... remove later
+    };
+
+    console.log('attendEvent inviteObj --> ', invite);
+
+    this.props.dispatch(createInviteRequest(invite));
+  }
 
   /* UI logic */
   
@@ -92,7 +127,7 @@ class EventPage extends React.Component {
   /* Render Logic */
 
   render() {
-    const { evt } = this.props;
+    const { evt, attendees } = this.props;
     if(!evt) return <div></div> 
 
     const hasImage = this.hasImage();
@@ -104,18 +139,20 @@ class EventPage extends React.Component {
     const date = this.formatDate(evt.start, evt.end);
 
     return (
-      <div className='eventPage background'>
+      <div className={`${styles.eventPage} background`}>
         <div className={`foreground ${styles.eventHeader}`}>
-          <div className={styles.date}>
-            <span className={styles.num}>{date.day}</span>
-            <span className={styles.abbr}>{date.monthAbbr}</span>
+          
+          <div className={`container ${styles.flexHeader}`}>
+            <div className={styles.date}>
+              <span className={styles.num}>{date.day}</span>
+              <span className={styles.abbr}>{date.monthAbbr}</span>
+            </div>
+             
+            <div className={styles.info}>
+              <div>{status}</div>
+              <div className={styles.title}>{evt.title}</div>
+            </div>
           </div>
-          <div className={styles.info}>
-            <div>{status}</div>
-            <div>{evt.title}</div>
-            <div>From: {evt.group.name}</div> 
-          </div>
-          <div className={styles.status}>{evt.attendees.length} people are attending</div>
         </div>
 
         <div className={`container ${styles.flexEvent}`}>
@@ -130,16 +167,18 @@ class EventPage extends React.Component {
             <div>
               <h2>Attendees</h2>
               <div className={styles.attendeesContainer}>
-                <div>Show All</div>
-                {this.props.evt.attendees.slice(0, 8).map(a => {
+                {attendees && attendees.slice(0, 4).map(a => {
                   console.log(a);
-                  return <UserInfoPanel image={a.displayPicture} name={a.name} role={'sdfsdf'} />
+                  return <UserInfoPanel image={a.displayPicture} name={a.user.name} role={'sdfsdf'} />
                 })}
+                {attendees && attendees.length > 4 && 
+                  <div>Show More!</div>
+                }
               </div>
             </div>
             <div>
               <h2>Photos</h2>
-              <div>photos here</div>
+              <AlbumHub imageableId={evt._id} imageableType='Event'/>
             </div>
             <div className='comments'>
               <h2>Comments</h2>
@@ -148,34 +187,45 @@ class EventPage extends React.Component {
           </div>
 
           <div className={`flex-column ${styles.eventSidebar}`}>
-            <div className='grid-list-elem'>
-              <FontAwesomeIcon icon={faClock} className='list-icon' />
-              <span className='list-content'> 
-                <div>{date.date}</div>
-                <div>{`${date.starttime} to ${date.endtime}`}</div>
-                <div>Add to Calender</div>
-              </span>
+            <div className={styles.eventGroupSidebar}>
+              <div></div>
+              <div>{evt.group.name}</div>
             </div>
-            {hasPrice && 
-              <div className='grid-list-elem'><FontAwesomeIcon icon={faDollarSign} className='list-icon' /> <span className='list-content'> price </span></div>
-            }
-            <div className='grid-list-elem'><FontAwesomeIcon icon={faMap} className='list-icon' /> <span className='list-content'> location </span></div>
-            <div>map</div>
+            <div className={styles.eventLocationSidebar}>
+              <div className='grid-list-elem'>
+                <FontAwesomeIcon icon={faClock} className='list-icon' />
+                <span className='list-content'> 
+                  <div>{date.date}</div>
+                  <div>{`${date.starttime} to ${date.endtime}`}</div>
+                  <div>Add to Calender</div>
+                </span>
+              </div>
+              {hasPrice && 
+                <div className='grid-list-elem'><FontAwesomeIcon icon={faDollarSign} className='list-icon' /> <span className='list-content'> price </span></div>
+              }
+              <div className='grid-list-elem'><FontAwesomeIcon icon={faMap} className='list-icon' /> <span className='list-content'> location </span></div>
+              <div>map</div>
+            </div>
           </div>
         </div>
 
         <div className={`foreground ${styles.eventFooter}`}>
-          <div className='dateTime'>
-            <span>{date.date} {date.starttime} </span>
-            <div>{evt.title}</div>
+          <div className={`container ${styles.flexFooter}`}>
+            <div className='dateTime'>
+              <span>{date.date} {date.starttime} </span>
+              <div>{evt.title}</div>
+            </div>
+            <div className='priceAndOpenSlots'>
+              { evt.slots === 9999 ? 
+                <div></div> :
+                <div>{evt.slots - attendees.length} spots remaining!</div>
+              }
+              { canAttend ? 
+                <button className='btn btn-md btn-default' onClick={this.attendEvent}>Attend</button>
+                : null
+              }
+            </div>
           </div>
-          <div className='priceAndOpenSlots'>
-            12 Open Slots
-          </div>
-          { canAttend ? 
-            <button onClick={this.attendEvent}>Attend</button>
-            : null
-          }
         </div>
       </div>
     )
@@ -209,9 +259,12 @@ const mapDispatchToProps = (dispatch, props) => {
 }
 
 const mapStateToProps = (state, props) => {
+  const eventId = props.match.params.eventId;
+
   return {
-    evt: getEventById(state, props.match.params.eventId),
+    evt: getEventById(state, eventId),
     //group: getGroupById(state, props.evt.group), 
+    attendees: getAttendees(state, eventId),
     currentUser: getCurrentUser(state), 
   };
 }
@@ -253,3 +306,17 @@ calculateState = () => {
       this.setState({...this.formatDate(start, end)});
     }
   }*/
+
+
+/* OLD
+<div>
+  <h2>Attendees</h2>
+  <div className={styles.attendeesContainer}>
+    <div>Show All</div>
+    {evt.attendees && evt.attendees.slice(0, 8).map(a => {
+      console.log(a);
+      return <UserInfoPanel image={a.displayPicture} name={a.name} role={'sdfsdf'} />
+    })}
+  </div>
+</div>
+*/

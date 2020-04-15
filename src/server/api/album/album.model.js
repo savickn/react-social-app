@@ -17,9 +17,12 @@ export const AlbumSchema = new Schema({
     type: String,
     required: true,
   },
-  thumbnail: { // the display picture of the Album
+  description: { // not mandatory
+    type: String, 
+  },
+  profile: { // the Profile picture of the Album
     type: Schema.Types.ObjectId,
-    ref: 'Picture',
+    ref: 'Profile',
   }, 
   pictures: [{
     type: Schema.Types.ObjectId,

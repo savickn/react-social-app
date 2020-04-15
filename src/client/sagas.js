@@ -2,14 +2,17 @@
 import TodoSagas from './components/ToDo/todoSagas';
 import AccountSagas from './components/User/AccountSagas';
 import UserSagas from './components/User/UserSagas';
+
 import GroupSagas from './components/Group/GroupSagas';
-import AlbumSagas from './components/Album/AlbumSagas';
-import EventSagas from './components/Event/EventSagas';
 import MembershipSagas from './components/Group/MembershipSagas';
+
+import EventSagas from './components/Event/EventSagas';
 import InviteSagas from './components/Event/InviteSagas';
-import UploadSagas from './components/Upload/UploadSagas';
 import CommentSagas from './components/Comment/CommentSagas';
+
+import UploadSagas from './components/Upload/UploadSagas';
 import ProfileSagas from './components/Profile/ProfileSagas';
+import AlbumSagas from './components/Album/AlbumSagas';
 
 import AlertSagas from './components/Utilities/Alert/alertSagas';
 

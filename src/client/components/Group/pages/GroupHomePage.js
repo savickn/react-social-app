@@ -12,10 +12,10 @@ import PaginationRedux from '../../Utilities/Pagination/PaginationRedux';
 import Modal from '../../Utilities/Modal/modal';
 import WizardHub from '../../Utilities/Wizard/wizard';
 import WizardPage from '../../Utilities/Wizard/page';
-import AlbumCreateWidget from '../../Album/CreateAlbumWidget';
+//import AlbumCreateWidget from '../../Album/CreateAlbumWidget';
 
 import { createGroup, fetchGroups } from '../GroupActions';
-import { createAlbum } from '../../Album/AlbumActions';
+//import { createAlbum } from '../../Album/AlbumActions';
 
 import { getGroups, getGroupCount, getLastGroup } from '../GroupReducer';
 import { getCurrentUser } from '../../User/AccountReducer';
@@ -90,7 +90,7 @@ export class GroupHomePage extends React.Component {
     this.props.dispatch(createAlbum(album));*/
   };
 
-  createAlbum = (albumData) => {
+  /*createAlbum = (albumData) => {
     const authorId = this.props.currentUser._id;
     const imageableType = 'Group';
     const imageableId = this.props.lastGroup._id;
@@ -100,7 +100,7 @@ export class GroupHomePage extends React.Component {
       imageableType, 
     });
     this.props.dispatch(createAlbum(album));
-  }
+  }*/
 
   /* STATE HANDLERS */
 

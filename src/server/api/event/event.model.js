@@ -44,6 +44,8 @@ const EventSchema = new Schema({
   }],*/
   
   /* ATTENDANCE */
+  // type --> e.g. Open
+
   slots: { // represents the total number of people that can attend the event
     type: Number, 
     default: 9999, 
@@ -52,17 +54,9 @@ const EventSchema = new Schema({
     type: Boolean,
     default: false, 
   }, 
-  attendees: [{
+  invites: [{ // represents attendence
     type: Schema.Types.ObjectId,
-    ref: 'User',
-  }],
-  notGoing: [{
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-  }],
-  waitlist: [{
-    type: Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'Invite'
   }],
 
   /* IMAGES */
@@ -88,6 +82,8 @@ EventSchema.virtual('date').get(function() {
 
 // do not allow a User to attend twice
 // WORKING, but could potential fail if the duplicate already exists
+
+/*
 EventSchema
   .path('attendees')
   .validate((attendees) => {
@@ -96,9 +92,7 @@ EventSchema
     //console.log('set --> ', set, '\n arr --> ', arr);
     return setSize === arrSize;
   }, 'You are already attending this event!')
-
-
-
+*/
 
 
 /* Middleware */

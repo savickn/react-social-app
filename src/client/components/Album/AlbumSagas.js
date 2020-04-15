@@ -1,13 +1,13 @@
 
 import { 
   CREATE_ALBUM_REQUEST, 
-  FETCH_ALBUMS_REQUEST, 
+  SEARCH_ALBUMS_REQUEST, 
   DELETE_ALBUM_REQUEST, 
   UPDATE_ALBUM_REQUEST, 
 } from './AlbumActions';
 
 import { 
-  fetchAlbumsSuccess, fetchAlbumsError,
+  searchAlbumsSuccess, searchAlbumsError,
   createAlbumSuccess, createAlbumError,
   updateAlbumSuccess, updateAlbumError,
   deleteAlbumSuccess, deleteAlbumFailure,
@@ -21,26 +21,26 @@ import { getAlbums } from './AlbumReducer';
 
 /* API CALLS */
 
-const fetchAlbumsAjax = (query={}) => {
+const searchAlbums = (query={}) => {
   console.log('fetchAlbum query --> ', query);
   return axios.get('/api/albums/', { params: query })
   .then(res => res.data)
   .catch(err => { throw err; })
 }
 
-const createAlbumAjax = (data) => {
+const createAlbum = (data) => {
   return axios.post('/api/albums/', data, {})
   .then(res => res.data)
   .catch(err => { throw err; })
 }
 
-const updateAlbumAjax = (data) => {
+const updateAlbum = (data) => {
   return axios.put(`/api/albums/${data._id}`, data, {})
   .then(res => res.data)
   .catch(err => { throw err; })
 }
 
-const deleteAlbumAjax = (albumId) => {
+const deleteAlbum = (albumId) => {
   return axios.delete(`api/albums/${albumId}`)
   .then(res => res.data)
   .catch(err => { throw err; })
@@ -48,11 +48,11 @@ const deleteAlbumAjax = (albumId) => {
 
 /* FETCHING */
 
-export function* fetchAlbumsWatcher() {
-  yield takeLatest(FETCH_ALBUMS_REQUEST, fetchAlbumsHandler);
+export function* searchAlbumsWatcher() {
+  yield takeLatest(SEARCH_ALBUMS_REQUEST, searchAlbumsHandler);
 }
 
-function* fetchAlbumsHandler(action) {
+function* searchAlbumsHandler(action) {
   try {
     // check reduxStore
     const reduxAlbums = yield select(getAlbums);
@@ -62,9 +62,9 @@ function* fetchAlbumsHandler(action) {
 
 
     // call API to retrieve immediate results
-    const response = yield call(fetchAlbumsAjax, action.query);
+    const response = yield call(searchAlbums, action.query);
     let { albums, count } = response;
-    yield put(fetchAlbumsSuccess(albums, count));
+    yield put(searchAlbumsSuccess(albums, count));
 
     // save results to localStorage
 
@@ -73,7 +73,7 @@ function* fetchAlbumsHandler(action) {
 
 
   } catch(error) {
-    yield put(fetchAlbumsError(error));
+    yield put(searchAlbumsError(error));
   }
 }
 
@@ -85,7 +85,7 @@ export function* createAlbumWatcher() {
 
 function* createAlbumHandler(action) {
   try {
-    const response = yield call(createAlbumAjax, action.data);
+    const response = yield call(createAlbum, action.data);
     yield put(createAlbumSuccess(response.album));
     //yield put({type: 'CLOSE_MODAL'});
   } catch(error) {
@@ -101,7 +101,7 @@ export function* updateAlbumWatcher() {
 
 function* updateAlbumHandler(action) {
   try {
-    const response = yield call(updateAlbumAjax, action.data);
+    const response = yield call(updateAlbum, action.data);
     yield put(updateAlbumSuccess(response.album));
   } catch(error) {
     yield put(updateAlbumError(error));
@@ -116,7 +116,7 @@ export function* deleteAlbumWatcher() {
 
 function* deleteAlbumHandler(action) {
   try {
-    const response = yield call(deleteAlbumAjax, action.id);
+    const response = yield call(deleteAlbum, action.id);
     yield put(deleteAlbumSuccess(response.albumId));
   } catch (err) {
     console.log('Err --> ', err);
@@ -128,7 +128,7 @@ function* deleteAlbumHandler(action) {
 /* export Watchers */
 
 export default [
-  fork(fetchAlbumsWatcher),
+  fork(searchAlbumsWatcher),
   fork(createAlbumWatcher),
   fork(updateAlbumWatcher),
   fork(deleteAlbumWatcher),

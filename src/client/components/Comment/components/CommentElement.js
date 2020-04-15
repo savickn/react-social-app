@@ -63,10 +63,10 @@ class CommentComponent extends React.Component {
 CommentComponent.propTypes = {
   comment: PropTypes.shape({
     content: PropTypes.string.isRequired, 
-    score: PropTypes.number.isRequired, 
+    //score: PropTypes.number.isRequired, 
   }).isRequired, 
 
-  isExpandable: PropTypes.bool.isRequired,
+  //isExpandable: PropTypes.bool.isRequired,
 
 
 };

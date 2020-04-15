@@ -13,6 +13,8 @@ import upload from './components/Upload/UploadReducer';
 import comments from './components/Comment/CommentReducer';
 import profiles from './components/Profile/ProfileReducer';
 
+import albums from './components/Album/AlbumReducer';
+
 //import wizard
 import alerts from './components/Utilities/Alert/alertReducer';
 import modal from './components/Utilities/Modal/modalReducer';
@@ -35,6 +37,7 @@ let reducers = {
   upload, 
   comments, 
   profiles, 
+  albums, 
 };
 
 export default reducers;

@@ -45,7 +45,7 @@ class EventInfo extends React.Component {
             <div className={styles.attendees}>
               <div>
                 <span></span>
-                <span>{evt.attendees.length} Attendees</span>
+                <span> Attendees</span>
               </div>
             </div>
             <button className={`btn btn-md btn-default ${styles.btnAttend}`} onClick={this.attendEvent}> Attend </button>

@@ -40,6 +40,7 @@ export const searchEvents = (req, res) => {
         path: 'profile', 
         populate: { path: 'image' }
       })
+      //.populate('invites')
       //.populate('group')
       .exec(function(err, events) {
         if(err) return handleError(res, err)

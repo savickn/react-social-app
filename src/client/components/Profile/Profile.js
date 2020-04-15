@@ -14,6 +14,8 @@ import { getProfileById } from './ProfileReducer';
 import noDp from './anon_user.png';
 import styles from './Profile.scss';
 
+// an embeddable Component used to display/change a Profile picture
+// ... add support to choose picture from list of recent pictures
 class Profile extends React.Component {
 
   constructor(props) {
@@ -23,6 +25,7 @@ class Profile extends React.Component {
     };
   }
 
+  // send GET request for Profile
   componentDidMount() {
     if(this.props.profileId) {
       this.props.dispatch(fetchProfileRequest(this.props.profileId));

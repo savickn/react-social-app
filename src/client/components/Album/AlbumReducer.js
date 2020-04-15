@@ -1,4 +1,5 @@
-import { CREATE_ALBUM_REQUEST, CREATE_ALBUM_SUCCESS, CREATE_ALBUM_ERROR, 
+import { 
+  CREATE_ALBUM_REQUEST, CREATE_ALBUM_SUCCESS, CREATE_ALBUM_ERROR, 
   FETCH_ALBUMS_REQUEST, FETCH_ALBUMS_SUCCESS, FETCH_ALBUMS_ERROR,
   UPDATE_ALBUM_REQUEST, UPDATE_ALBUM_SUCCESS, UPDATE_ALBUM_ERROR,
   DELETE_ALBUM_REQUEST, DELETE_ALBUM_SUCCESS, DELETE_ALBUM_ERROR,
@@ -54,7 +55,7 @@ const AlbumReducer = (state = initialState, action) => {
     case CREATE_ALBUM_SUCCESS :
       return {
         ...state,
-        status: 'idle',
+        status: 'created',
         data: [action.album, ...state.data],
         len: state.len + 1,
       };

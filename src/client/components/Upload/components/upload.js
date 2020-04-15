@@ -12,10 +12,6 @@ class UploadComponent extends React.Component {
   *  maxFileSize={5242880}
   */
 
-  // event handler for image change
-  handleChange = (e) => {
-    this.props.multiple ? this.changeMultiple(e) : this.changeSingle(e);
-  }
 
   // for upload of individual images
   changeSingle = (e) => {
@@ -44,6 +40,14 @@ class UploadComponent extends React.Component {
 
     this.props.handleUpload(formData);
   }
+
+  /* EVENT HANDLERS */
+
+  // event handler for image change
+  handleChange = (e) => {
+    this.props.multiple ? this.changeMultiple(e) : this.changeSingle(e);
+  }
+
 
   /* Render Logic */
   

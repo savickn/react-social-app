@@ -1,5 +1,7 @@
 
-import { uploadSuccess, uploadFailure, UPLOAD_REQUEST,  } from './UploadActions';
+import { 
+  UPLOAD_REQUEST, uploadSuccess, uploadFailure,  
+} from './UploadActions';
 
 import axios from '../../util/axiosCaller';
 
