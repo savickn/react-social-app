@@ -1,8 +1,14 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Image } from 'react-bootstrap';
 
 import UpvoteControl from '../UpvoteControl';
+
+import styles from './CommentElement.scss';
+
+import noPic from '../../../../shared/missing_avatar.png';
+
 
 // used to display a single Comment
 class CommentComponent extends React.Component {
@@ -25,7 +31,7 @@ class CommentComponent extends React.Component {
 
   // used to handle an Upvote or Downvote
   handleVote = () => {
-
+    
   }
 
 
@@ -39,20 +45,36 @@ class CommentComponent extends React.Component {
   }
 
   render() {
-    const comment = this.props.comment;
+    const { comment, } = this.props;
+
+    const thumbnail = null || noPic;
 
     return (
-      <div className='comment'>
-        <div className='author'>
-          Author name... created when
+      <div className={styles.container}>
+        <div className='icon'>
+          <Image width='50' height='50' src={thumbnail} rounded />
         </div>
-        <div className='content'>
-          {comment.content}
-        </div>
-        <div className='controls'>
-          reply
-          embed
-          <UpvoteControl score={0} handleVote={this.handleVote} />
+
+        <div className={styles.comment}>
+          <div className={`foreground ${styles.content}`}>
+            <div className={styles.author}>
+              Author
+            </div>
+            <div className='content'>
+              {comment.content}
+            </div>
+          </div>
+
+          <div className={styles.interactions}>
+            <div className={`action-text`}>Reply</div>
+            <div className={`action-text`}>Embed</div>
+            <div className={styles.aux}>
+              <div className={styles.date}>Date</div>
+              <div className={styles.likes}>
+                <UpvoteControl score={0} handleVote={this.handleVote} />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     )

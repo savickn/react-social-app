@@ -2,15 +2,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faClock, faDollarSign, faMap, faCalender, faLocationArrow } from '@fortawesome/free-solid-svg-icons'
+import { faClock, faDollarSign, faMap, faCalender, faLocationArrow, faPlus, } from '@fortawesome/free-solid-svg-icons'
 
 import UserInfoPanel from '../../User/components/UserInfoPanel';
 import CommentHub from '../../Comment/components/CommentHub';
 import AlbumHub from '../../Album/components/AlbumHub';
 
 import { createInviteRequest, searchInviteRequest } from '../InviteActions';
-import { getEventRequest, updateEventRequest } from '../EventActions';
+import { fetchEventRequest, updateEventRequest } from '../EventActions';
+import { fetchGroup } from '../../Group/GroupActions';
 
 
 import { getCurrentUser } from '../../User/AccountReducer';
@@ -18,7 +20,7 @@ import { getGroupById } from '../../Group/GroupReducer';
 import { getEventById } from '../EventReducer';
 import { getAttendees } from '../InviteReducer';
 
-import { getMonthName } from '../../../util/utilFuncs';
+import { formatDate } from '../../../util/DateUtil';
 
 import styles from './EventDisplayPage.scss';
 
@@ -26,15 +28,21 @@ import noImg from '../../../../shared/no-image-icon.png';
 
 // used to display a single Event in complete detail (on separate page)
 class EventPage extends React.Component {
+  
+  /* LIFECYCLE LOGIC */
+
   constructor(props) {
     super(props);
-    console.log('EventDisplayPage props --> ', props);
     this.state = {};
   }
   
-  componentWillMount() {
-    const eventId = this.props.match.params.eventId;
-    this.props.dispatch(getEventRequest(eventId));
+  componentDidMount() {
+    console.log('eventDisplayPage props --> ', this.props);
+    const { eventId, groupId }  = this.props.match.params;
+
+    this.props.dispatch(fetchEventRequest(eventId));
+    this.props.dispatch(fetchGroup(groupId));
+    
     // query invites
     const query = {
       event: eventId,
@@ -43,7 +51,7 @@ class EventPage extends React.Component {
     this.props.dispatch(searchInviteRequest(query));
   }
 
-  /* Component Logic */
+  /* STATE LOGIC */
  
   // used to determine if current event is Past/Ongoing/Upcoming
   getEventStatus = (start, end) => {
@@ -53,27 +61,8 @@ class EventPage extends React.Component {
     return 'Happening Now';
   }
 
-  // used to calculate 'starttime', 'endtime', and 'date' from 'evt' object
-  formatDate = (start, end) => {
-    let state = {};
 
-    const startDate = new Date(start);
-    const endDate = new Date(end);
-    const monthName = getMonthName(startDate.getMonth());
-    const abbr = monthName.substring(0, 3);
-
-    state['starttime'] = `${startDate.getHours()}:${startDate.getMinutes()}`;
-    state['endtime'] = `${endDate.getHours()}:${endDate.getMinutes()}`;
-    state['day'] = `${startDate.getDate()}`;
-    state['month'] = `${monthName}`;
-    state['monthAbbr'] = abbr;
-    state['year'] = `${startDate.getFullYear()}`;
-    state['date'] = `${monthName} ${startDate.getDate()}, ${startDate.getFullYear()}`; // e.g. March 10th, 2010
-    console.log(state);
-    return state;
-  }
-
-  /* Event Handlers */
+  /* EVENT HANDLERS */
 
   // used to validate whether a User is eligible to attend the Event... should probably be performed server-side
   validateInvite = () => {
@@ -83,19 +72,16 @@ class EventPage extends React.Component {
 
   // determines whether to show/hide Attend button
   canAttend = () => {
-    const userArr = this.props.attendees.map((a) => a.user._id);
-    console.log(userArr);
+    const { currentUser, attendees, } = this.props;
+    if(!currentUser) return false;
 
-    return !userArr.includes(this.props.currentUser._id);
+    const userArr = attendees.map((a) => a.user._id);
+    //console.log(userArr);
+
+    return !userArr.includes(currentUser._id);
   }
 
-  // used to add a User to the list of Attendees
-  // OLD
-  /*attendEvent = () => {
-    const attendees = [...this.props.evt.attendees, this.props.currentUser._id];
-    this.props.dispatch(updateEventRequest(this.props.evt._id, {attendees}));
-  } */
-
+  // used by external User to create an Invite object (basically request to attend)
   attendEvent = (e) => {
     const { evt, currentUser } = this.props;
 
@@ -111,7 +97,9 @@ class EventPage extends React.Component {
 
     console.log('attendEvent inviteObj --> ', invite);
 
-    this.props.dispatch(createInviteRequest(invite));
+    if(this.canAttend()) {
+      this.props.dispatch(createInviteRequest(invite));
+    }
   }
 
   /* UI logic */
@@ -127,8 +115,10 @@ class EventPage extends React.Component {
   /* Render Logic */
 
   render() {
-    const { evt, attendees } = this.props;
-    if(!evt) return <div></div> 
+    const { evt, group, attendees, } = this.props;
+    if(!evt || !group) return <div></div> 
+
+    const groupImg = group.profile && group.profile.image ? group.profile.image.path : noImg;
 
     const hasImage = this.hasImage();
     const hasPrice = this.hasPrice();
@@ -136,12 +126,15 @@ class EventPage extends React.Component {
     const canAttend = this.canAttend();
 
     const status = this.getEventStatus(evt.start, evt.end);
-    const date = this.formatDate(evt.start, evt.end);
+    const date = formatDate(evt.start, evt.end);
+
+    console.log('eventPage attendees --> ', attendees);
 
     return (
       <div className={`${styles.eventPage} background`}>
-        <div className={`foreground ${styles.eventHeader}`}>
-          
+
+        {/* HEADER */}
+        <div className={`foreground ${styles.eventHeader}`}>  
           <div className={`container ${styles.flexHeader}`}>
             <div className={styles.date}>
               <span className={styles.num}>{date.day}</span>
@@ -155,8 +148,11 @@ class EventPage extends React.Component {
           </div>
         </div>
 
+        {/* BODY */}
         <div className={`container ${styles.flexEvent}`}>
-          <div className={styles.eventInfo}>
+
+          {/* CONTENT */}
+          <div className={styles.eventBody}>
             {this.hasImage() && 
               <div>image</div>
             }
@@ -167,12 +163,16 @@ class EventPage extends React.Component {
             <div>
               <h2>Attendees</h2>
               <div className={styles.attendeesContainer}>
-                {attendees && attendees.slice(0, 4).map(a => {
-                  console.log(a);
-                  return <UserInfoPanel image={a.displayPicture} name={a.user.name} role={'sdfsdf'} />
+                {attendees.length > 0 && attendees.slice(0, 3).map(a => {
+                  //console.log(a);
+                  return <UserInfoPanel key={a.user._id} image={a.displayPicture} name={a.user.name} role={'sdfsdf'} />
                 })}
-                {attendees && attendees.length > 4 && 
-                  <div>Show More!</div>
+                {attendees.length > 3 && 
+                  <Link to='' className='addIcon'>
+                    <div>
+                      <FontAwesomeIcon icon={faPlus} />
+                    </div>
+                  </Link>
                 }
               </div>
             </div>
@@ -180,35 +180,49 @@ class EventPage extends React.Component {
               <h2>Photos</h2>
               <AlbumHub imageableId={evt._id} imageableType='Event'/>
             </div>
+
+            {/* COMMENTS */}
             <div className='comments'>
               <h2>Comments</h2>
               <CommentHub parentId={this.props.evt._id} />
             </div>
           </div>
 
+          <div className={styles.eventGap}></div>
+
+          {/* LOCATION SIDEBAR */}
           <div className={`flex-column ${styles.eventSidebar}`}>
-            <div className={styles.eventGroupSidebar}>
-              <div></div>
-              <div>{evt.group.name}</div>
+            <div className={`foreground ${styles.groupSidebar}`}>
+              <Link to={`/groups/${group._id}`}>
+                <img src={groupImg} width='50' height='50' />
+              </Link>
+              <div>{group.name}</div>
             </div>
-            <div className={styles.eventLocationSidebar}>
+            <div className={`foreground ${styles.locationSidebar}`}>
               <div className='grid-list-elem'>
-                <FontAwesomeIcon icon={faClock} className='list-icon' />
+                <div className='list-icon'>
+                  <FontAwesomeIcon icon={faClock} />
+                </div>
                 <span className='list-content'> 
                   <div>{date.date}</div>
                   <div>{`${date.starttime} to ${date.endtime}`}</div>
-                  <div>Add to Calender</div>
                 </span>
               </div>
               {hasPrice && 
                 <div className='grid-list-elem'><FontAwesomeIcon icon={faDollarSign} className='list-icon' /> <span className='list-content'> price </span></div>
               }
-              <div className='grid-list-elem'><FontAwesomeIcon icon={faMap} className='list-icon' /> <span className='list-content'> location </span></div>
-              <div>map</div>
+              <div className='grid-list-elem'><FontAwesomeIcon icon={faMap} className='list-icon' /> <span className='list-content'> {evt.location} </span></div>
+              <iframe width="250"
+                      height="250" 
+                      src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyCpq4jPk_kzCr-oIfSvyDwio7ZS-KVLENI
+                        &q=${evt.location}`}
+                      allowFullScreen>
+              </iframe>
             </div>
           </div>
         </div>
 
+        {/* FOOTER */}
         <div className={`foreground ${styles.eventFooter}`}>
           <div className={`container ${styles.flexFooter}`}>
             <div className='dateTime'>
@@ -217,7 +231,8 @@ class EventPage extends React.Component {
             </div>
             <div className='priceAndOpenSlots'>
               { evt.slots === 9999 ? 
-                <div></div> :
+                <div></div> 
+                :
                 <div>{evt.slots - attendees.length} spots remaining!</div>
               }
               { canAttend ? 
@@ -231,6 +246,20 @@ class EventPage extends React.Component {
     )
   }
 }
+
+  // used to parse a list of Users that is currently set to attend the event (e.g. creator + verified invites)
+  // returns empty Array by default
+  // getAttendees = () => {
+  //   return [this.props.evt.creator, ...this.props.attendees];
+  // }
+
+/*
+
+<Link to={`/groups/${evt.group.id}`}>
+                <img src={groupImg} width='50' height='50' />
+              </Link>
+              */
+
 
 /*
 <div><FontAwesomeIcon icon={faClock} /><span className='left-padded'> datetime </span></div>
@@ -246,6 +275,13 @@ class EventPage extends React.Component {
             <div>From: {evt.group.name}</div> 
           </div>*/
 
+  // used to add a User to the list of Attendees
+  // OLD
+  /*attendEvent = () => {
+    const attendees = [...this.props.evt.attendees, this.props.currentUser._id];
+    this.props.dispatch(updateEventRequest(this.props.evt._id, {attendees}));
+  } */
+      
 
 EventPage.propTypes = {
   evt: PropTypes.object.isRequired,  
@@ -259,11 +295,11 @@ const mapDispatchToProps = (dispatch, props) => {
 }
 
 const mapStateToProps = (state, props) => {
-  const eventId = props.match.params.eventId;
+  const { eventId, groupId } = props.match.params;
 
   return {
     evt: getEventById(state, eventId),
-    //group: getGroupById(state, props.evt.group), 
+    group: getGroupById(state, groupId), 
     attendees: getAttendees(state, eventId),
     currentUser: getCurrentUser(state), 
   };

@@ -12,13 +12,13 @@ import EventForm from '../components/eventForm';
 import Modal from '../../Utilities/Modal/modal';
 import PaginationScroll from '../../Utilities/PaginationScroll/PaginationScroll';
 
-import { createEventRequest, fetchEventsRequest, clearCollection } from '../EventActions';
+import { createEventRequest, searchEventsRequest, clearCollection } from '../EventActions';
 import { getEvents, getEventCount } from '../EventReducer';
 import { getCurrentUser } from '../../User/AccountReducer';
 
 import styles from './EventCollectionPage.scss';
 
-// used to render a page displaying a collection of Events
+// used to display a collection of Events
 class EventCollectionPage extends React.Component {
 
                                 /* Lifecycle logic */
@@ -34,8 +34,8 @@ class EventCollectionPage extends React.Component {
     };
   }
 
-  componentWillMount() {
-    if(this.props.events.length === 0) {
+  componentDidMount() {
+    if(this.props.events.length < 1) {
       this.queryEvents();
     }
   }
@@ -44,7 +44,12 @@ class EventCollectionPage extends React.Component {
 
   // used for initial queries (e.g. on page load, on change search criteria)
   queryEvents = () => {
-    this.props.dispatch(fetchEventsRequest({ group: this.props.groupId, searchMode: this.state.searchMode, pageSize: this.state.pageSize }));
+    console.log('querying events!');
+    this.props.dispatch(searchEventsRequest({ 
+      group: this.props.groupId, 
+      searchMode: this.state.searchMode, 
+      pageSize: this.state.pageSize 
+    }));
   }
 
   // used to load more events based on current search criteria, WORKING
@@ -55,7 +60,7 @@ class EventCollectionPage extends React.Component {
       pageSize: this.state.pageSize, 
       offset: this.props.events.length,
     };
-    this.props.dispatch(fetchEventsRequest(query));
+    this.props.dispatch(searchEventsRequest(query));
   }
 
   // used to change the 'searchMode', should refactor to only send HTTP request when necessary
@@ -116,9 +121,10 @@ class EventCollectionPage extends React.Component {
   }
 
   render() {
-    console.log('eventCollectionState --> ', this.state);
+    //console.log('eventCollectionState --> ', this.state);
 
     const { searchMode } = this.state;
+    
 
     return (
       <div className={styles.eventsContainer}>
@@ -133,6 +139,8 @@ class EventCollectionPage extends React.Component {
 
         <div className={`background full-width`}>
           <div className={`${styles.listAndSidebar} container`}>
+            
+            {/* filter events by date (e.g. upcoming vs. past) */}
             <div className={styles.sortingSidebar}>
               <div className={styles.sidebarElem} onClick={this.changeSearchMode}>
                 <span>Upcoming </span>
@@ -148,18 +156,21 @@ class EventCollectionPage extends React.Component {
               </div>
             </div>
 
+            {/* renders list of events from this.props.events */}
             <div className={styles.eventList}>
               {this.props.events.map((evt) => {
-                return <EventInfo key={evt._id} evt={evt} />
+                return <EventInfo key={evt._id} evt={evt} groupId={this.props.groupId} />
               })}
             </div>
           </div>
         </div>
 
+        {/* conditionally render pagination */}
         { this.hasEventsToLoad() && 
           <button onClick={this.loadMore}>Show More</button>
         }
-            
+        
+        {/* conditionally render EventForm within Modal */}
         <Modal isVisible={this.state.modalVisibility} close={this.closeModal}>
           <EventForm creatorId={this.props.currentUser._id} groupId={this.props.groupId} createEvent={this.addEvent} />
         </Modal>
@@ -171,14 +182,13 @@ class EventCollectionPage extends React.Component {
 // <PaginationScroll loadMore={this.loadEvents} collectionSize={this.props.eventCount} loadedCount={this.props.events.length}/>
 
 EventCollectionPage.propTypes = {
-  groupId: PropTypes.string.isRequired, 
-  groupDp: PropTypes.string.isRequired, 
+  groupId: PropTypes.string.isRequired, // used to fetch events by group
 };
 
 const mapStateToProps = (state, props) => {
   return {
     currentUser: getCurrentUser(state),
-    events: getEvents(state), 
+    events: getEvents(state), // returns Array 
     eventCount: getEventCount(state), 
   };
 }

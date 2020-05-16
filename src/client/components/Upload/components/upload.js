@@ -2,7 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faImages, faImage } from '@fortawesome/free-solid-svg-icons';
 
 class UploadComponent extends React.Component {
@@ -12,6 +12,15 @@ class UploadComponent extends React.Component {
   *  maxFileSize={5242880}
   */
 
+  constructor(props) {
+    super(props);
+    this.state = {};
+    //this.uploadRef = React.createRef();
+
+    console.log('upload props --> ', props);
+  }
+
+  /* COMPONENT LOGIC */
 
   // for upload of individual images
   changeSingle = (e) => {
@@ -29,6 +38,9 @@ class UploadComponent extends React.Component {
   // for upload of multiple images
   changeMultiple = (e) => {
     const files = Array.from(e.target.files);
+    //const files = this.uploadRef.current.target.files;
+    //console.log(this.uploadRef.current);
+
     const formData = new FormData();
 
     files.forEach((file, i) => {
@@ -47,38 +59,59 @@ class UploadComponent extends React.Component {
   handleChange = (e) => {
     this.props.multiple ? this.changeMultiple(e) : this.changeSingle(e);
   }
-
-
-  /* Render Logic */
   
+
   render() {
-    const icon = this.props.children ? this.props.children : <FontAwesomeIcon icon={faImage} color='#3B5998' size='10x' />;
+    const { _id_, children, multiple, } = this.props;
+    const icon = children ? children : <FontAwesomeIcon icon={faImage} color='#3B5998' size='10x' />;
 
     return (
       <div className='buttons fadein'>
         <div className='button'>
-          <label htmlFor='upload' className='click-cursor'>
+          <label htmlFor={_id_} className='click-cursor'>
             {icon}
           </label>
-          <input type='file' name='avatar' id='upload' style={{ display: 'none' }} onChange={this.handleChange} multiple={this.props.multiple} /> 
+          
+          {/*
+          <input type='file' name='avatars[]' id='upload' style={{ display: 'none' }} 
+            ref={this.uploadRef} onChange={this.handleChange} multiple /> 
+          */}
+
+                    
+          {multiple ? 
+            <input type='file' name='avatars[]' id={_id_} style={{ display: 'none' }} onChange={this.handleChange} multiple={multiple} /> 
+            : 
+            <input type='file' name='avatar' id={_id_} style={{ display: 'none' }} onChange={this.handleChange} />
+          }
         </div>
-    </div>
+      </div>
     );
   }
 }
 
 UploadComponent.defaultProps = {
-  multiple: false
-};
+  _id_: 'upload', 
+  multiple: false,
+}
+
 
 UploadComponent.propTypes = {
+  _id_: PropTypes.string.isRequired, // used to differentiate between multiple Upload components on one page
   handleUpload: PropTypes.func.isRequired,
-  multiple: PropTypes.bool, 
+  multiple: PropTypes.bool.isRequired, 
   status: PropTypes.string, // used by parent component to communicate whether or not upload was successful (or if errors occurred)
 };
 
 export default UploadComponent;
 
+
+/*
+  getInputType = () => {
+    return this.props.multiple ? 
+      <input type='file' name='avatars[]' id='upload' style={{ display: 'none' }} onChange={this.handleChange} multiple /> : 
+      <input type='file' name='avatar' id='upload' style={{ display: 'none' }} onChange={this.handleChange} />
+  }
+  */
 
 /*
 <div className='buttons fadein'>

@@ -5,11 +5,14 @@
 /* Grid List --> has an 'icon' + 'content' on each row */
 
 .grid-list-elem {
+  padding-top: 10px;
+  padding-bottom: 10px;
+
   display: grid;
-  grid-template-columns: 10% 90%;
+  grid-template-columns: 10% 10% 90%;
   grid-template-rows: 100%;
   grid-template-areas: 
-    "icon content";
+    "icon gap content";
 
   .list-icon {
     grid-area: icon;
@@ -17,6 +20,11 @@
 
   .list-content {
     grid-area: content;
+
+    .div {
+      padding-top: 5px;
+      padding-bottom: 5px;
+    }
   }
 }
 

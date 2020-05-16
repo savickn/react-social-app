@@ -13,6 +13,9 @@ import {
   deleteAlbumSuccess, deleteAlbumFailure,
 } from './AlbumActions';
 
+import { createProfileRequest } from '../Profile/ProfileActions';
+import { uploadRequest } from '../Upload/UploadActions';
+
 import axios from '../../util/axiosCaller';
 import { takeLatest, put, call, fork, select } from 'redux-saga/effects';
 
@@ -85,8 +88,26 @@ export function* createAlbumWatcher() {
 
 function* createAlbumHandler(action) {
   try {
-    const response = yield call(createAlbum, action.data);
-    yield put(createAlbumSuccess(response.album));
+    // create album
+    const { album } = yield call(createAlbum, action.data);
+    yield put(createAlbumSuccess(album));
+
+    // create Profile if applicable
+    if(action.data.profile) {
+      yield put(createProfileRequest({
+        imageableId: album._id,
+        imageableType: 'Album', 
+      }));
+    }
+
+    // add Images to Album if applicable
+    if(action.data.images) {
+      yield put(uploadRequest({
+
+      }));
+    }
+
+    //close Modal
     //yield put({type: 'CLOSE_MODAL'});
   } catch(error) {
     yield put(createAlbumError(error));

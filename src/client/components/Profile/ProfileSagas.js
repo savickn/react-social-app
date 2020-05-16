@@ -7,6 +7,8 @@ import {
   createProfileSuccess, fetchProfileSuccess, 
 } from './ProfileActions';
 
+import { uploadRequest, } from '../Upload/UploadActions';
+
 /* FETCH PROFILE */
 
 function fetchProfile(id) {
@@ -43,9 +45,13 @@ function* createProfileWatcher() {
 
 function* createProfileHandler(action) {
   try {
-    const res = yield call(createProfile, action.data);
-    console.log('createProfile res --> ', res);
-    yield put(createProfileSuccess(res.profile));
+    // create Profile
+    const { profile } = yield call(createProfile, action.data);
+    yield put(createProfileSuccess(profile));
+
+    // now upload Picture that goes with Profile
+
+
   } catch(err) {
     console.log('createProfile err --> ', err);
   }

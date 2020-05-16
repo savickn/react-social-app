@@ -12,8 +12,8 @@ class UpvoteControl extends React.Component {
   render() {
     return (
       <div className={styles.upvoteContainer}>
-        <span onClick={this.props.handleVote(1)}> <FontAwesomeIcon icon={faThumbsUp} /> </span>
-        <span onClick={this.props.handleVote(-1)}> <FontAwesomeIcon icon={faThumbsDown} /> </span>
+        <span className='click-cursor' onClick={this.props.handleVote(1)}> <FontAwesomeIcon icon={faThumbsUp} /> </span>
+        <span className='click-cursor' onClick={this.props.handleVote(-1)}> <FontAwesomeIcon icon={faThumbsDown} /> </span>
         <span className='score'> {this.props.score} </span>
       </div>
     )

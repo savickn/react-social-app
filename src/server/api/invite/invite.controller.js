@@ -36,7 +36,7 @@ export const createInvite = async (req, res) => {
     console.log('existingInvite --> ', existingInvite);
     
     // guard against duplicate Invites
-    if(existingInvite) {
+    if(existingInvite && existingInvite.length > 0) {
       throw new Error('Duplicate invite!');
     }
 

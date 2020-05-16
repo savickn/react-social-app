@@ -7,9 +7,9 @@ export const CREATE_GROUP_REQUEST = 'CREATE_GROUP_REQUEST';
 export const CREATE_GROUP_SUCCESS = 'CREATE_GROUP_SUCCESS';
 export const CREATE_GROUP_ERROR = 'CREATE_GROUP_ERROR';
 
-export const FETCH_GROUPS_REQUEST = 'FETCH_GROUPS_REQUEST';
-export const FETCH_GROUPS_SUCCESS = 'FETCH_GROUPS_SUCCESS';
-export const FETCH_GROUPS_ERROR = 'FETCH_GROUPS_ERROR';
+export const SEARCH_GROUPS_REQUEST = 'SEARCH_GROUPS_REQUEST';
+export const SEARCH_GROUPS_SUCCESS = 'SEARCH_GROUPS_SUCCESS';
+export const SEARCH_GROUPS_ERROR = 'SEARCH_GROUPS_ERROR';
 
 export const DELETE_GROUP_REQUEST = 'DELETE_GROUP_REQUEST';
 export const DELETE_GROUP_SUCCESS = 'DELETE_GROUP_SUCCESS';
@@ -45,16 +45,16 @@ export function fetchGroupError(errors) {
 
 /* SEARCHING */
 
-export function fetchGroups(query={}) {
+export function searchGroups(query={}) {
   return {
-    type: FETCH_GROUPS_REQUEST,
+    type: SEARCH_GROUPS_REQUEST,
     query
   };
 }
 
-export function fetchGroupsSuccess(groups, count) {
+export function searchGroupsSuccess(groups, count) {
   return {
-    type: FETCH_GROUPS_SUCCESS,
+    type: SEARCH_GROUPS_SUCCESS,
     payload: {
       groups,
       count
@@ -62,9 +62,9 @@ export function fetchGroupsSuccess(groups, count) {
   }
 }
 
-export function fetchGroupsError(errors) {
+export function searchGroupsError(errors) {
   return {
-    type: FETCH_GROUPS_ERROR,
+    type: SEARCH_GROUPS_ERROR,
     errors
   }
 }

@@ -2,6 +2,7 @@
 /* GENERIC/SYNCHRONOUS ACTIONS */
 
 export const CLEAR_COLLECTION = 'CLEAR_COLLECTION';
+export const EVENT_ERROR = 'EVENT_ERROR';
 
 /* AJAX ACTIONS */
 
@@ -9,13 +10,13 @@ export const CREATE_EVENT_REQUEST = 'CREATE_EVENT_REQUEST';
 export const CREATE_EVENT_SUCCESS = 'CREATE_EVENT_SUCCESS';
 export const CREATE_EVENT_FAILURE = 'CREATE_EVENT_FAILURE';
 
-export const GET_EVENT_REQUEST = 'GET_EVENT_REQUEST';
-export const GET_EVENT_SUCCESS = 'GET_EVENT_SUCCESS';
-export const GET_EVENT_FAILURE = 'GET_EVENT_FAILURE';
+export const FETCH_EVENT_REQUEST = 'FETCH_EVENT_REQUEST';
+export const FETCH_EVENT_SUCCESS = 'FETCH_EVENT_SUCCESS';
+export const FETCH_EVENT_FAILURE = 'FETCH_EVENT_FAILURE';
 
-export const FETCH_EVENTS_REQUEST = 'FETCH_EVENTS_REQUEST';
-export const FETCH_EVENTS_SUCCESS = 'FETCH_EVENTS_SUCCESS';
-export const FETCH_EVENTS_FAILURE = 'FETCH_EVENTS_FAILURE';
+export const SEARCH_EVENTS_REQUEST = 'SEARCH_EVENTS_REQUEST';
+export const SEARCH_EVENTS_SUCCESS = 'SEARCH_EVENTS_SUCCESS';
+export const SEARCH_EVENTS_FAILURE = 'SEARCH_EVENTS_FAILURE';
 
 export const UPDATE_EVENT_REQUEST = 'UPDATE_EVENT_REQUEST';
 export const UPDATE_EVENT_SUCCESS = 'UPDATE_EVENT_SUCCESS';
@@ -34,12 +35,19 @@ export function clearCollection() {
   }
 }
 
+export function eventError(errors) {
+  return {
+    type: EVENT_ERROR, 
+    errors, 
+  }
+}
+
 /* SIGN UP / ACCOUNT CREATION */
 
-export function createEventRequest(eventData) {
+export function createEventRequest(data) {
   return {
     type: CREATE_EVENT_REQUEST,
-    eventData,
+    data,
   };
 }
 
@@ -50,59 +58,38 @@ export function createEventSuccess(event) {
   };
 }
 
-export function createEventFailure(errors) {
-  return {
-    type: CREATE_EVENT_FAILURE,
-    errors,
-  };
-}
+/* FETCH EVENT */
 
-/* GET EVENT */
-
-export function getEventRequest(id) {
+export function fetchEventRequest(id) {
   return {
-    type: GET_EVENT_REQUEST,
+    type: FETCH_EVENT_REQUEST,
     id,
   }
 }
 
-export function getEventSuccess(event) {
+export function fetchEventSuccess(event) {
   return {
-    type: GET_EVENT_SUCCESS,
+    type: FETCH_EVENT_SUCCESS,
     event,
-  }
-}
-
-export function getEventFailure(errors) {
-  return {
-    type: GET_EVENT_FAILURE,
-    errors,
   }
 }
 
 /* SEARCH EVENTS */
 
-export function fetchEventsRequest(query) {
+export function searchEventsRequest(query) {
   return {
-    type: FETCH_EVENTS_REQUEST,
+    type: SEARCH_EVENTS_REQUEST,
     query,
   }
 }
 
-export function fetchEventsSuccess(events, count) {
+export function searchEventsSuccess(events, count) {
   return {
-    type: FETCH_EVENTS_SUCCESS,
+    type: SEARCH_EVENTS_SUCCESS,
     payload: {
       events, 
       count, 
     }
-  }
-}
-
-export function fetchEventsFailure(errors) {
-  return {
-    type: FETCH_EVENTS_FAILURE,
-    errors,
   }
 }
 
@@ -125,13 +112,6 @@ export function updateEventSuccess(event) {
   }
 }
 
-export function updateEventFailure(errors) {
-  return {
-    type: UPDATE_EVENT_FAILURE,
-    errors,
-  }
-}
-
 /* DELETE EVENT */
 
 export function deleteEventRequest(id) {
@@ -145,13 +125,6 @@ export function deleteEventSuccess(id) {
   return {
     type: DELETE_EVENT_SUCCESS,
     id,
-  };
-}
-
-export function deleteEventFailure(errors) {
-  return {
-    type: DELETE_EVENT_FAILURE,
-    errors,
   };
 }
 

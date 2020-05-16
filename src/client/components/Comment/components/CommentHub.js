@@ -15,17 +15,19 @@ import { getCurrentUser } from '../../User/AccountReducer';
 // can be embedded as child to support commenting (e.g. posting/viewing)
 export class CommentHub extends React.Component {
 
+                        /* LIFECYCLE METHODS */
+
   constructor(props) {
     super(props);
-    this.state = {
-
-    };
+    this.state = {};
   }
 
   componentDidMount() {
     this.props.dispatch(searchCommentsRequest(/* parentId */ ));
   }
 
+                        /* EVENT HANDLERS */
+  
   createComment = (data) => {
     const comment = {
       author: this.props.currentUser._id, 
@@ -36,13 +38,16 @@ export class CommentHub extends React.Component {
     this.props.dispatch(addCommentRequest(comment));
   }
 
+
+                        /* RENDER LOGIC */
+
   render() {
     const { comments } = this.props;
 
     return (
       <div>
         { comments && comments.map((comment) => {
-          return <CommentElement comment={comment} />
+          return <CommentElement key={comment._id} comment={comment} />
         })}
         <CommentForm handleSubmit={this.createComment} />
       </div>

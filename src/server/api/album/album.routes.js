@@ -5,7 +5,7 @@ const router = new Router();
 
 router.get('/', controller.searchAlbums); 
 router.get('/:id', controller.getAlbum); 
-router.post('/', controller.addAlbum); 
+router.post('/', controller.createAlbum); 
 router.delete('/:id', controller.deleteAlbum); 
 
 export default router;

@@ -21,62 +21,7 @@ function saveToDisk() {
 
 }
 
-// create Picture entry
-export function createPicture(req, res) {
-  const { parentId, parentType } = req.body;
 
-  if(!parentId || !parentType) {
-    return res.status(500).send('Invalid Arguments!');
-  }
-
-  const destination = path.resolve(config.root, `src/server/public/${parentType}s/${parentId}`);
-  console.log('\n destination --> ', destination);
-  console.log('\n createLocal req.files --> ', req.files);
-  console.log('\n req.body --> ', req.body);
-  
-  let file = req.files.avatar;
-  console.log('file --> ', file);
-    
-  mkdirp(destination, (err) => {
-    if(err) return handleError(res, err);
-    file.mv(path.resolve(destination, file.name), (err) => {
-      if(err) return handleError(res, err);
-      let body = {
-        filename: file.name, 
-        size: file.data.length, 
-        contentType: file.mimetype,
-        path: path.join(`/${parentType}s/${parentId}`, file.name), // or destination??
-        parentId,
-        parentType, 
-      };
-      console.log('picture obj --> ', body);
-      Picture.create(body, function(err, picture) {
-        if(err) return handleError(res, err);
-  
-        const pictureObj = {
-          _id: picture._id,
-          contentType: picture.contentType,
-          path: picture.path
-        };
-        
-        return res.status(201).json({ picture });
-      });
-    });
-  });
-}
-
-
-
-// Get a single picture
-export function getPicture(req, res) {
-  Picture.findById(req.params.id, '_id contentType path', function (err, picture) {
-    if(err) return handleError(res, err);
-    if(!picture) return res.status(404).send('Not Found');
-
-    res.contentType(picture.contentType);
-    return res.json(picture);
-  });
-};
 
 // used to upload multiple pictures in the same operation
 /* export const batchCreateLocal = async (req, res) => {
@@ -225,6 +170,63 @@ let rstream = fs.createReadStream(path)
     */
 
 
+
+// create Picture entry... WORKING
+export function createPicture(req, res) {
+  const { parentId, parentType } = req.body;
+
+  if(!parentId || !parentType) {
+    return res.status(500).send('Invalid Arguments!');
+  }
+
+  const destination = path.resolve(config.root, `src/server/public/${parentType}s/${parentId}`);
+  console.log('\n destination --> ', destination);
+  console.log('\n createLocal req.files --> ', req.files);
+  console.log('\n req.body --> ', req.body);
+  
+  let file = req.files.avatar;
+  console.log('file --> ', file);
+    
+  mkdirp(destination, (err) => {
+    if(err) return handleError(res, err);
+    file.mv(path.resolve(destination, file.name), (err) => {
+      if(err) return handleError(res, err);
+      let body = {
+        filename: file.name, 
+        size: file.data.length, 
+        contentType: file.mimetype,
+        path: path.join(`/${parentType}s/${parentId}`, file.name), // or destination??
+        parentId,
+        parentType, 
+      };
+      console.log('picture obj --> ', body);
+      Picture.create(body, function(err, picture) {
+        if(err) return handleError(res, err);
+  
+        const pictureObj = {
+          _id: picture._id,
+          contentType: picture.contentType,
+          path: picture.path
+        };
+        
+        return res.status(201).json({ picture });
+      });
+    });
+  });
+}
+
+
+// Get a single picture
+export function getPicture(req, res) {
+  Picture.findById(req.params.id, '_id contentType path', function (err, picture) {
+    if(err) return handleError(res, err);
+    if(!picture) return res.status(404).send('Not Found');
+
+    res.contentType(picture.contentType);
+    return res.json(picture);
+  });
+};
+
 // Deletes a picture from the DB, WORKING
 export function deletePicture(req, res) {
   Picture.findByIdAndRemove(req.params.id, function (err, picture) {
@@ -239,6 +241,14 @@ function handleError(res, err) {
   console.log('err --> ', err);
   return res.status(500).send(err);
 }
+
+
+
+
+
+
+
+
 
 /*
 var writeDir = `${destination}/${req.body.filename}.${req.body.ext}`;

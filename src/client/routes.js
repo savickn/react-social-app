@@ -17,7 +17,7 @@ const StylesTest = loadable(() => import('./components/Prototypes/StylesTestPage
 const CommentTest = loadable(() => import('./components/Comment//components/CommentHub'), options);
 
 const AdminPage = loadable(() => import('./components/App/components/Admin/AdminPage'), options);
-const ToDoHub = loadable(() => import('./components/ToDo/todoHub'), options);
+//const ToDoHub = loadable(() => import('./components/ToDo/todoHub'), options);
 
 const HomePage = loadable(() => import('./components/App/components/Home/HomePage'), options);
 const AboutComponent = loadable(() => import('./components/StaticPages/about'), options);
@@ -30,17 +30,16 @@ const EventDisplayPage = loadable(() => import('./components/Event/pages/EventDi
 
 export default (
   <Switch>
-    <Route exact path="/" component={HomePage} />
-    <Route path="/users/login" component={LoginPage} />
-    <Route path="/users/new" component={SignUpPage} />
-    <ProtectedRoute path="/users/:userId" component={ProfilePage} />
-    <Route exact path="/groups" component={GroupHomePage} />
-    <ProtectedRoute path="/groups/:groupId" component={GroupDisplayPage} />
+    <Route exact path='/' component={HomePage} />
+    <Route path='/users/login' component={LoginPage} />
+    <Route path='/users/new' component={SignUpPage} />
+    <ProtectedRoute path='/users/:userId' component={ProfilePage} />
+    <Route exact path='/groups' component={GroupHomePage} />
+    <Route exact path='/groups/:groupId/events/:eventId' component={EventDisplayPage} />
+    <ProtectedRoute path='/groups/:groupId' component={GroupDisplayPage} />
     <Route path='/about' component={AboutComponent} />
-    <Route path='/events/:eventId' component={EventDisplayPage} />
 
     <ProtectedRoute path="/admin" component={AdminPage} role='admin' />
-    <ProtectedRoute path='/todos' component={ToDoHub} />
     <ProtectedRoute path="/modalwizard" component={ModalWizardPage} role='admin' />
     <ProtectedRoute path="/stylesTest" component={StylesTest} role='admin' />
     <ProtectedRoute path="/commentTest" component={CommentTest} role='admin' />

@@ -4,8 +4,8 @@ import app from './components/App/AppReducer';
 import users from './components/User/UserReducer';
 import groups from './components/Group/GroupReducer';
 import account from './components/User/AccountReducer';
-import test from './components/TestApp/TestReducer';
-import todos from './components/ToDo/todoReducer';
+//import test from './components/TestApp/TestReducer';
+//import todos from './components/ToDo/todoReducer';
 import events from './components/Event/EventReducer';
 import memberships from './components/Group/MembershipReducer';
 import invites from './components/Event/InviteReducer';
@@ -23,12 +23,12 @@ import page from './components/Utilities/Pagination/PaginationReducer';
 // return list of Reducers which will be combined via 'combineReducers'
 let reducers = {
   app,
-  todos,
+  //todos,
   users,
   groups,
   events,
   account,
-  test,
+  //test,
   alerts,
   modal,
   page,

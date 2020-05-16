@@ -135,7 +135,7 @@ GroupSchema.virtual('rating').get(function() {
 })
 
 GroupSchema.virtual('memberCount').get(function() {
-  return this.members.length;
+  return this.members ? this.members.length : '';
 })
 
 GroupSchema.virtual('distance').get(function(myLocation) {

@@ -1,5 +1,5 @@
 
-import TodoSagas from './components/ToDo/todoSagas';
+//import TodoSagas from './components/ToDo/todoSagas';
 import AccountSagas from './components/User/AccountSagas';
 import UserSagas from './components/User/UserSagas';
 
@@ -30,7 +30,7 @@ export default function* rootSaga() {
     ...EventSagas, 
     ...AlbumSagas, 
     ...UserSagas,
-    ...TodoSagas,
+    //...TodoSagas,
     ...AccountSagas,
     ...AlertSagas,
     ...GroupSagas,

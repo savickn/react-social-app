@@ -42,30 +42,20 @@ export const safeSplice = (arr, startIdx, iterate) => {
 
 }
 
-/* Date Manipulation */
+// converts FileReader to Promise in order to use 'async/await'
+export function readFileAsync(file) {
+  return new Promise((resolve, reject) => {
+    let reader = new FileReader();
 
-const months = [
-  'January', 
-  'February', 
-  'March', 
-  'April', 
-  'May', 
-  'June', 
-  'July', 
-  'August', 
-  'September', 
-  'October', 
-  'November', 
-  'December', 
-];
+    reader.onload = () => {
+      resolve(reader.result);
+    };
 
-export const getMonthName = (monthNumber) => {
-  const abbr = months[monthNumber - 1];
-  console.log('getMonthName --> ', monthNumber, abbr);
-  return abbr;
+    reader.onerror = reject;
+
+    reader.readAsDataURL(file);
+  })
 }
-
-
 
 
 

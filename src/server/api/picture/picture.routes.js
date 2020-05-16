@@ -8,10 +8,14 @@ import path from 'path';
 import * as controller from './picture.controller';
 import config from '../../config/environment';
 
+// NOT WORKING
 const storage = multer.diskStorage({
+  // used to specify where to save file
   destination: function (req, file, cb) {
     cb(null, path.resolve(config.root, 'src/server/public/Profiles'))
   },
+
+  // used to dynamically create the files name
   filename: function (req, file, cb) {
     console.log('multer upload file --> ', file);
     const strArr = file.originalname.split('.');

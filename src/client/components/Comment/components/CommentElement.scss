@@ -1,0 +1,94 @@
+
+
+.container {
+  display: flex;
+
+  padding-bottom: 10px;
+}
+
+/* everything except the Icon */
+
+.comment {
+  width: 100%;
+  padding-left: 15px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* content section */
+
+.content {
+  padding: 10px;
+  border-radius: 5px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.author {
+  font-weight: 700;
+  padding-bottom: 5px;
+}
+
+/* Interactive elements (below content) */
+
+
+
+.interactions {
+  padding-top: 3px;
+
+  display: flex;
+  justify-content: start;
+
+  & > * {
+    padding: 3px;
+  }
+}
+
+.aux {
+  padding-left: 5px;
+  width: 100%;
+
+  display: flex;
+  justify-content: space-between;
+}
+
+.date {
+  font-size: 10pt;
+  font-weight: 200;
+}
+
+
+/* try working with Grid sometime
+
+.interactions {
+  padding-top: 3px;
+
+  display: grid;
+  justify-items: center;
+  
+  grid-template-columns: 10% 10% 20% 50% 10%;
+  grid-template-rows: auto;
+  grid-template-areas: 
+    "reply embed date gap likes";
+
+  
+}
+
+.reply {
+  grid-area: "reply";
+}
+
+.embed {
+  grid-area: "embed";
+}
+
+.date {
+  grid-area: "date"
+}
+
+.likes {
+  grid-area: "likes";
+}
+*/

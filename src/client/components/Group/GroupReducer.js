@@ -1,6 +1,7 @@
-import { FETCH_GROUP_REQUEST, FETCH_GROUP_SUCCESS, FETCH_GROUP_ERROR, 
+import { 
+  FETCH_GROUP_REQUEST, FETCH_GROUP_SUCCESS, FETCH_GROUP_ERROR, 
   CREATE_GROUP_REQUEST, CREATE_GROUP_SUCCESS, CREATE_GROUP_ERROR, 
-  FETCH_GROUPS_REQUEST, FETCH_GROUPS_SUCCESS, FETCH_GROUPS_ERROR,
+  SEARCH_GROUPS_REQUEST, SEARCH_GROUPS_SUCCESS, SEARCH_GROUPS_ERROR,
   UPDATE_GROUP_REQUEST, UPDATE_GROUP_SUCCESS, UPDATE_GROUP_ERROR,
   DELETE_GROUP_REQUEST, DELETE_GROUP_SUCCESS, DELETE_GROUP_ERROR,
 } from './GroupActions';
@@ -45,13 +46,13 @@ const GroupReducer = (state = initialState, action) => {
         errors: action.errors,
       };
 
-    case FETCH_GROUPS_REQUEST :
+    case SEARCH_GROUPS_REQUEST :
       return {
         ...state,
         status: 'loading',
         errors: null,
       };
-    case FETCH_GROUPS_SUCCESS :
+    case SEARCH_GROUPS_SUCCESS :
       console.log('state.data --> ', state.data);
       console.log('payload.groups --> ', action.payload.groups);
       return {
@@ -61,7 +62,7 @@ const GroupReducer = (state = initialState, action) => {
         lastGroup: null, 
         len: action.payload.count
       };
-    case FETCH_GROUPS_ERROR :
+    case SEARCH_GROUPS_ERROR :
       return {
         ...state,
         status: 'error',

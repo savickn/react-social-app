@@ -9,8 +9,6 @@ export const createProfile = (req, res) => {
     return res.status(500).send('Invalid Arguments!');
   }
 
-  console.log('createProfile body --> ', req.body);
-
   Profile.create(req.body)
     .then(profile => res.status(201).json({ profile }))
     .catch(err => {
@@ -28,6 +26,8 @@ export const fetchProfile = (req, res) => {
     .then(profile => res.status(200).json({ profile }))
     .catch(err => res.status(500).send(err));
 }
+
+
 
 
 

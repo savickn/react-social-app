@@ -43,7 +43,7 @@ export const getGroup = (req, res) => {
   Group.findById(req.params.id)
     .populate({ path: 'admins', populate: { path: 'user' }})
     .populate({ path: 'members', populate: { path: 'user' }})
-    .populate('displayPicture')
+    .populate({ path: 'profile', populate: { path: 'image' }})
     .exec((err, group) => {
       if(err) return handleError(res, err);
       //console.log('getGroup --> ', group);

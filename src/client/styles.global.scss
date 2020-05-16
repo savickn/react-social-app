@@ -68,20 +68,43 @@
   }
 }
 
+// used to add link-like styling to regular text (e.g. similar font but has hover effect/etc)
+.action-text {
+
+  &:hover {
+    cursor: pointer;
+    font-weight: 550;
+  }
+}
+
 // span with some padding to the left
 span.left-padded {
   padding-left: 5px;
-}
-
+} 
 
 // span that is positioned as far right as possible
 span.pull-right {
 
-}
+} 
 
 // used to create a large Button that looks like an image
 .addIcon {
+  display: inline-block;
 
+  width: 105px;
+  height: 130px;
+
+  border-radius: 5px;
+
+  &:first-child {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &:hover {
+    box-shadow: 2px 6px #888888;
+  }
 }
 
 
@@ -103,7 +126,7 @@ h2 {
 	margin: 1em 0 0.5em 0;
 	color: #343434;
 	font-weight: normal;
-	font-size: 30px;
+	font-size: 24px;
 	line-height: 40px;
 	font-family: 'Orienta', sans-serif;
 }

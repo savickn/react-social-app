@@ -7,7 +7,7 @@ export const searchEvents = (req, res) => {
   console.log('searchEvents query --> ', req.query);
   var query = {};
 
-  const now = Date.now();
+  const now = new Date();
   switch(req.query.searchMode) {
     case 'Upcoming':
       query['end'] = { $gte: now };
@@ -44,7 +44,7 @@ export const searchEvents = (req, res) => {
       //.populate('group')
       .exec(function(err, events) {
         if(err) return handleError(res, err)
-        //console.log('searchEvents results --> ', events);
+        console.log('searchEvents results --> ', events);
         return res.status(200).header('total-events', count).json({ events, count });
       });
   });
@@ -55,7 +55,18 @@ export const searchEvents = (req, res) => {
 */ 
 export const getEvent = (req, res) => {
   Event.findById(req.params.id)
-    .populate('creator attendees notGoing waitlist', '_id name displayPicture')
+    //.populate('creator attendees notGoing waitlist', '_id name displayPicture')
+    .populate('creator', '_id name')
+    .populate({
+      path: 'group',
+      select: 'name profile',
+      populate: {
+        path: 'profile',
+        populate: {
+          path: 'image', 
+        }
+      }
+    })
     .exec((err, event) => {
       if(err) return handleError(res, err);
       return res.status(200).json({event});

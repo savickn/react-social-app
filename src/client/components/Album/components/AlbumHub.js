@@ -2,6 +2,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlus, } from '@fortawesome/free-solid-svg-icons'
+
 
 import Modal from '../../Utilities/Modal/modal';
 
@@ -38,6 +41,7 @@ class AlbumHub extends React.Component {
 
                                               /* ALBUM FORM */
 
+  // used to create Album... FIRST
   createAlbum = (data) => {
     console.log('createAlbum --> ', data);
 
@@ -46,14 +50,21 @@ class AlbumHub extends React.Component {
     this.props.dispatch(createAlbumRequest({
       author: currentUser._id, 
       name: data.name, 
+      description: data.description, 
+      profile: data.profile,
+      images: data.images, 
       imageableId, 
       imageableType, 
     }));
   }
 
-                                          /* UPLOAD MULTIPLE IMAGES */
+  // used to create Album's Profile... SECOND
+  createProfile = () => {
 
-  addImages = () => {
+  }
+
+  // used to upload Images... THIRD
+  uploadImages = () => {
 
   }
 
@@ -74,10 +85,12 @@ class AlbumHub extends React.Component {
 
     return (
       <div className='albumHubContainer'>
-        {albums.map((a) => {
-          return <AlbumIcon />
+        {albums.slice(0, 3).map((a) => {
+          return <AlbumIcon key={a._id} />
         })}
-        <button onClick={this.openModal}>+</button>
+        <button className='addIcon' onClick={this.openModal}>
+          <FontAwesomeIcon icon={faPlus} />
+        </button>
 
         <Modal isVisible={this.state.modalVisibility} close={this.closeModal} >
           <AlbumForm handleSubmit={this.createAlbum} complete={this.state.complete} />

@@ -1,6 +1,6 @@
 import { 
   CREATE_ALBUM_REQUEST, CREATE_ALBUM_SUCCESS, CREATE_ALBUM_ERROR, 
-  FETCH_ALBUMS_REQUEST, FETCH_ALBUMS_SUCCESS, FETCH_ALBUMS_ERROR,
+  SEARCH_ALBUMS_REQUEST, SEARCH_ALBUMS_SUCCESS, SEARCH_ALBUMS_ERROR,
   UPDATE_ALBUM_REQUEST, UPDATE_ALBUM_SUCCESS, UPDATE_ALBUM_ERROR,
   DELETE_ALBUM_REQUEST, DELETE_ALBUM_SUCCESS, DELETE_ALBUM_ERROR,
 } from './AlbumActions';
@@ -24,13 +24,13 @@ const initialState = {
 // must set 'len' from server response header
 const AlbumReducer = (state = initialState, action) => {
   switch (action.type) {
-    case FETCH_ALBUMS_REQUEST :
+    case SEARCH_ALBUMS_REQUEST :
       return {
         ...state,
         status: 'loading',
         errors: null,
       };
-    case FETCH_ALBUMS_SUCCESS :
+    case SEARCH_ALBUMS_SUCCESS :
       console.log('state.data --> ', state.data);
       console.log('payload.albums --> ', action.payload.albums);
       return {
@@ -39,7 +39,7 @@ const AlbumReducer = (state = initialState, action) => {
         data: [/*...state.data,*/ ...action.payload.albums],
         len: action.payload.count
       };
-    case FETCH_ALBUMS_ERROR :
+    case SEARCH_ALBUMS_ERROR :
       return {
         ...state,
         status: 'error',

@@ -2,6 +2,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlay, } from '@fortawesome/free-solid-svg-icons'
+import { Image } from 'react-bootstrap';
+
+import styles from './CommentForm.scss';
+
+import noPic from '../../../../shared/missing_avatar.png';
+
 // comment creator
 class CommentForm extends React.Component {
   
@@ -33,21 +41,27 @@ class CommentForm extends React.Component {
   }
   
   render() {
+    const thumbnail = this.props.userImg || noPic;
+
     return (
-      <React.Fragment>
-        <div>button to show/hide form</div>
-        <div> 
-          <label>Comment:</label>
-          <input type='text' ref={this.contentRef} className='form-control'/>
+      <div className={styles.commentContainer}>
+        { /* <div> OPTIONAL button to show/hide form</div> */ }
+
+        <div className='icon'>
+          <Image width='50' height='50' src={thumbnail} rounded />
         </div>
-        <button onClick={this.createComment}> Create </button>
-      </React.Fragment>
+        <textarea className='form-control' ref={this.contentRef} placeholder='Comment...'/>
+        <div className='click-cursor' onClick={this.createComment}>
+          <FontAwesomeIcon icon={faPlay} size={"2x"} />
+        </div>
+      </div>
     );
   }
 }
 
 CommentForm.propTypes = {
   handleSubmit: PropTypes.func.isRequired, 
+  userImg: PropTypes.string, 
 };
 
 export default CommentForm;

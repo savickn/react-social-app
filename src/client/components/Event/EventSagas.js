@@ -1,29 +1,72 @@
-import { CREATE_EVENT_REQUEST, GET_EVENT_REQUEST, FETCH_EVENTS_REQUEST, UPDATE_EVENT_REQUEST, DELETE_EVENT_REQUEST, } from './EventActions';
+import { 
+  CREATE_EVENT_REQUEST, 
+  FETCH_EVENT_REQUEST, 
+  SEARCH_EVENTS_REQUEST, 
+  UPDATE_EVENT_REQUEST, 
+  DELETE_EVENT_REQUEST, 
+} from './EventActions';
 
 import {
-  createEventSuccess, createEventFailure,
-  getEventSuccess, getEventFailure, 
-  fetchEventsSuccess, fetchEventsFailure,
-  updateEventSuccess, updateEventFailure,
-  deleteEventSuccess, deleteEventFailure,
+  createInviteRequest, 
+} from './InviteActions';
+
+import {
+  createEventSuccess,
+  fetchEventSuccess, 
+  searchEventsSuccess, 
+  updateEventSuccess, 
+  deleteEventSuccess, 
+  eventError, 
 } from './EventActions';
 
 import axios from '../../util/axiosCaller';
 import { takeLatest, put, call, fork } from 'redux-saga/effects';
 
-/* AJAX REQUESTS */
 
-const getEventAjax = (eventId) => {
+                                                /* FETCH ONE EVENT */
+
+const fetchEventAjax = (eventId) => {
   return axios.get(`api/events/${eventId}`)
   .then(res => res.data)
   .catch((err) => { throw err; })
 }
 
-const fetchEventsAjax = (query) => {
+export function* fetchEventWatcher() {
+  yield takeLatest(FETCH_EVENT_REQUEST, fetchEventHandler);
+}
+
+function* fetchEventHandler(action) {
+  try {
+    const response = yield call(fetchEventAjax, action.id);
+    yield put(fetchEventSuccess(response.event));
+  } catch (err) {
+    yield put(eventError(err));
+  }
+}
+
+                                                /* SEARCH EVENTS */
+
+const searchEventsAjax = (query) => {
   return axios.get('api/events/', { params: query })
   .then(res => res.data)
   .catch((err) => { throw err; })
 }
+
+export function* searchEventsWatcher() {
+  yield takeLatest(SEARCH_EVENTS_REQUEST, searchEventsHandler);
+}
+
+function* searchEventsHandler(action) {
+  try {
+    const response = yield call(searchEventsAjax, action.query);
+    yield put(searchEventsSuccess(response.events, response.count));
+  } catch (err) {
+    console.log('searchEvents err --> ', err);
+    yield put(eventError(err));
+  }
+}
+
+                                                  /* CREATE EVENT */
 
 const createEventAjax = (event) => {
   return axios.post('api/events/', event)
@@ -31,66 +74,37 @@ const createEventAjax = (event) => {
   .catch(err => { throw err; })
 }
 
-const updateEventAjax = (id, data) => {
-  return axios.put(`api/events/${id}`, data)
-  .then(res => res.data)
-  .catch(err => { throw err; })
-}
-
-const deleteEventAjax = (eventId) => {
-  return axios.delete(`api/events/${eventId}`)
-  .then(res => res.data)
-  .catch(err => { throw err; })
-}
-
-/* GET ONE EVENT */
-
-export function* getEventWatcher() {
-  yield takeLatest(GET_EVENT_REQUEST, getEventHandler);
-}
-
-function* getEventHandler(action) {
-  try {
-    const response = yield call(getEventAjax, action.id);
-    yield put(getEventSuccess(response.event));
-  } catch (err) {
-    yield put(getEventFailure(err));
-  }
-}
-
-/* SEARCH EVENTS */
-
-export function* fetchEventsWatcher() {
-  yield takeLatest(FETCH_EVENTS_REQUEST, fetchEventsHandler);
-}
-
-function* fetchEventsHandler(action) {
-  try {
-    const response = yield call(fetchEventsAjax, action.query);
-    yield put(fetchEventsSuccess(response.events, response.count));
-  } catch (err) {
-    console.log('searchEvents err --> ', err);
-    yield put(fetchEventsFailure(err));
-  }
-}
-
-/* CREATE EVENT */
-
 export function* createEventWatcher() {
   yield takeLatest(CREATE_EVENT_REQUEST, createEventHandler);
 }
 
 function* createEventHandler(action) {
   try {
-    const response = yield call(createEventAjax, action.eventData);
-    yield put(createEventSuccess(response.event));
+    const { event } = yield call(createEventAjax, action.data);
+    yield put(createEventSuccess(event));
+    
+    // create an Invite for the Creator
+    yield put(createInviteRequest({
+      event: event._id, 
+      user: event.creator, 
+      issueType: 'Admin', 
+      accepted: true,
+      verified: true, 
+      attending: true, 
+    }));
   } catch (err) {
     console.log('createEvent err --> ', err);
-    yield put(createEventFailure(err));
+    yield put(eventError(err));
   }
 }
 
-/* UPDATE EVENT */
+                                                  /* UPDATE EVENT */
+
+const updateEventAjax = (id, data) => {
+  return axios.put(`api/events/${id}`, data)
+  .then(res => res.data)
+  .catch(err => { throw err; })
+}
 
 export function* updateEventWatcher() {
   yield takeLatest(UPDATE_EVENT_REQUEST, updateEventHandler);
@@ -103,11 +117,19 @@ function* updateEventHandler(action) {
     yield put(updateEventSuccess(response.event));
   } catch (err) {
     console.log('updateEvent err --> ', err);
-    yield put(updateEventFailure(err));
+    yield put(eventError(err));
   } 
 }
 
-/* DELETE EVENT */ 
+                                                  /* DELETE EVENT */ 
+
+
+const deleteEventAjax = (eventId) => {
+  return axios.delete(`api/events/${eventId}`)
+  .then(res => res.data)
+  .catch(err => { throw err; })
+}
+
 
 export function* deleteEventWatcher() {
   yield takeLatest(DELETE_EVENT_REQUEST, deleteEventHandler);
@@ -119,14 +141,14 @@ function* deleteEventHandler(action) {
     yield put(deleteEventSuccess(response.eventId));
   } catch (err) {
     console.log('deleteEvent err --> ', err);
-    yield put(deleteEventFailure(err));
+    yield put(eventError(err));
   }
 }
 
 export default [
   fork(createEventWatcher),
-  fork(getEventWatcher),
-  fork(fetchEventsWatcher),
+  fork(fetchEventWatcher),
+  fork(searchEventsWatcher),
   fork(updateEventWatcher),
   fork(deleteEventWatcher),
 ];

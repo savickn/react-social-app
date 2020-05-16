@@ -2,26 +2,25 @@
 import { 
   FETCH_GROUP_REQUEST, 
   CREATE_GROUP_REQUEST, 
-  FETCH_GROUPS_REQUEST, 
+  SEARCH_GROUPS_REQUEST, 
   DELETE_GROUP_REQUEST, 
   UPDATE_GROUP_REQUEST, 
 } from './GroupActions';
 
 import { 
   fetchGroupSuccess, fetchGroupError, 
-  fetchGroupsSuccess, fetchGroupsError,
+  searchGroupsSuccess, searchGroupsError,
   createGroupSuccess, createGroupError,
   updateGroupSuccess, updateGroupError,
   deleteGroupSuccess, deleteGroupFailure,
 } from './GroupActions';
 
-import { createAlbum } from '../Album/AlbumActions';
+import { createAlbumRequest } from '../Album/AlbumActions';
 
 import axios from '../../util/axiosCaller';
 import { takeLatest, put, call, fork, select } from 'redux-saga/effects';
 
 import { getGroups } from './GroupReducer';
-
 
 
 /* API CALLS */
@@ -32,7 +31,7 @@ const fetchGroupAjax = (id) => {
     .catch(err => { throw err; })
 }  
 
-const fetchGroupsAjax = (query={}) => {
+const searchGroupsAjax = (query={}) => {
   console.log('fetchGroup query --> ', query);
   return axios.get('/api/groups/', { params: query })
     .then(res => res.data)
@@ -67,6 +66,7 @@ function* fetchGroupHandler(action) {
   try {
     const response = yield call(fetchGroupAjax, action.id);
     let { group } = response;
+    console.log('fetchGroupSaga --> ', group);
     yield put(fetchGroupSuccess(group));
   } catch(error) {
     yield put(fetchGroupError(error));
@@ -76,11 +76,11 @@ function* fetchGroupHandler(action) {
 
 /* FETCHING */
 
-export function* fetchGroupsWatcher() {
-  yield takeLatest(FETCH_GROUPS_REQUEST, fetchGroupsHandler);
+export function* searchGroupsWatcher() {
+  yield takeLatest(SEARCH_GROUPS_REQUEST, searchGroupsHandler);
 }
 
-function* fetchGroupsHandler(action) {
+function* searchGroupsHandler(action) {
   try {
     // check reduxStore
     const reduxGroups = yield select(getGroups);
@@ -90,9 +90,9 @@ function* fetchGroupsHandler(action) {
 
 
     // call API to retrieve immediate results
-    const response = yield call(fetchGroupsAjax, action.query);
+    const response = yield call(searchGroupsAjax, action.query);
     let { groups, count } = response;
-    yield put(fetchGroupsSuccess(groups, count));
+    yield put(searchGroupsSuccess(groups, count));
 
     // save results to localStorage
 
@@ -101,7 +101,7 @@ function* fetchGroupsHandler(action) {
 
 
   } catch(error) {
-    yield put(fetchGroupsError(error));
+    yield put(searchGroupsError(error));
   }
 }
 
@@ -117,7 +117,7 @@ function* createGroupHandler(action) {
     const group = response.group; 
     console.log('createGroupRes --> ', group);
     yield put(createGroupSuccess(group));
-    yield put(createAlbum({
+    yield put(createAlbumRequest({
       name: 'Display Pictures', 
       authorId: group.admins[0],
       imageableId: group._id,
@@ -166,7 +166,7 @@ function* deleteGroupHandler(action) {
 
 export default [
   fork(fetchGroupWatcher), 
-  fork(fetchGroupsWatcher),
+  fork(searchGroupsWatcher),
   fork(createGroupWatcher),
   fork(updateGroupWatcher),
   fork(deleteGroupWatcher),

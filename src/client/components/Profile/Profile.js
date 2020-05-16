@@ -11,7 +11,7 @@ import { uploadRequest } from '../Upload/UploadActions';
 import { fetchProfileRequest } from './ProfileActions';
 import { getProfileById } from './ProfileReducer';
 
-import noDp from './anon_user.png';
+import noPic from './anon_user.png';
 import styles from './Profile.scss';
 
 // an embeddable Component used to display/change a Profile picture
@@ -69,15 +69,27 @@ class Profile extends React.Component {
     this.props.dispatch(uploadRequest(formData));
   }
 
+  // used to determine which image to show (e.g. Profile vs. preview vs. default)
+  getPic = () => {
+    const { profile, preview, } = this.props;
+
+    if(profile) {
+      return profile.image.path;
+    } else if(preview) {
+      return preview;
+    } else {
+      return noPic;
+    }
+  }
+
   /* Render logic */
 
   render() {
-    const { profile } = this.props;
-    const dp = profile ? profile.image.path : noDp;
+    const dp = this.getPic();
 
     return (
       <React.Fragment>
-        <Upload handleUpload={this.changePhoto}>
+        <Upload handleUpload={this.changePhoto} multiple={false}>
           <div>
             <img src={dp} width='150' height='150' />
           </div>
@@ -89,6 +101,7 @@ class Profile extends React.Component {
 
 Profile.propTypes = {
   // default: path --> add option for different default images
+  preview: PropTypes.string, 
 
   profileId: PropTypes.string.isRequired,
   // createProfile: PropTypes.func.isRequired, // --> used to create Profile if not exists 

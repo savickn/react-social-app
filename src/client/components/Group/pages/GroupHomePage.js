@@ -14,7 +14,7 @@ import WizardHub from '../../Utilities/Wizard/wizard';
 import WizardPage from '../../Utilities/Wizard/page';
 //import AlbumCreateWidget from '../../Album/CreateAlbumWidget';
 
-import { createGroup, fetchGroups } from '../GroupActions';
+import { createGroup, searchGroups } from '../GroupActions';
 //import { createAlbum } from '../../Album/AlbumActions';
 
 import { getGroups, getGroupCount, getLastGroup } from '../GroupReducer';
@@ -67,13 +67,13 @@ export class GroupHomePage extends React.Component {
 
   /* SERVER REQUESTS */
 
-  getGroups = (query={}) => {
-    query = {
-      ...query,
+  getGroups = (q={}) => {
+    const query = {
+      ...q,
       currentPage: this.state.currentPage,
       pageSize: this.state.pageSize,
     };
-    this.props.dispatch(fetchGroups(query));
+    this.props.dispatch(searchGroups(query));
   };
 
   addGroup = (name, location) => {
