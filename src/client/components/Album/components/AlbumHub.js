@@ -41,7 +41,7 @@ class AlbumHub extends React.Component {
 
                                               /* ALBUM FORM */
 
-  // used to create Album... FIRST
+  // used to create Album
   createAlbum = (data) => {
     console.log('createAlbum --> ', data);
 
@@ -51,11 +51,12 @@ class AlbumHub extends React.Component {
       author: currentUser._id, 
       name: data.name, 
       description: data.description, 
-      profile: data.profile,
-      images: data.images, 
       imageableId, 
       imageableType, 
-    }));
+    }, 
+      data.imagesForm, 
+      data.profileForm
+    ));
   }
 
   // used to create Album's Profile... SECOND

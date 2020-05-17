@@ -30,7 +30,6 @@ class UploadComponent extends React.Component {
     formData.append('avatar', files[0]);
 
     console.log('uploadElem files --> ', files);
-    console.log('uploadElem formData --> ', formData);
 
     this.props.handleUpload(formData);
   }
@@ -44,11 +43,10 @@ class UploadComponent extends React.Component {
     const formData = new FormData();
 
     files.forEach((file, i) => {
-      formData.append(i, file);
+      formData.append(`image${i}`, file);
     })
 
     console.log('uploadElem files --> ', files);
-    console.log('uploadElem formData --> ', formData);
 
     this.props.handleUpload(formData);
   }

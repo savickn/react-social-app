@@ -18,23 +18,19 @@ class AlbumForm extends React.Component {
     this.state = {
       profile: {}, 
       images: [], 
-      formData: null, 
+      imagesForm: null,
     };
 
     this.nameRef = React.createRef();
     this.descRef = React.createRef();
   }
 
-  // used to select Profile image 
-  handleSelectProfile = () => {
-
-  }
-
   // used to select content Images
-  handleSelectImages = async (formData) => {
+  handleSelectImages = async (imagesForm) => {
     const images = [];
 
-    for(let v of formData.values()) {
+    for(let [k, v] of imagesForm.entries()) {
+      console.log(k, ' --- ', v);
       if(v instanceof File) {
         let dUrl = await readFileAsync(v);
         images.push({
@@ -46,28 +42,32 @@ class AlbumForm extends React.Component {
 
     this.setState({
       images, 
-      formData, 
+      imagesForm, 
     })
   }
 
   // used to select an Image as the Profile
   setAsProfile = (image) => {
-    let formData = this.state.formData;
-
     this.setState({
       profile: image,
-      formData,  
     })
   }
 
 
   // used to create new Album
   submit = () => {
+    // images for Album
+    const imagesForm = this.state.imagesForm;
+
+    // image for Profile
+    let profileForm = new FormData();
+    profileForm.append('avatar', this.state.profile.file);
+
     const data = {
       name: this.nameRef.current.value,
       description: this.descRef.current.value, 
-      images: this.state.images, 
-      profile: this.state.profile, 
+      imagesForm, 
+      profileForm, 
     };
 
     this.props.handleSubmit(data);

@@ -89,22 +89,23 @@ export function* createAlbumWatcher() {
 function* createAlbumHandler(action) {
   try {
     // create album
-    const { album } = yield call(createAlbum, action.data);
+    const { album } = yield call(createAlbum, action.data.album);
     yield put(createAlbumSuccess(album));
 
     // create Profile if applicable
-    if(action.data.profile) {
+    if(action.data.profileForm) {
       yield put(createProfileRequest({
         imageableId: album._id,
         imageableType: 'Album', 
-      }));
+      }, action.data.profileForm));
     }
 
     // add Images to Album if applicable
-    if(action.data.images) {
-      yield put(uploadRequest({
+    if(action.data.imagesForm) {
+      action.data.imagesForm.append('parentId', album._id);
+      action.data.imagesForm.append('parentType', 'Album');
 
-      }));
+      yield put(uploadRequest(action.data.imagesForm));
     }
 
     //close Modal

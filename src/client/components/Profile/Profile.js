@@ -8,7 +8,7 @@ import axios from '../../util/axiosCaller';
 import Upload from '../Upload/components/upload';
 
 import { uploadRequest } from '../Upload/UploadActions';
-import { fetchProfileRequest } from './ProfileActions';
+import { fetchProfileRequest, createProfileRequest, } from './ProfileActions';
 import { getProfileById } from './ProfileReducer';
 
 import noPic from './anon_user.png';
@@ -17,6 +17,8 @@ import styles from './Profile.scss';
 // an embeddable Component used to display/change a Profile picture
 // ... add support to choose picture from list of recent pictures
 class Profile extends React.Component {
+
+                      /* LIFECYCLE LOGIC */
 
   constructor(props) {
     super(props);
@@ -32,42 +34,23 @@ class Profile extends React.Component {
     }
   }
 
-  /* API Requests */
-
-  // creates Profile if not exists
-  createProfile = async () => {
-    const { imageableId, imageableType, } = this.props;
-    return axios.post('/api/profiles/', { imageableId, imageableType })
-      .then(res => res.data).then(async res => {
-        console.log('createProfile res --> ', res);
-        await this.setState({ id: res.profile._id })
-      })
-      .catch(err => { 
-        console.log('createProfile err --> ', err);
-        throw err; 
-      })
-  }
+                      /* API Requests */
 
   // used to upload a new Profile picture
-  changePhoto = async (formData) => {
-
-    // create Profile if necessary
-    if(!this.props.profile) {
-      try {
-        await this.createProfile();
-      } catch(err) {
-        console.log('Unable to create Profile! Please try again!'); 
-        return;
-      }
+  createProfile = async (formData) => {
+    for(let [k, v] of formData.entries()) {
+      console.log(k, ' --- ', v);
     }
 
-    const parentId = this.props.profileId || this.state.id;
-    
-    formData.append('parentId', parentId);
-    formData.append('parentType', 'Profile');
+    const profile = {
+      imageableId: this.props.imageableId,
+      imageableType: this.props.imageableType, 
+    };
 
-    this.props.dispatch(uploadRequest(formData));
+    this.props.dispatch(createProfileRequest(profile, formData));
   }
+
+                      /*  RENDER LOGIC */
 
   // used to determine which image to show (e.g. Profile vs. preview vs. default)
   getPic = () => {
@@ -82,14 +65,12 @@ class Profile extends React.Component {
     }
   }
 
-  /* Render logic */
-
   render() {
     const dp = this.getPic();
 
     return (
       <React.Fragment>
-        <Upload handleUpload={this.changePhoto} multiple={false}>
+        <Upload handleUpload={this.createProfile} multiple={false}>
           <div>
             <img src={dp} width='150' height='150' />
           </div>
@@ -135,7 +116,19 @@ if(typeof window != undefined) {
 }
 */
 
-
+  // creates Profile if not exists
+  /*createProfile = async () => {
+    const { imageableId, imageableType, } = this.props;
+    return axios.post('/api/profiles/', { imageableId, imageableType })
+      .then(res => res.data).then(async res => {
+        console.log('createProfile res --> ', res);
+        await this.setState({ id: res.profile._id })
+      })
+      .catch(err => { 
+        console.log('createProfile err --> ', err);
+        throw err; 
+      })
+  }*/
 
 // OLD IMAGE UPLOAD
 /*axios.post('/api/pictures/', formData, {

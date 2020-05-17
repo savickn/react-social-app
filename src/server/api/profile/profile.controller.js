@@ -5,6 +5,7 @@ import Profile from './profile.model';
 ** create a Profile 
 */
 export const createProfile = (req, res) => {
+  console.log('createProfile body --> ', req.body);
   if(!req.body.imageableId || !req.body.imageableType) {
     return res.status(500).send('Invalid Arguments!');
   }

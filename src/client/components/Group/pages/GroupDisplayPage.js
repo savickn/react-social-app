@@ -5,11 +5,11 @@ import { Switch, Route } from 'react-router-dom';
 import { Navbar, Nav, NavItem, MenuItem, NavDropdown } from 'react-bootstrap'; 
 import { LinkContainer } from 'react-router-bootstrap';
 
+import Profile from '../../Profile/Profile';
+
 import { HomeView, MemberView, EventView } from '../GroupRoutes';
 import axios from '../../../util/axiosCaller';
 import { matchByObjectId } from '../../../util/utilFuncs';
-
-import GroupBanner from '../components/GroupBanner/GroupBanner';
 
 import { fetchGroup, updateGroup } from '../GroupActions';
 import { fetchMembershipRequest, createMembership, deleteMembership } from '../MembershipActions';
@@ -85,7 +85,8 @@ export class GroupDisplayPage extends React.Component {
   /* Render Logic */
 
   render() {
-    if(!this.props.group) return(<div></div>);
+    const { group } = this.props;
+    if(!group) return(<div></div>);
 
     console.log('groupDisplay state --> ', this.state);
 
@@ -96,8 +97,20 @@ export class GroupDisplayPage extends React.Component {
 
     return (
       <React.Fragment>
-        <GroupBanner groupId={this.props.group._id} groupName={this.props.group.name} location={this.props.group.location} 
-          memberCount={this.props.group.memberCount} admins={this.props.group.admins} profileId={this.props.group.profile} />
+        
+        {/* BANNER */}
+        <div className='groupBanner'>
+          <div className='col1'>
+            <Profile profileId={group.profile._id} imageableId={group._id} imageableType='Group' />
+          </div>
+          <div className='col2'>
+            <h2>{this.props.groupName}</h2>
+            <div>Location: {group.location}</div>
+            <div>Members: {group.memberCount}</div>
+          </div>
+        </div>
+
+        {/* NAVBAR */}
         <Navbar>
           <Nav>
             <LinkContainer to={`/groups/${this.props.group._id}`}>
@@ -123,6 +136,8 @@ export class GroupDisplayPage extends React.Component {
             }
           </Nav>
         </Navbar>
+        
+        {/* VIEWS */}
         <Switch>
           <Route exact path="/groups/:groupId" component={HomeView} />
           <Route path="/groups/:groupId/members" component={MemberView} /> 

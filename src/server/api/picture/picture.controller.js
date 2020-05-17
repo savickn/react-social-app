@@ -172,7 +172,7 @@ let rstream = fs.createReadStream(path)
 
 
 // create Picture entry... WORKING
-export function createPicture(req, res) {
+export const createPicture = async (req, res) => {
   const { parentId, parentType } = req.body;
 
   if(!parentId || !parentType) {
@@ -184,11 +184,30 @@ export function createPicture(req, res) {
   console.log('\n createLocal req.files --> ', req.files);
   console.log('\n req.body --> ', req.body);
   
-  let file = req.files.avatar;
-  console.log('file --> ', file);
+  // console.log('files --> ', req.files);
+  // let file = req.files.avatar;
+  // console.log('file --> ', file);
     
+  try {
+    //create directory
+    await mkdirp(destination);
+
+    for(let file of req.files.values()) {
+      console.log('file --> ', file);
+
+      // save file to disk
+      await file.mv(path.resolve(destination, file.name));
+
+
+
+    }
+
+
+  } catch(err) {
+    return handleError(res, err);
+  }
+  
   mkdirp(destination, (err) => {
-    if(err) return handleError(res, err);
     file.mv(path.resolve(destination, file.name), (err) => {
       if(err) return handleError(res, err);
       let body = {

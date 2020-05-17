@@ -43,10 +43,14 @@ export function searchAlbumsError(errors) {
 
 /* CREATION */
 
-export function createAlbumRequest(data) {
+export function createAlbumRequest(album, imagesForm, profileForm) {
   return {
     type: CREATE_ALBUM_REQUEST,
-    data
+    data: {
+      album, 
+      imagesForm, 
+      profileForm, 
+    }
   };
 }
 

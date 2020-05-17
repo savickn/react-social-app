@@ -31,7 +31,7 @@ function* fetchProfileHandler(action) {
   }
 }
 
-/* CREATE PROFILE */
+                              /* CREATE PROFILE */
 
 function createProfile(data) {
   return axios.post('/api/profiles/', data)
@@ -44,14 +44,22 @@ function* createProfileWatcher() {
 }
 
 function* createProfileHandler(action) {
-  try {
+  try { 
+    const { formData } = action.data;
+    
+    // guard against invalid args
+    if(!formData.has('avatar')) {
+      throw new Error('no avatar selected!');
+    }
+
     // create Profile
-    const { profile } = yield call(createProfile, action.data);
+    const { profile } = yield call(createProfile, action.data.profile);
     yield put(createProfileSuccess(profile));
 
     // now upload Picture that goes with Profile
-
-
+    formData.append('parentId', profile._id);
+    formData.append('parentType', 'Profile');
+    yield put(uploadRequest(formData));
   } catch(err) {
     console.log('createProfile err --> ', err);
   }

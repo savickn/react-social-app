@@ -32,11 +32,14 @@ export const fetchProfileError = (error) => {
 
 /* CREATE PROFILE */
 
-export const createProfileRequest = (data) => {
+export const createProfileRequest = (profile, formData) => {
   return {
     type: CREATE_PROFILE_REQUEST,
-    data, 
-  }
+    data: {
+      profile,
+      formData,
+    } 
+  };
 }
 
 export const createProfileSuccess = (profile) => {
