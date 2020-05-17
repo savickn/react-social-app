@@ -22,11 +22,31 @@ export const searchAlbums = async (req, res) => {
     const albums = await Album.find(query)
                             .skip(offset)
                             .limit(pageSize)
-                            .sort('-memberCount name');
+                            .sort('-memberCount name')
+                            .populate({
+                              path: 'profile', 
+                              populate: {
+                                path: 'image'
+                              }
+                            });
     return res.status(200).json({ albums, count });
   } catch(err) {
     return handleError(res, err);
   }
+}
+
+// used to retreive all data for one Album entry
+export const fetchAlbum = (req, res) => {
+  Album.findById(req.params.id)
+    .populate('author pictures')
+    .populate({
+      path: 'profile',
+      populate: {
+        path: 'image'
+      }
+    })
+      .then(album => res.status(200).json({ album }))
+      .catch(err => handleError(res, err))
 }
 
 // used to create a new Album entry (e.g. 'POST /albums')
@@ -46,14 +66,6 @@ export const deleteAlbum = (req, res) => {
     .then(r => res.status(203).end())
     .catch(err => handleError(res, err));
 }
-
-// used to retrieve a single Album resource (e.g. 'GET /albums/123')
-export const getAlbum = (req, res) => {
-  Album.findById(req.params.id)
-    .then(album => res.status(200).json({ album }))
-    .catch(err => handleError(res, err));
-}
-
 
 /* UTILITY */
 

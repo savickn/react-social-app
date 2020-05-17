@@ -1,4 +1,7 @@
 
+export const FETCH_ALBUM_REQUEST = 'FETCH_ALBUM_REQUEST';
+export const FETCH_ALBUM_SUCCESS = 'FETCH_ALBUM_SUCCESS';
+
 export const CREATE_ALBUM_REQUEST = 'CREATE_ALBUM_REQUEST';
 export const CREATE_ALBUM_SUCCESS = 'CREATE_ALBUM_SUCCESS';
 export const CREATE_ALBUM_ERROR = 'CREATE_ALBUM_ERROR';
@@ -14,6 +17,22 @@ export const DELETE_ALBUM_ERROR = 'DELETE_ALBUM_ERROR';
 export const UPDATE_ALBUM_REQUEST = 'UPDATE_ALBUM_REQUEST';
 export const UPDATE_ALBUM_SUCCESS = 'UPDATE_ALBUM_SUCCESS';
 export const UPDATE_ALBUM_ERROR = 'UPDATE_ALBUM_ERROR';
+
+/* FETCH ONE */
+
+export function fetchAlbumRequest(id) {
+  return {
+    type: FETCH_ALBUM_REQUEST,
+    id, 
+  }
+}
+
+export function fetchAlbumSuccess(album) {
+  return {
+    type: FETCH_ALBUM_SUCCESS,
+    album, 
+  }
+}
 
 /* SEARCHING */
 

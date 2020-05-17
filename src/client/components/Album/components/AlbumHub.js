@@ -39,7 +39,7 @@ class AlbumHub extends React.Component {
   }
 
 
-                                              /* ALBUM FORM */
+                                                /* ALBUM FORM */
 
   // used to create Album
   createAlbum = (data) => {
@@ -59,16 +59,6 @@ class AlbumHub extends React.Component {
     ));
   }
 
-  // used to create Album's Profile... SECOND
-  createProfile = () => {
-
-  }
-
-  // used to upload Images... THIRD
-  uploadImages = () => {
-
-  }
-
                                                 /* MODAL */
 
   openModal = () => {
@@ -79,7 +69,7 @@ class AlbumHub extends React.Component {
     this.setState({ modalVisibility: false });
   }
 
-  /* Render Logic */
+                                                /* RENDER LOGIC */
 
   render() {
     const { albums } = this.props;
@@ -87,7 +77,7 @@ class AlbumHub extends React.Component {
     return (
       <div className='albumHubContainer'>
         {albums.slice(0, 3).map((a) => {
-          return <AlbumIcon key={a._id} />
+          return <AlbumIcon key={a._id} albumId={a._id} image={a.profile.image.path} />
         })}
         <button className='addIcon' onClick={this.openModal}>
           <FontAwesomeIcon icon={faPlus} />

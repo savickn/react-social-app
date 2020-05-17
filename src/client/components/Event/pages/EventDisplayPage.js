@@ -190,14 +190,17 @@ class EventPage extends React.Component {
 
           <div className={styles.eventGap}></div>
 
-          {/* LOCATION SIDEBAR */}
           <div className={`flex-column ${styles.eventSidebar}`}>
+            
+            {/* GROUP INFO */}
             <div className={`foreground ${styles.groupSidebar}`}>
               <Link to={`/groups/${group._id}`}>
                 <img src={groupImg} width='50' height='50' />
               </Link>
               <div>{group.name}</div>
             </div>
+            
+            {/* LOCATION SIDEBAR */}
             <div className={`foreground ${styles.locationSidebar}`}>
               <div className='grid-list-elem'>
                 <div className='list-icon'>

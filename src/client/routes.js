@@ -17,8 +17,6 @@ const StylesTest = loadable(() => import('./components/Prototypes/StylesTestPage
 const CommentTest = loadable(() => import('./components/Comment//components/CommentHub'), options);
 
 const AdminPage = loadable(() => import('./components/App/components/Admin/AdminPage'), options);
-//const ToDoHub = loadable(() => import('./components/ToDo/todoHub'), options);
-
 const HomePage = loadable(() => import('./components/App/components/Home/HomePage'), options);
 const AboutComponent = loadable(() => import('./components/StaticPages/about'), options);
 const LoginPage = loadable(() => import('./components/User/pages/UserLoginPage/UserLoginPage'), options);
@@ -27,6 +25,7 @@ const ProfilePage = loadable(() => import('./components/User/pages/UserProfilePa
 const GroupDisplayPage = loadable(() => import('./components/Group/pages/GroupDisplayPage'), options);
 const GroupHomePage = loadable(() => import('./components/Group/pages/GroupHomePage'), options);
 const EventDisplayPage = loadable(() => import('./components/Event/pages/EventDisplayPage'), options);
+const AlbumDisplayPage = loadable(() => import('./components/Album/pages/AlbumPage'), options);
 
 export default (
   <Switch>
@@ -37,6 +36,7 @@ export default (
     <Route exact path='/groups' component={GroupHomePage} />
     <Route exact path='/groups/:groupId/events/:eventId' component={EventDisplayPage} />
     <ProtectedRoute path='/groups/:groupId' component={GroupDisplayPage} />
+    <Route path='/albums/:albumId' component={AlbumDisplayPage} />
     <Route path='/about' component={AboutComponent} />
 
     <ProtectedRoute path="/admin" component={AdminPage} role='admin' />

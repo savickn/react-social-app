@@ -4,7 +4,7 @@ import * as auth from '../../auth/auth.service';
 const router = new Router();
 
 router.get('/', controller.searchAlbums); 
-router.get('/:id', controller.getAlbum); 
+router.get('/:id', controller.fetchAlbum); 
 router.post('/', controller.createAlbum); 
 router.delete('/:id', controller.deleteAlbum); 
 

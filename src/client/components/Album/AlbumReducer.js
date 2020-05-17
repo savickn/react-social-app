@@ -1,4 +1,5 @@
 import { 
+  FETCH_ALBUM_REQUEST, FETCH_ALBUM_SUCCESS, 
   CREATE_ALBUM_REQUEST, CREATE_ALBUM_SUCCESS, CREATE_ALBUM_ERROR, 
   SEARCH_ALBUMS_REQUEST, SEARCH_ALBUMS_SUCCESS, SEARCH_ALBUMS_ERROR,
   UPDATE_ALBUM_REQUEST, UPDATE_ALBUM_SUCCESS, UPDATE_ALBUM_ERROR,
@@ -24,6 +25,16 @@ const initialState = {
 // must set 'len' from server response header
 const AlbumReducer = (state = initialState, action) => {
   switch (action.type) {
+    case FETCH_ALBUM_REQUEST : 
+      return {
+        ...state, 
+      }
+    case FETCH_ALBUM_SUCCESS : 
+      return {
+        ...state, 
+        data: [...state.data, action.album]
+      }
+      
     case SEARCH_ALBUMS_REQUEST :
       return {
         ...state,
@@ -115,5 +126,5 @@ export const getAlbumStatus = state => state.albums.status;
 
 export const getAlbumById = (state, id) => state.albums.data.filter(album => album._id === id)[0];
 
-
 export default AlbumReducer;
+

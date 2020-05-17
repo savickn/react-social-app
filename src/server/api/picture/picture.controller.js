@@ -192,24 +192,13 @@ export const createPicture = async (req, res) => {
     //create directory
     await mkdirp(destination);
 
-    for(let file of req.files.values()) {
+    for(let f in req.files) {
+      let file = req.files[f];
       console.log('file --> ', file);
 
       // save file to disk
       await file.mv(path.resolve(destination, file.name));
 
-
-
-    }
-
-
-  } catch(err) {
-    return handleError(res, err);
-  }
-  
-  mkdirp(destination, (err) => {
-    file.mv(path.resolve(destination, file.name), (err) => {
-      if(err) return handleError(res, err);
       let body = {
         filename: file.name, 
         size: file.data.length, 
@@ -219,19 +208,20 @@ export const createPicture = async (req, res) => {
         parentType, 
       };
       console.log('picture obj --> ', body);
-      Picture.create(body, function(err, picture) {
-        if(err) return handleError(res, err);
-  
-        const pictureObj = {
-          _id: picture._id,
-          contentType: picture.contentType,
-          path: picture.path
-        };
-        
-        return res.status(201).json({ picture });
-      });
-    });
-  });
+
+      // save picture to database
+      const picture = await Picture.create(body);
+
+      const pictureObj = {
+        _id: picture._id,
+        contentType: picture.contentType,
+        path: picture.path
+      };
+    }
+    return res.status(201).send('Upload Successful!');
+  } catch(err) {
+    return handleError(res, err);
+  }
 }
 
 

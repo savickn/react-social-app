@@ -1,5 +1,6 @@
 
 import { 
+  FETCH_ALBUM_REQUEST, 
   CREATE_ALBUM_REQUEST, 
   SEARCH_ALBUMS_REQUEST, 
   DELETE_ALBUM_REQUEST, 
@@ -7,6 +8,7 @@ import {
 } from './AlbumActions';
 
 import { 
+  fetchAlbumSuccess, 
   searchAlbumsSuccess, searchAlbumsError,
   createAlbumSuccess, createAlbumError,
   updateAlbumSuccess, updateAlbumError,
@@ -23,6 +25,12 @@ import { getAlbums } from './AlbumReducer';
 
 
 /* API CALLS */
+
+const fetchAlbum = (albumId) => {
+  return axios.get(`/api/albums/${albumId}`)
+    .then(res => res.data)
+    .catch(err => { throw err; })
+}
 
 const searchAlbums = (query={}) => {
   console.log('fetchAlbum query --> ', query);
@@ -49,7 +57,23 @@ const deleteAlbum = (albumId) => {
   .catch(err => { throw err; })
 }
 
-/* FETCHING */
+/* FETCH ONE */
+
+export function* fetchAlbumWatcher() {
+  yield takeLatest(FETCH_ALBUM_REQUEST, fetchAlbumHandler);
+}
+
+function* fetchAlbumHandler(action) {
+  try {
+    const { album } = yield call(fetchAlbum, action.id);
+    yield put(fetchAlbumSuccess(album));
+  } catch(err) {
+    console.error('fetchAlbum err --> ', err);
+  }
+}
+
+
+/* SEARCHING */
 
 export function* searchAlbumsWatcher() {
   yield takeLatest(SEARCH_ALBUMS_REQUEST, searchAlbumsHandler);
@@ -105,6 +129,10 @@ function* createAlbumHandler(action) {
       action.data.imagesForm.append('parentId', album._id);
       action.data.imagesForm.append('parentType', 'Album');
 
+      for(let [k, v] of action.data.imagesForm) {
+        console.log(k, ' --- ', v);
+      }
+
       yield put(uploadRequest(action.data.imagesForm));
     }
 
@@ -150,6 +178,7 @@ function* deleteAlbumHandler(action) {
 /* export Watchers */
 
 export default [
+  fork(fetchAlbumWatcher), 
   fork(searchAlbumsWatcher),
   fork(createAlbumWatcher),
   fork(updateAlbumWatcher),

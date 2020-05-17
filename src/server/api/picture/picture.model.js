@@ -12,7 +12,7 @@ export const PictureSchema = new Schema({
   },
   contentType: {
     type: String,
-    match: [/image\/(jpeg|jpg|png)/, "This file's format is incorrect."],
+    match: [/image\/(jpeg|jpg|png|webp)/, "This file's format is incorrect."],
     required: true
   },
   size: {
