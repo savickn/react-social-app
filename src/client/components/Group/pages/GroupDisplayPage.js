@@ -90,7 +90,8 @@ export class GroupDisplayPage extends React.Component {
 
     console.log('groupDisplay state --> ', this.state);
 
-    const dp = this.props.group.displayPicture ? this.props.group.displayPicture.path : this.state.altImg;
+    //const dp = this.props.group.displayPicture ? this.props.group.displayPicture.path : this.state.altImg;
+    const profileId = group.profile ? group.profile._id : null;
 
     const isNone = this.state.role === 'none';
     const isMember = this.state.role === 'member';
@@ -101,7 +102,7 @@ export class GroupDisplayPage extends React.Component {
         {/* BANNER */}
         <div className='groupBanner'>
           <div className='col1'>
-            <Profile profileId={group.profile._id} imageableId={group._id} imageableType='Group' />
+            <Profile profileId={profileId} imageableId={group._id} imageableType='Group' />
           </div>
           <div className='col2'>
             <h2>{this.props.groupName}</h2>

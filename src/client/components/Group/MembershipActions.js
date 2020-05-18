@@ -65,12 +65,13 @@ export const fetchMembershipFailure = (errors) => {
 
 /* CREATION */
 
-export const createMembership = (groupId, userId) => {
+export const createMembership = (groupId, userId, admin=false) => {
   return {
     type: CREATE_MEMBERSHIP,
     payload: {
       groupId, 
       userId, 
+      admin, 
     }
   }
 }

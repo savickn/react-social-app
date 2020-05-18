@@ -15,6 +15,7 @@ import {
   deleteGroupSuccess, deleteGroupFailure,
 } from './GroupActions';
 
+import { createMembership } from './MembershipActions';
 import { createAlbumRequest } from '../Album/AlbumActions';
 
 import axios from '../../util/axiosCaller';
@@ -30,13 +31,6 @@ const fetchGroupAjax = (id) => {
     .then(res => res.data)
     .catch(err => { throw err; })
 }  
-
-const searchGroupsAjax = (query={}) => {
-  console.log('fetchGroup query --> ', query);
-  return axios.get('/api/groups/', { params: query })
-    .then(res => res.data)
-    .catch(err => { throw err; })
-}
 
 const createGroupAjax = (data) => {
   return axios.post('/api/groups/', data, {})
@@ -76,6 +70,13 @@ function* fetchGroupHandler(action) {
 
 /* FETCHING */
 
+const searchGroupsAjax = (query={}) => {
+  console.log('fetchGroup query --> ', query);
+  return axios.get('/api/groups/', { params: query })
+    .then(res => res.data)
+    .catch(err => { throw err; })
+}
+
 export function* searchGroupsWatcher() {
   yield takeLatest(SEARCH_GROUPS_REQUEST, searchGroupsHandler);
 }
@@ -84,7 +85,7 @@ function* searchGroupsHandler(action) {
   try {
     // check reduxStore
     const reduxGroups = yield select(getGroups);
-    console.log(reduxGroups);
+    console.log('reduxGroups --> ', reduxGroups);
   
     // check localStorage if reduxStore is empty and localStorage cache is fresh
 
@@ -113,16 +114,22 @@ export function* createGroupWatcher() {
 
 function* createGroupHandler(action) {
   try {
-    const response = yield call(createGroupAjax, action.data);
-    const group = response.group; 
+    // create Group
+    const { group } = yield call(createGroupAjax, action.data); 
     console.log('createGroupRes --> ', group);
     yield put(createGroupSuccess(group));
+
+    // create Membership for admin User
+    yield put(createMembership(group._id, action.data.admin, true));
+
+    // create ALBUM/PROFILE
     yield put(createAlbumRequest({
       name: 'Display Pictures', 
       authorId: group.admins[0],
       imageableId: group._id,
       imageableType: 'Group',
     }));
+    
     yield put({type: 'NEW_ALERT', alert: { type: 'success', message: `Group - '${group.name}' was successfully created!` }});
     //yield put({type: 'CLOSE_MODAL'});
   } catch(error) {

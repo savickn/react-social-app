@@ -36,7 +36,9 @@ export class UserProfilePage extends React.Component {
   }
 
   render() {
-    if(!this.props.currentUser) return <div></div>; // should prob redirect instead
+    const { currentUser } = this.props;
+    console.log('profilePage currentUser --> ', currentUser);
+    if(!currentUser) return <div></div>; // should prob redirect instead
 
     //const dp = this.getDisplayPicture();
 
@@ -44,39 +46,69 @@ export class UserProfilePage extends React.Component {
     //console.log('profilePage dp --> ', dp);
 
     return (
-      <div className={styles.profileContainer}>
-        <div className={styles.profileContent}>
-          <div className={styles.infoGrid}>
-            <h1 className={styles.header}>{this.props.currentUser.name}</h1>
-            <div className={styles.location}>Location: {this.props.currentUser.location}</div>
-            <div className={styles.joinDate}>Member Since: </div>
-            <div className={styles.socialNetworks}>Networks: </div>
-            <p className={styles.bio}>{this.getBio()}</p>
+      <div className='container'>
+
+        <div className='sidebar'>
+          <div>
+          <Profile 
+                profileId={this.props.currentUser.profile} 
+                imageableId={this.props.currentUser._id} 
+                imageableType='User'
+              />
           </div>
-          <div className={styles.meetups}>
-            <h2>Member of {this.props.currentUser.groups.length} Meetups</h2>
-            <div>
-              {this.props.currentUser.groups.slice(0, 10).map(g => {
-                return <div></div>
-              })}
+          <div>{currentUser.name}</div>
+          <div>{currentUser.location}</div>
+          <div>bio</div>
+        </div>
+
+        <div className='content'>
+          <div className={styles.groupContainer}>
+            { currentUser.groups.map((m) => {
+              return <img src={m.group.profile.image.path} height='50' width='50' />
+            })}
+          </div>
+
+
+        </div>
+
+        {/*
+        <div className={styles.profileContainer}>
+          <div className={styles.profileContent}>
+            <div className={styles.infoGrid}>
+              <h1 className={styles.header}>{this.props.currentUser.name}</h1>
+              <div className={styles.location}>Location: {this.props.currentUser.location}</div>
+              <div className={styles.joinDate}>Member Since: </div>
+              <div className={styles.socialNetworks}>Networks: </div>
+              <p className={styles.bio}>{this.getBio()}</p>
+            </div>
+            <div className={styles.meetups}>
+              <h2>Member of {this.props.currentUser.groups.length} Meetups</h2>
+              <div>
+                {this.props.currentUser.groups.slice(0, 10).map(g => {
+                  return <div></div>
+                })}
+              </div>
+            </div>
+          </div>
+          <div className={styles.profileSidebar}>
+            <div className={styles.displayPictureContainer}>
+              <Profile 
+                profileId={this.props.currentUser.profile} 
+                imageableId={this.props.currentUser._id} 
+                imageableType='User'
+              />
+            </div>
+            <div className={styles.interests}>
+              <h2>Interests</h2>
+              <button>Edit</button>
+              {this.getInterests()}
             </div>
           </div>
         </div>
-        <div className={styles.profileSidebar}>
-          <div className={styles.displayPictureContainer}>
-            <Profile 
-              profileId={this.props.currentUser.profile} 
-              imageableId={this.props.currentUser._id} 
-              imageableType='User'
-            />
-          </div>
-          <div className={styles.interests}>
-            <h2>Interests</h2>
-            <button>Edit</button>
-            {this.getInterests()}
-          </div>
-        </div>
+              */ }
+
       </div>
+      
     );
   }
 };
@@ -103,38 +135,78 @@ const mapStateToProps = (state, props) => {
 export default connect(mapStateToProps)(UserProfilePage);
 
 
-/* OLD
+
+/* OLD 
+
+<div className={styles.profileContainer}>
+  <div className={styles.profileContent}>
+    <div className={styles.infoGrid}>
+      <h1 className={styles.header}>{this.props.currentUser.name}</h1>
+      <div className={styles.location}>Location: {this.props.currentUser.location}</div>
+      <div className={styles.joinDate}>Member Since: </div>
+      <div className={styles.socialNetworks}>Networks: </div>
+      <p className={styles.bio}>{this.getBio()}</p>
+    </div>
+    <div className={styles.meetups}>
+      <h2>Member of {this.props.currentUser.groups.length} Meetups</h2>
+      <div>
+        {this.props.currentUser.groups.slice(0, 10).map(g => {
+          return <div></div>
+        })}
+      </div>
+    </div>
+  </div>
+  <div className={styles.profileSidebar}>
+    <div className={styles.displayPictureContainer}>
+      <Profile 
+        profileId={this.props.currentUser.profile} 
+        imageableId={this.props.currentUser._id} 
+        imageableType='User'
+      />
+    </div>
+    <div className={styles.interests}>
+      <h2>Interests</h2>
+      <button>Edit</button>
+      {this.getInterests()}
+    </div>
+  </div>
+</div>
+
+*/
+
+/* OLDER
 
 <div>
-        <div className="content">
-          <div className="flex-row">
-            <h2>{this.props.currentUser.name}</h2>
-          </div>
-          <div className="flex-row">
-            <h3>{this.props.currentUser.location}</h3>
-            <p>{this.props.currentUser.bio}</p>
-          </div>
-          <div className="flex-row">
-            <h3>Groups</h3>
-            {
-              this.props.currentUser.groups.map(group => (
-                <div>{group.name}</div>
-              ))
-            }
-          </div>
-        </div>
-        <div className="sidebar">
-          <div className="flex-row">
-            Display Picture
-          </div>
-          <div className="flex-row">
-            <h3>Interests</h3>
-            {
-              this.props.currentUser.interests.map(interest => (
-                <div>{interest}</div>
-              ))
-            }
-          </div>
-        </div>
-      </div>
-      */
+  <div className="content">
+    <div className="flex-row">
+      <h2>{this.props.currentUser.name}</h2>
+    </div>
+    <div className="flex-row">
+      <h3>{this.props.currentUser.location}</h3>
+      <p>{this.props.currentUser.bio}</p>
+    </div>
+    <div className="flex-row">
+      <h3>Groups</h3>
+      {
+        this.props.currentUser.groups.map(group => (
+          <div>{group.name}</div>
+        ))
+      }
+    </div>
+  </div>
+  <div className="sidebar">
+    <div className="flex-row">
+      Display Picture
+    </div>
+    <div className="flex-row">
+      <h3>Interests</h3>
+      {
+        this.props.currentUser.interests.map(interest => (
+          <div>{interest}</div>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+*/

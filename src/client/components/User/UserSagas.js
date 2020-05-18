@@ -1,9 +1,10 @@
 
-import { SIGN_UP_REQUEST, FETCH_USERS_REQUEST, UPDATE_USER_REQUEST, DELETE_USER_REQUEST, } from './UserActions';
+import { FETCH_USER_REQUEST, SIGN_UP_REQUEST, SEARCH_USERS_REQUEST, UPDATE_USER_REQUEST, DELETE_USER_REQUEST, } from './UserActions';
 
 import {
+  fetchUserSuccess, 
   signUpSuccess, signUpFailure,
-  fetchUsersSuccess, fetchUsersFailure,
+  searchUsersSuccess, searchUsersFailure,
   updateUserSuccess, updateUserFailure,
   deleteUserSuccess, deleteUserFailure,
 } from './UserActions';
@@ -14,7 +15,13 @@ import { takeLatest, put, call, fork } from 'redux-saga/effects';
 
 /* AJAX REQUESTS */
 
-const fetchUsersAjax = (query) => {
+const fetchUser = (id) => {
+  return axios.get(`api/users/${id}`)
+    .then(res => res.data)
+    .catch(err => { throw err; })
+}
+
+const searchUsersAjax = (query) => {
   return axios.get('api/users/', { params: query })
   .then(res => res.data)
   .catch((err) => { throw err; })
@@ -38,20 +45,34 @@ const deleteUserAjax = (userId) => {
   .catch(err => { throw err; })
 }
 
-/* FETCH USERS */
+/* FETCH ONE */
 
-export function* fetchUsersWatcher() {
-  yield takeLatest(FETCH_USERS_REQUEST, fetchUsersHandler);
+export function* fetchUserWatcher() {
+  yield takeLatest(FETCH_USER_REQUEST, fetchUserHandler);
 }
 
-
-function* fetchUsersHandler(action) {
+function* fetchUserHandler(action) {
   try {
-    const response = yield call(fetchUsersAjax, action.query);
-    yield put(fetchUsersSuccess(response.users));
+    const { user } = yield call(fetchUser, action.id);
+    yield put(fetchUserSuccess(user));
+  } catch(err) {
+    console.error('fetchUser err --> ', err);
+  }
+}
+
+/* SEARCH USERS */
+
+export function* searchUsersWatcher() {
+  yield takeLatest(SEARCH_USERS_REQUEST, searchUsersHandler);
+}
+
+function* searchUsersHandler(action) {
+  try {
+    const response = yield call(searchUsersAjax, action.query);
+    yield put(searchUsersSuccess(response.users));
   } catch (err) {
-    console.log('Err --> ', err);
-    yield put(fetchUsersFailure(err));
+    console.log('searchUsers err --> ', err);
+    yield put(searchUsersFailure(err));
   }
 }
 
@@ -60,7 +81,6 @@ function* fetchUsersHandler(action) {
 export function* addUserWatcher() {
   yield takeLatest(SIGN_UP_REQUEST, addUserHandler);
 }
-
 
 function* addUserHandler(action) {
   try {
@@ -108,8 +128,9 @@ function* deleteUserHandler(action) {
 }
 
 export default [
+  fork(fetchUserWatcher), 
   fork(addUserWatcher),
-  fork(fetchUsersWatcher),
+  fork(searchUsersWatcher),
   fork(updateUserWatcher),
   fork(deleteUserWatcher),
 ];

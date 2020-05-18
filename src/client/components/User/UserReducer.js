@@ -1,5 +1,6 @@
 import { 
-  FETCH_USERS_REQUEST, FETCH_USERS_SUCCESS, FETCH_USERS_FAILURE,
+  FETCH_USER_REQUEST, FETCH_USER_SUCCESS, 
+  SEARCH_USERS_REQUEST, SEARCH_USERS_SUCCESS, SEARCH_USERS_FAILURE,
   SIGN_UP_REQUEST, SIGN_UP_SUCCESS, SIGN_UP_FAILURE, 
   UPDATE_USER_REQUEST, UPDATE_USER_SUCCESS, UPDATE_USER_FAILURE, 
   DELETE_USER_REQUEST, DELETE_USER_SUCCESS, DELETE_USER_FAILURE, 
@@ -40,19 +41,25 @@ const UserReducer = (state = initialState, action) => {
         errors: action.errors,
       };
 
-    case FETCH_USERS_REQUEST:
+    case FETCH_USER_SUCCESS:
+      return {
+        ...state,
+        collection: [...state.collection, action.user], 
+      }
+
+    case SEARCH_USERS_REQUEST:
       return {
         ...state,
         status: 'pending',
         errors: null
       };
-    case FETCH_USERS_SUCCESS:
+    case SEARCH_USERS_SUCCESS:
       return {
         ...state,
         status: 'idle',
         collection: [...action.users]
       };
-    case FETCH_USERS_FAILURE:
+    case SEARCH_USERS_FAILURE:
       return {
         ...state,
         status: 'error',

@@ -20,6 +20,8 @@ import alerts from './components/Utilities/Alert/alertReducer';
 import modal from './components/Utilities/Modal/modalReducer';
 import page from './components/Utilities/Pagination/PaginationReducer';
 
+import osm from './components/Utilities/OSM/GeolocationReducer';
+
 // return list of Reducers which will be combined via 'combineReducers'
 let reducers = {
   app,
@@ -38,6 +40,7 @@ let reducers = {
   comments, 
   profiles, 
   albums, 
+  osm, 
 };
 
 export default reducers;

@@ -1,11 +1,14 @@
 
+export const FETCH_USER_REQUEST = 'FETCH_USER_REQUEST';
+export const FETCH_USER_SUCCESS = 'FETCH_USER_SUCCESS';
+
 export const SIGN_UP_REQUEST = 'SIGN_UP_REQUEST';
 export const SIGN_UP_SUCCESS = 'SIGN_UP_SUCCESS';
 export const SIGN_UP_FAILURE = 'SIGN_UP_FAILURE';
 
-export const FETCH_USERS_REQUEST = 'FETCH_USERS_REQUEST';
-export const FETCH_USERS_SUCCESS = 'FETCH_USERS_SUCCESS';
-export const FETCH_USERS_FAILURE = 'FETCH_USERS_FAILURE';
+export const SEARCH_USERS_REQUEST = 'SEARCH_USERS_REQUEST';
+export const SEARCH_USERS_SUCCESS = 'SEARCH_USERS_SUCCESS';
+export const SEARCH_USERS_FAILURE = 'SEARCH_USERS_FAILURE';
 
 export const UPDATE_USER_REQUEST = 'UPDATE_USER_REQUEST';
 export const UPDATE_USER_SUCCESS = 'UPDATE_USER_SUCCESS';
@@ -39,26 +42,42 @@ export function signUpFailure(errors) {
   };
 }
 
-/* USER QUERIES */
+/* SEARCH USERS */
 
-export function fetchUsersRequest(query) {
+export function searchUsersRequest(query) {
   return {
-    type: FETCH_USERS_REQUEST,
+    type: SEARCH_USERS_REQUEST,
     query,
   }
 }
 
-export function fetchUsersSuccess(users) {
+export function searchUsersSuccess(users) {
   return {
-    type: FETCH_USERS_SUCCESS,
+    type: SEARCH_USERS_SUCCESS,
     users,
   }
 }
 
-export function fetchUsersFailure(errors) {
+export function searchUsersFailure(errors) {
   return {
-    type: FETCH_USERS_FAILURE,
+    type: SEARCH_USERS_FAILURE,
     errors,
+  }
+}
+
+/* FETCH ONE */
+
+export function fetchUserRequest(query) {
+  return {
+    type: FETCH_USER_REQUEST,
+    query, 
+  }
+}
+
+export function fetchUserSuccess(user) {
+  return {
+    type: FETCH_USER_SUCCESS,
+    user, 
   }
 }
 

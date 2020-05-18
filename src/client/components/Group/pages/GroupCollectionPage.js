@@ -20,23 +20,23 @@ import { createGroup, searchGroups } from '../GroupActions';
 import { getGroups, getGroupCount, getLastGroup } from '../GroupReducer';
 import { getCurrentUser } from '../../User/AccountReducer';
 
-export class GroupHomePage extends React.Component {
+export class GroupCollectionPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       showModal: false,
       displayType: 'Groups', // can be 'Groups' or 'Calender'
       id: md5('Groups').toString(base64), // used to identify pagination/etc, should maybe be converted into mongoose virtual method
-      query: '',
-      currentPage: 1,
-      pageSize: 6,
       createGroupState: "None", // represents stage of creation process (e.g. None = hide modal, Group = create group, DisplayPic = create picture)
+
+      search: {}, // for custom products search
+      pagination: {
+        currentPage: 1,
+        pageSize: 12, 
+      }, 
+
     };
   }
-
-  componentWillMount() {
-    this.getGroups();
-  };
 
   componentDidMount() {
     // NOT WORKING CUZ .getGroups IS CALLED IN componentWillMount
@@ -44,6 +44,8 @@ export class GroupHomePage extends React.Component {
     // check localStorage for pagination info
     // check localStorage for search query info
     // check localStorage for search results
+
+    this.searchGroups();
 
     // populate Component state from localStorage (if fresh)
     if(typeof window !== undefined) {
@@ -56,7 +58,7 @@ export class GroupHomePage extends React.Component {
         console.log('diffInMinutes --> ', diffInMinutes);
         if(diffInMinutes < 15) {
           this.setState(state, () => {
-            this.getGroups();
+            this.searchGroups();
           });
         } else {
           localStorage.removeItem(this.state.id);
@@ -65,44 +67,25 @@ export class GroupHomePage extends React.Component {
     }
   };
 
-  /* SERVER REQUESTS */
+                                    /* SERVER REQUESTS */
 
-  getGroups = (q={}) => {
+  // search database for Groups
+  searchGroups = (q={}) => {
     const query = {
       ...q,
-      currentPage: this.state.currentPage,
-      pageSize: this.state.pageSize,
+      currentPage: this.state.pagination.currentPage,
+      pageSize: this.state.pagination.pageSize,
     };
     this.props.dispatch(searchGroups(query));
   };
 
+  // add new Group to database
   addGroup = (name, location) => {
     const admin = this.props.currentUser._id;
     this.props.dispatch(createGroup({ name, location, admin }));
-
-    
-    /*const album = {
-      name: 'Display Pictures', 
-      authorId: admin,
-      imageableId: this.props.lastGroup._id,
-      imageableType: 'Group',
-    };
-    this.props.dispatch(createAlbum(album));*/
   };
 
-  /*createAlbum = (albumData) => {
-    const authorId = this.props.currentUser._id;
-    const imageableType = 'Group';
-    const imageableId = this.props.lastGroup._id;
-    const album = Object.assign({}, albumData, {
-      authorId,
-      imageableId,
-      imageableType, 
-    });
-    this.props.dispatch(createAlbum(album));
-  }*/
-
-  /* STATE HANDLERS */
+                                    /* STATE HANDLERS */
 
   changeDisplayType = (value) => {
     if(['Groups', 'Calender'].includes(value)) {
@@ -110,25 +93,21 @@ export class GroupHomePage extends React.Component {
     };
   };
 
-  changePageSize = (value) => {
-    this.setState({pageSize: value}, () => {
+                                    /* PAGINATION */
+
+  // change pagination state then send AJAX request to repopulate products
+  handlePaginationChange = (paginationState) => {
+    this.setState({pagination: paginationState}, () => {
       if(typeof window !== undefined) {
         localStorage.setItem(this.state.id, JSON.stringify({...this.state, date: Date.now()}));
       }
-      this.getGroups();
+
+      this.searchGroups();
     });
   }
 
-  changeCurrentPage = (value) => {
-    this.setState({currentPage: value}, () => {
-      if(typeof window !== undefined) {
-        localStorage.setItem(this.state.id, JSON.stringify({...this.state, date: Date.now()}));
-      }
-      this.getGroups();
-    });
-  }
 
-  /* Modal Props */
+                                    /* MODAL */
 
   openModal = () => {
     this.setState({showModal: true});  
@@ -139,7 +118,7 @@ export class GroupHomePage extends React.Component {
     this.setState({showModal: false});
   }
 
-  /* Wizard Props */
+                                    /* WIZARD */
 
   onWizardComplete = () => {
 
@@ -150,7 +129,7 @@ export class GroupHomePage extends React.Component {
 
   }
 
-  
+                                    /* RENDER LOGIC */
 
   render() {
     return (
@@ -161,8 +140,8 @@ export class GroupHomePage extends React.Component {
         <Modal isVisible={this.state.showModal} close={this.closeModal}>
           <GroupCreateWidget addGroup={this.addGroup} />
         </Modal>
-        <Pagination currentPage={this.state.currentPage} pageSize={this.state.pageSize} collectionSize={this.props.groupCount}
-          changeSize={this.changePageSize} changePage={this.changeCurrentPage} />
+        <Pagination currentPage={this.state.pagination.currentPage} pageSize={this.state.pagination.pageSize} 
+          collectionSize={this.props.groupCount} changePagination={this.handlePaginationChange} />
       </div>
     );
   }
@@ -202,7 +181,7 @@ function mapStateToProps(state) {
   };
 }
 
-GroupHomePage.propTypes = {
+GroupCollectionPage.propTypes = {
   groups: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string.isRequired,
     location: PropTypes.string.isRequired,
@@ -210,7 +189,30 @@ GroupHomePage.propTypes = {
   dispatch: PropTypes.func.isRequired,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(GroupHomePage);
+export default connect(mapStateToProps, mapDispatchToProps)(GroupCollectionPage);
+
+
+
+    /*const album = {
+      name: 'Display Pictures', 
+      authorId: admin,
+      imageableId: this.props.lastGroup._id,
+      imageableType: 'Group',
+    };
+    this.props.dispatch(createAlbum(album));*/
+
+  /*createAlbum = (albumData) => {
+    const authorId = this.props.currentUser._id;
+    const imageableType = 'Group';
+    const imageableId = this.props.lastGroup._id;
+    const album = Object.assign({}, albumData, {
+      authorId,
+      imageableId,
+      imageableType, 
+    });
+    this.props.dispatch(createAlbum(album));
+  }*/
+
 
 
 //<PaginationRedux collectionId={this.state.id} />

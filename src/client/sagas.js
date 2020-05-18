@@ -1,5 +1,5 @@
 
-//import TodoSagas from './components/ToDo/todoSagas';
+
 import AccountSagas from './components/User/AccountSagas';
 import UserSagas from './components/User/UserSagas';
 
@@ -16,6 +16,8 @@ import AlbumSagas from './components/Album/AlbumSagas';
 
 import AlertSagas from './components/Utilities/Alert/alertSagas';
 
+import OSMSagas from './components/Utilities/OSM/GeolocationSagas';
+
 //import { watchIncrementAsync } from './components/TestApp/TestSagas';
 //import { addUserWatcher } from './components/User/UserSagas';
 //import { todoWatcher } from './components/ToDo/todoSagas';
@@ -30,7 +32,7 @@ export default function* rootSaga() {
     ...EventSagas, 
     ...AlbumSagas, 
     ...UserSagas,
-    //...TodoSagas,
+    ...OSMSagas, 
     ...AccountSagas,
     ...AlertSagas,
     ...GroupSagas,

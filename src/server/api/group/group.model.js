@@ -10,6 +10,10 @@ const GroupSchema = new Schema({
     type: String,
     required: true,
   },
+  coords: { // e.g. "lat, long"
+    type: String, 
+    required: true, 
+  }, 
   category: [{ // for search, e.g. Dining/Athletics/etc
     type: String,
   }],
@@ -37,19 +41,7 @@ const GroupSchema = new Schema({
   albums: [{
     type: Schema.Types.ObjectId,
     ref: 'Album',
-  }],
-  /*admins: [{ // specifies which users have higher-level permissions in this group
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-  }],
-  members: [{
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-  }],*/
-  /*admins: [{
-    type: Schema.Types.ObjectId, 
-    ref: 'Membership', 
-  }], */
+  }], 
   members: [{
     type: Schema.Types.ObjectId, 
     ref: 'Membership', 
@@ -146,3 +138,18 @@ GroupSchema.virtual('distance').get(function(myLocation) {
 GroupSchema.set('toJSON', {virtuals: true});
 
 export default mongoose.model('Group', GroupSchema);
+
+
+
+/*admins: [{ // specifies which users have higher-level permissions in this group
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+  }],
+  members: [{
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+  }],*/
+  /*admins: [{
+    type: Schema.Types.ObjectId, 
+    ref: 'Membership', 
+  }], */

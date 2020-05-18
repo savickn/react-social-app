@@ -12,6 +12,7 @@ const options = {
   //fallback: <div> Loading... </div>
 };
 
+const OSMPage = loadable(() => import('./components/Prototypes/OpenStreetMap'), options)
 const ModalWizardPage = loadable(() => import('./components/Prototypes/ModalWizardTestPage'), options)
 const StylesTest = loadable(() => import('./components/Prototypes/StylesTestPage'), options);
 const CommentTest = loadable(() => import('./components/Comment//components/CommentHub'), options);
@@ -23,7 +24,7 @@ const LoginPage = loadable(() => import('./components/User/pages/UserLoginPage/U
 const SignUpPage = loadable(() => import('./components/User/pages/UserCreatePage/UserCreatePage'), options);
 const ProfilePage = loadable(() => import('./components/User/pages/UserProfilePage/UserProfilePage'), options);
 const GroupDisplayPage = loadable(() => import('./components/Group/pages/GroupDisplayPage'), options);
-const GroupHomePage = loadable(() => import('./components/Group/pages/GroupHomePage'), options);
+const GroupCollectionPage = loadable(() => import('./components/Group/pages/GroupCollectionPage'), options);
 const EventDisplayPage = loadable(() => import('./components/Event/pages/EventDisplayPage'), options);
 const AlbumDisplayPage = loadable(() => import('./components/Album/pages/AlbumPage'), options);
 
@@ -33,7 +34,7 @@ export default (
     <Route path='/users/login' component={LoginPage} />
     <Route path='/users/new' component={SignUpPage} />
     <ProtectedRoute path='/users/:userId' component={ProfilePage} />
-    <Route exact path='/groups' component={GroupHomePage} />
+    <Route exact path='/groups' component={GroupCollectionPage} />
     <Route exact path='/groups/:groupId/events/:eventId' component={EventDisplayPage} />
     <ProtectedRoute path='/groups/:groupId' component={GroupDisplayPage} />
     <Route path='/albums/:albumId' component={AlbumDisplayPage} />
@@ -43,6 +44,7 @@ export default (
     <ProtectedRoute path="/modalwizard" component={ModalWizardPage} role='admin' />
     <ProtectedRoute path="/stylesTest" component={StylesTest} role='admin' />
     <ProtectedRoute path="/commentTest" component={CommentTest} role='admin' />
+    <ProtectedRoute path="/openstreetmap" component={OSMPage} role='admin' />
   </Switch>
 )
 

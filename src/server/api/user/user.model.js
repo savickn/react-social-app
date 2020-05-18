@@ -54,7 +54,7 @@ export const UserSchema = new Schema({
   }],
   events: [{
     type: Schema.Types.ObjectId,
-    ref: 'Event',
+    ref: 'Invite',
   }],
   profile: {
     type: Schema.Types.ObjectId,
