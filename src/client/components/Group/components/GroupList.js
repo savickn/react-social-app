@@ -12,8 +12,8 @@ function GroupList(props) {
         props.groups.map(group => (
           <div className={styles['flex-gallery-element']}>
             <GroupListItem
-              group={group}
               key={group._id}
+              group={group}
             />
           </div>
         ))

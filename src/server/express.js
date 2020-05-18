@@ -12,9 +12,14 @@ import errorHandler from 'errorhandler';
 
 import config from './config/environment';
 
+
+import { ipTracker } from './util/ipMiddleware';
+
 export default function(app) {
   console.log('registering express');
   let env = app.get('env');
+
+                                      /* IMPORTANT MIDDLEWARE */
 
   app.set('views', path.resolve(config.root, 'src/server/views'));
   app.set('view engine', 'pug');
@@ -34,6 +39,13 @@ export default function(app) {
       db: 'passport'
     })
   }));*/
+
+                                    /* CUSTOM MIDDLEWARE */
+
+  //app.use(ipTracker);
+
+
+  /* ASSETS */
 
   app.set('appPath', path.resolve(config.root, 'dist')); 
   app.set('staticDir', path.resolve(config.root, 'src/server/public'));

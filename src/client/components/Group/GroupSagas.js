@@ -24,33 +24,13 @@ import { takeLatest, put, call, fork, select } from 'redux-saga/effects';
 import { getGroups } from './GroupReducer';
 
 
-/* API CALLS */
+                              /* FETCH ONE */
 
 const fetchGroupAjax = (id) => {
   return axios.get(`/api/groups/${id}`)
     .then(res => res.data)
     .catch(err => { throw err; })
 }  
-
-const createGroupAjax = (data) => {
-  return axios.post('/api/groups/', data, {})
-  .then(res => res.data)
-  .catch(err => { throw err; })
-}
-
-const updateGroupAjax = (data) => {
-  return axios.put(`/api/groups/${data._id}`, data, {})
-  .then(res => res.data)
-  .catch(err => { throw err; })
-}
-
-const deleteGroupAjax = (groupId) => {
-  return axios.delete(`api/groups/${groupId}`)
-  .then(res => res.data)
-  .catch(err => { throw err; })
-}
-
-/* FETCH ONE */
 
 export function* fetchGroupWatcher() {
   yield takeLatest(FETCH_GROUP_REQUEST, fetchGroupHandler);
@@ -68,7 +48,7 @@ function* fetchGroupHandler(action) {
 }
 
 
-/* FETCHING */
+                            /* SEARCHING */
 
 const searchGroupsAjax = (query={}) => {
   console.log('fetchGroup query --> ', query);
@@ -106,7 +86,13 @@ function* searchGroupsHandler(action) {
   }
 }
 
-/* CREATING */
+                              /* CREATING */
+
+const createGroupAjax = (data) => {
+  return axios.post('/api/groups/', data, {})
+  .then(res => res.data)
+  .catch(err => { throw err; })
+}
 
 export function* createGroupWatcher() {
   yield takeLatest(CREATE_GROUP_REQUEST, createGroupHandler);
@@ -137,7 +123,13 @@ function* createGroupHandler(action) {
   }
 }
 
-/* UPDATING */
+                            /* UPDATING */
+
+const updateGroupAjax = (data) => {
+  return axios.put(`/api/groups/${data._id}`, data, {})
+  .then(res => res.data)
+  .catch(err => { throw err; })
+}
 
 export function* updateGroupWatcher() {
   yield takeLatest(UPDATE_GROUP_REQUEST, updateGroupHandler);
@@ -152,7 +144,13 @@ function* updateGroupHandler(action) {
   }
 }
 
-/* DELETING */
+                            /* DELETING */
+
+const deleteGroupAjax = (groupId) => {
+  return axios.delete(`api/groups/${groupId}`)
+  .then(res => res.data)
+  .catch(err => { throw err; })
+}
 
 export function* deleteGroupWatcher() {
   yield takeLatest(DELETE_GROUP_REQUEST, deleteGroupHandler);
@@ -169,7 +167,7 @@ function* deleteGroupHandler(action) {
 }
 
 
-/* export Watchers */
+                            /* EXPORTS */
 
 export default [
   fork(fetchGroupWatcher), 

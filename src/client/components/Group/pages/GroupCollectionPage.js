@@ -17,8 +17,10 @@ import WizardPage from '../../Utilities/Wizard/page';
 import { createGroup, searchGroups } from '../GroupActions';
 //import { createAlbum } from '../../Album/AlbumActions';
 
+import { autocompleteRequest, } from '../../Utilities/OSM/GeolocationActions';
+import { getLocation, getAutocomplete, } from '../../Utilities/OSM/GeolocationReducer';
 import { getGroups, getGroupCount, getLastGroup } from '../GroupReducer';
-import { getCurrentUser } from '../../User/AccountReducer';
+import { getCurrentUser, } from '../../User/AccountReducer';
 
 export class GroupCollectionPage extends React.Component {
   constructor(props) {
@@ -27,14 +29,15 @@ export class GroupCollectionPage extends React.Component {
       showModal: false,
       displayType: 'Groups', // can be 'Groups' or 'Calender'
       id: md5('Groups').toString(base64), // used to identify pagination/etc, should maybe be converted into mongoose virtual method
-      createGroupState: "None", // represents stage of creation process (e.g. None = hide modal, Group = create group, DisplayPic = create picture)
+      createGroupState: 'None', // represents stage of creation process (e.g. None = hide modal, Group = create group, DisplayPic = create picture)
+
+
 
       search: {}, // for custom products search
       pagination: {
         currentPage: 1,
         pageSize: 12, 
       }, 
-
     };
   }
 
@@ -80,10 +83,21 @@ export class GroupCollectionPage extends React.Component {
   };
 
   // add new Group to database
-  addGroup = (name, location) => {
+  addGroup = (name, locData) => {
     const admin = this.props.currentUser._id;
-    this.props.dispatch(createGroup({ name, location, admin }));
+
+    const location = locData.display_name.split(', ')[0];
+    const lat = locData.lat;
+    const lon = locData.lon;
+
+    this.props.dispatch(createGroup({ name, location, lat, lon, admin }));
   };
+
+  // query OSM for location suggestions
+  getSuggestions = (query) => {
+    const country_code = this.props.location.address.country_code;
+    this.props.dispatch(autocompleteRequest({ location: query, country_code }));
+  }
 
                                     /* STATE HANDLERS */
 
@@ -118,27 +132,21 @@ export class GroupCollectionPage extends React.Component {
     this.setState({showModal: false});
   }
 
-                                    /* WIZARD */
-
-  onWizardComplete = () => {
-
-  }
-
-  // called by WizardPage to check if 
-  validateGroupCreated = () => {
-
-  }
-
                                     /* RENDER LOGIC */
 
   render() {
+    const { location } = this.props;
+
+    const countryCode = location.address ? location.address.country_code : null;
+
     return (
       <div>
-        <GroupSearchBar search={this.handleSearch} displayType={this.state.displayType} changeDisplayType={this.changeDisplayType}/>
+        <GroupSearchBar search={this.handleSearch} displayType={this.state.displayType} changeDisplayType={this.changeDisplayType} 
+          location={this.props.location} />
         <GroupList groups={this.props.groups} displayType={this.state.displayType}/>
         <button className='btn btn-default fill-container' onClick={this.openModal}><span className='glyphicon glyphicon-plus click-cursor'></span></button>
         <Modal isVisible={this.state.showModal} close={this.closeModal}>
-          <GroupCreateWidget addGroup={this.addGroup} />
+          <GroupCreateWidget addGroup={this.addGroup} getSuggestions={this.getSuggestions} locationSuggestions={this.props.suggestions} />
         </Modal>
         <Pagination currentPage={this.state.pagination.currentPage} pageSize={this.state.pagination.pageSize} 
           collectionSize={this.props.groupCount} changePagination={this.handlePaginationChange} />
@@ -175,6 +183,8 @@ function mapDispatchToProps(dispatch) {
 function mapStateToProps(state) {
   return {
     currentUser: getCurrentUser(state),
+    location: getLocation(state),
+    suggestions: getAutocomplete(state), 
     groups: getGroups(state),
     groupCount: getGroupCount(state),
     lastGroup: getLastGroup(state), 

@@ -2,11 +2,13 @@
 import {
   GEOCODING_SUCCESS,
   AUTOCOMPLETE_SUCCESS, 
+  REVERSE_SUCCESS, 
 } from './GeolocationActions';
 
 const initialState = {
-  geocode: '',
-  autocomplete: [], 
+  lookup: {}, // represents geocode search result
+  autocomplete: [], // represents autocomplete results
+  location: {}, // represents reverse lookup results
 }
 
 const GeolocationReducer = (state=initialState, action) => {
@@ -14,12 +16,17 @@ const GeolocationReducer = (state=initialState, action) => {
     case GEOCODING_SUCCESS: 
       return {
         ...state, 
-        geocode: action.coords, 
+        lookup: action.coords, 
       }
     case AUTOCOMPLETE_SUCCESS:
       return {
         ...state, 
         autocomplete: [...action.data], 
+      }
+    case REVERSE_SUCCESS:
+      return {
+        ...state, 
+        location: action.data
       }
     default:
       return state;
@@ -28,5 +35,6 @@ const GeolocationReducer = (state=initialState, action) => {
 
 export const getGeocode = (state) => state.osm.geocode;
 export const getAutocomplete = (state) => state.osm.autocomplete;
+export const getLocation = (state) => state.osm.location;
 
 export default GeolocationReducer;

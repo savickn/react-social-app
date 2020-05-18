@@ -3,28 +3,30 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { debounce } from 'lodash';
 
-//import axios from '../../util/axiosCaller';
-
-import { getGeocode, getAutocomplete, } from '../Utilities/OSM/GeolocationReducer';
-import { geocodeRequest, autocompleteRequest, } from '../Utilities/OSM/GeolocationActions';
+import { getGeocode, getAutocomplete, getLocation,  } from '../Utilities/OSM/GeolocationReducer';
+import { geocodeRequest, autocompleteRequest, reverseRequest, } from '../Utilities/OSM/GeolocationActions';
 
 class OSMPage extends React.Component {
   
   constructor(props) {
     super(props);
     this.state = {
-      selected: '', 
+      selected: '',
+      coords: {},  
       location: '', 
     };
   }
 
-  /*componentDidMount() {
-    axios.get('https://nominatim.openstreetmap.org/search?city=Toronto&country=Canada&format=json')
-      .then(res => res.data)
-      .then(obj => {
-        console.log('obj --> ', obj);
-      })
-  }*/
+  componentDidMount() {
+    // get user's location
+    navigator.geolocation.getCurrentPosition((loc) => {
+      console.log('coords --> ', loc);
+      this.setState({ coords: {
+        lat: loc.coords.latitude,
+        lon: loc.coords.longitude, 
+      }})
+    });
+  }
 
   /* EVENT HANDLERS */
 
@@ -35,13 +37,21 @@ class OSMPage extends React.Component {
     })
   }, 500)
 
-  // 
-  getAutocomplete = () => {
-    const { location } = this.state;
-    this.props.dispatch(autocompleteRequest({ location }));
+  // used to convert HTML5 geolocation coords to OSM location
+  reverseGeocode = () => {
+    const { coords } = this.state;
+    this.props.dispatch(reverseRequest(coords));
   }
 
-  // 
+  // used to provide search suggestions based on location name
+  getAutocomplete = () => {
+    const { location } = this.state;
+    const country_code = this.props.location.address ? this.props.location.address.country_code : null;
+
+    this.props.dispatch(autocompleteRequest({ location, country_code }));
+  }
+
+  // used to convert location name (e.g. Etobicoke) to lat/lon coords
   getGeocode = () => {
     const { location } = this.state;
     this.props.dispatch(geocodeRequest(''));
@@ -52,6 +62,7 @@ class OSMPage extends React.Component {
   render() {
     return (
       <div>
+        <button onClick={this.reverseGeocode} >Reverse</button>
         <button onClick={this.getGeocode}>Geocode</button>
         <input type='text' onChange={(e) => this.onLocationChange(e.target.value)} />
         { this.props.autocomplete.map((res, idx) => {
@@ -66,6 +77,7 @@ function mapStateToProps(state, props) {
   return { 
     geocode: getGeocode(state),
     autocomplete: getAutocomplete(state), 
+    location: getLocation(state), 
   };
 }
 

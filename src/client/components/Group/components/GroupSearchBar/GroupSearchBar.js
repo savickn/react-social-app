@@ -11,14 +11,11 @@ export class GroupSearchBar extends Component {
     this.state = {
       query: '',
       location: 'Toronto, Ontario', // should auto-detect if possible
-      distance: 10, // should default to 10 miles
+      distance: 50, // should default to 10 miles
     };
   }
 
-  handleDisplayChange = (type) => {
-    console.log('display type', type);
-    this.props.changeDisplayType(type);
-  }
+  /* FORM HANDLERS */
 
   handleQueryChange = (se) => {
     this.setState({query: se.target.value});
@@ -36,9 +33,17 @@ export class GroupSearchBar extends Component {
     this.setState({distance: distance});
   }
 
-  hasQuery = () => {
-    return (this.state.query.length > 0) ? true : false;
+
+  /* EVENT HANDLERS */
+
+  handleLocationChange = () => {
+
   }
+
+  handleDisplayChange = (type) => {
+    console.log('display type', type);
+    this.props.changeDisplayType(type);
+  };
 
   handleSubmit = (se) => {
     if (this.hasQuery()) {
@@ -46,8 +51,22 @@ export class GroupSearchBar extends Component {
     }
   };
 
+  /* RENDER LOGIC */
+
+  hasQuery = () => {
+    return (this.state.query.length > 0) ? true : false;
+  }
+
+  // converts OSM location object to String
+  parseLocation = () => {
+    const { location } = this.props;
+    return location.address ? `${location.address.city}, ${location.address.state}` : '';
+  }
+
   render() {
     const hasQuery = this.hasQuery();
+
+    const location = this.parseLocation();
 
     return (
       <div className={styles['flex-search-bar']}>
@@ -62,15 +81,14 @@ export class GroupSearchBar extends Component {
         <div className={styles['location-input']}>
            within
           <NavDropdown id='distance-dropdown' className={styles['inline']} title={this.state.distance} activeKey={this.state.distance} onSelect={this.handleDistanceChange} noCaret>
-            <MenuItem eventKey="5">5</MenuItem>
             <MenuItem eventKey="10">10</MenuItem>
             <MenuItem eventKey="25">25</MenuItem>
             <MenuItem eventKey="50">50</MenuItem>
             <MenuItem eventKey="100">100</MenuItem>
           </NavDropdown>
            miles of
-          <NavDropdown id='location-dropdown' className={styles['inline']} title={this.state.location} noCaret>
-            <MenuItem eventKey="5">5</MenuItem>
+          <NavDropdown id='location-dropdown' className={styles['inline']} title={location} noCaret>
+            <MenuItem eventKey="5"> Not Your Location? </MenuItem>
           </NavDropdown>
         </div>
         <div className={styles['toggle-display-type']}>

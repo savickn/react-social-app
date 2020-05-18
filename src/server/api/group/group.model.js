@@ -10,8 +10,12 @@ const GroupSchema = new Schema({
     type: String,
     required: true,
   },
-  coords: { // e.g. "lat, long"
+  lat: {
     type: String, 
+    required: true, 
+  }, 
+  lon: {
+    type: String,
     required: true, 
   }, 
   category: [{ // for search, e.g. Dining/Athletics/etc
@@ -133,7 +137,6 @@ GroupSchema.virtual('memberCount').get(function() {
 GroupSchema.virtual('distance').get(function(myLocation) {
   return interpolateDistance(myLocation, this.location);
 })
-
 
 GroupSchema.set('toJSON', {virtuals: true});
 

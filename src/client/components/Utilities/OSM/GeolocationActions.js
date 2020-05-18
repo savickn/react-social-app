@@ -5,6 +5,10 @@ export const GEOCODING_SUCCESS = 'GEOCODING_SUCCESS';
 export const AUTOCOMPLETE_REQUEST = 'ADDRESS_AUTOCOMPLETE_REQUEST'; 
 export const AUTOCOMPLETE_SUCCESS = 'ADDRESS_AUTOCOMPLETE_SUCCESS'; 
 
+export const REVERSE_REQUEST = 'REVERSE_REQUEST';
+export const REVERSE_SUCCESS = 'REVERSE_SUCCESS';
+
+
 /* ADDRESS AUTOCOMPLETE */
 
 export const autocompleteRequest = (query) => {
@@ -37,4 +41,18 @@ export const geocodeSuccess = (coords) => {
   }
 }
 
+/* REVERSE GEOCODING */
 
+export const reverseRequest = (coords) => {
+  return {
+    type: REVERSE_REQUEST,
+    coords, 
+  }
+}
+
+export const reverseSuccess = (data) => {
+  return {
+    type: REVERSE_SUCCESS,
+    data, 
+  }
+}

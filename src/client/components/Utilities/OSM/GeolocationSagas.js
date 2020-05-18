@@ -1,47 +1,48 @@
 
 import {
-  GEOCODING_REQUEST, AUTOCOMPLETE_REQUEST, 
-  geocodeSuccess, autocompleteSuccess, 
+  GEOCODING_REQUEST, AUTOCOMPLETE_REQUEST, REVERSE_REQUEST, 
+  geocodeSuccess, autocompleteSuccess, reverseSuccess, 
 } from './GeolocationActions';
 
 import { takeLatest, fork, call, put, } from 'redux-saga/effects';
 
 import axios from '../../../util/axiosCaller';
 
-/* Geocoding */
+/* Reverse Geocoding */
 
-function geocode(data) {
-
-
-  return axios.get()
+function reverseGeocode(coords) {
+  const templateStr = `https://nominatim.openstreetmap.org/reverse?lat=${coords.lat}&lon=${coords.lon}&format=json`;
+  console.log(templateStr);
+  return axios.get(templateStr)
+    .then(res => res.data)
+    .catch(err => { throw err; })
 }
 
-function* geocodeWatcher() {
-  yield takeLatest(GEOCODING_REQUEST, geocodeHandler);
+function* reverseWatcher() {
+  yield takeLatest(REVERSE_REQUEST, reverseHandler);
 }
 
-function* geocodeHandler(action) {
+function* reverseHandler(action) {
   try {
-    const res = yield call(geocode, action.queryString);
-    console.log('geocode res --> ', res);
+    const res = yield call(reverseGeocode, action.coords);
+    console.log('reverse res --> ', res);
+    yield put(reverseSuccess(res));
   } catch(err) {
     console.error('geocode err --> ', err);
   }
 }
 
-
 /* Autocomplete */
 
 // WORKING (more or less)
 function autocomplete(query) {
-  console.log('autocomplete query --> ', query);
+  const restrictions = query.country_code ? `&countrycodes=${query.country_code}` : '';
 
-  // const query = 'https://nominatim.openstreetmap.org/search?q=etobicoke&format=json';
-  // const query = 'https://nominatim.openstreetmap.org/search?q=36+holywell+drive&format=json';
+  const templateStr = `https://nominatim.openstreetmap.org/search?q=${query.location}${restrictions}&format=json&addressdetails=1`;
 
-  const template = `https://nominatim.openstreetmap.org/search?q=${query.location}&format=json`;
+  console.log('autocompleteStr --> ', templateStr);
 
-  return axios.get(template)
+  return axios.get(templateStr)
     .then(res => res.data)
     .catch(err => { throw err; })
 }
@@ -60,10 +61,33 @@ function* autocompleteHandler(action) {
   }
 }
 
+
+/* GEOCODING */
+
+function geocode(data) {
+  const templateStr = `https://nominatim.openstreetmap.org/search?q=${query.location}&format=json`;
+
+  return axios.get()
+}
+
+function* geocodeWatcher() {
+  yield takeLatest(GEOCODING_REQUEST, geocodeHandler);
+}
+
+function* geocodeHandler(action) {
+  try {
+    const res = yield call(geocode, action.queryString);
+    console.log('geocode res --> ', res);
+  } catch(err) {
+    console.error('geocode err --> ', err);
+  }
+}
+
 /* EXPORTS */
 
 export default [
   fork(autocompleteWatcher),
   fork(geocodeWatcher), 
+  fork(reverseWatcher), 
 ]
 

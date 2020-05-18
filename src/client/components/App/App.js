@@ -15,6 +15,7 @@ import Spinner from '../Utilities/Spinner/spinkit';
 
 //import { switchLanguage } from '../../modules/Intl/IntlActions';
 import { logOut } from '../User/AccountActions';
+import { reverseRequest } from '../Utilities/OSM/GeolocationActions';
 
 import { getCurrentUser, getAccountStatus } from '../User/AccountReducer';
 import { isLoading } from './AppReducer';
@@ -24,6 +25,15 @@ export class App extends React.Component {
   componentDidMount() {
     this.props.dispatch({type: 'RESOLVED'}); // used to remove Spinner after loading
     
+    // get user location
+    navigator.geolocation.getCurrentPosition((loc) => {
+      console.log('coords --> ', loc);
+      this.props.dispatch(reverseRequest({
+        lat: loc.coords.latitude,
+        lon: loc.coords.longitude, 
+      }))
+    });
+
     // attempt user auth from localStorage
     if(localStorage.getItem('authToken')) {
       this.props.dispatch({type: 'TOKEN_AUTH'});

@@ -58,6 +58,23 @@ export function readFileAsync(file) {
 }
 
 
+// used to calculate distance between 2 lat/lon coordinates 
+export function haversine(lat1, lon1, lat2, lon2) {
+  const RM = 3961;
+  const RK = 6373;
+
+  const dlon = lon2 - lon1;
+  const dlat = lat2 - lat1;
+  const a = (sin(dlat/2))^2 + cos(lat1) * cos(lat2) * (sin(dlon/2))^2;
+  const c = 2 * atan2( sqrt(a), sqrt(1-a) );
+  
+  const dM = RM * c; 
+  const dK = RK * c;
+  
+  console.log('dm --> ', dM);
+  console.log('dk --> ', dK);
+}
+
 
 
 

@@ -52,12 +52,12 @@ export const getGroup = (req, res) => {
 }
 
 /*
-* Required args: name, location, admin
+* Required args: name, location, admin, lat, lon
 * 
 * 
 */
 export const addGroup = async (req, res) => {
-  if (!req.body.name || !req.body.location || !req.body.admin) {
+  if (!req.body.name || !req.body.location || !req.body.lat || !req.body.lon || !req.body.admin) {
     return res.status(403).end('Invalid body arguments!');
   };
 
