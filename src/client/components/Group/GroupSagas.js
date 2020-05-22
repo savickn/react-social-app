@@ -64,8 +64,8 @@ export function* searchGroupsWatcher() {
 function* searchGroupsHandler(action) {
   try {
     // check reduxStore
-    const reduxGroups = yield select(getGroups);
-    console.log('reduxGroups --> ', reduxGroups);
+    //const reduxGroups = yield select(getGroups);
+    //console.log('reduxGroups --> ', reduxGroups);
   
     // check localStorage if reduxStore is empty and localStorage cache is fresh
 
@@ -73,6 +73,7 @@ function* searchGroupsHandler(action) {
     // call API to retrieve immediate results
     const response = yield call(searchGroupsAjax, action.query);
     let { groups, count } = response;
+    console.log('searchGroups res --> ', response);
     yield put(searchGroupsSuccess(groups, count));
 
     // save results to localStorage

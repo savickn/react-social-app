@@ -38,7 +38,8 @@ export const searchAlbums = async (req, res) => {
 // used to retreive all data for one Album entry
 export const fetchAlbum = (req, res) => {
   Album.findById(req.params.id)
-    .populate('author pictures')
+    .populate('author')
+    .populate('pictures')
     .populate({
       path: 'profile',
       populate: {

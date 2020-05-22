@@ -59,13 +59,12 @@ export class GroupSearchBar extends Component {
 
   // converts OSM location object to String
   parseLocation = () => {
-    const { location } = this.props;
-    return location.address ? `${location.address.city}, ${location.address.state}` : '';
+    const { address } = this.props;
+    return address ? `${address.city}, ${address.state}` : '';
   }
 
   render() {
     const hasQuery = this.hasQuery();
-
     const location = this.parseLocation();
 
     return (
@@ -86,7 +85,7 @@ export class GroupSearchBar extends Component {
             <MenuItem eventKey="50">50</MenuItem>
             <MenuItem eventKey="100">100</MenuItem>
           </NavDropdown>
-           miles of
+           kilometers of
           <NavDropdown id='location-dropdown' className={styles['inline']} title={location} noCaret>
             <MenuItem eventKey="5"> Not Your Location? </MenuItem>
           </NavDropdown>
@@ -103,6 +102,8 @@ export class GroupSearchBar extends Component {
 }
 
 GroupSearchBar.propTypes = {
+  address: PropTypes.object.isRequired, 
+
   search: PropTypes.func.isRequired,
   displayType: PropTypes.string.isRequired,
   changeDisplayType: PropTypes.func.isRequired,

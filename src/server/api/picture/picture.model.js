@@ -50,6 +50,8 @@ export const PictureSchema = new Schema({
 // NOTE: should add validation to check that User has proper permissions to add Picture to Album
 PictureSchema.pre('save', function(next) {
   
+  console.log('pre-save picture this --> ', this);
+
   let updateObj = {};
 
   switch(this.parentType) {
@@ -62,6 +64,8 @@ PictureSchema.pre('save', function(next) {
     default: 
       return next(false);
   }
+
+  console.log('updateObj --> ', updateObj);
 
   mongoose.model(this.parentType)
     .findByIdAndUpdate(this.parentId, updateObj)

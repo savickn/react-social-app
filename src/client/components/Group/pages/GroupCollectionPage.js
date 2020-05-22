@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import md5 from 'crypto-js/md5';
 import base64 from 'crypto-js/enc-base64';
+import { isEmpty } from 'lodash';
 
 import GroupList from '../components/GroupList';
 import GroupCreateWidget from '../components/GroupCreateWidget/GroupCreateWidget';
@@ -18,7 +19,7 @@ import { createGroup, searchGroups } from '../GroupActions';
 //import { createAlbum } from '../../Album/AlbumActions';
 
 import { autocompleteRequest, } from '../../Utilities/OSM/GeolocationActions';
-import { getLocation, getAutocomplete, } from '../../Utilities/OSM/GeolocationReducer';
+import { getLocation, getAutocomplete, getGeojson, } from '../../Utilities/OSM/GeolocationReducer';
 import { getGroups, getGroupCount, getLastGroup } from '../GroupReducer';
 import { getCurrentUser, } from '../../User/AccountReducer';
 
@@ -32,8 +33,10 @@ export class GroupCollectionPage extends React.Component {
       createGroupState: 'None', // represents stage of creation process (e.g. None = hide modal, Group = create group, DisplayPic = create picture)
 
 
-
-      search: {}, // for custom products search
+      // for custom Groups search
+      search: {
+        distance: 50, 
+      }, 
       pagination: {
         currentPage: 1,
         pageSize: 12, 
@@ -51,7 +54,7 @@ export class GroupCollectionPage extends React.Component {
     this.searchGroups();
 
     // populate Component state from localStorage (if fresh)
-    if(typeof window !== undefined) {
+    /*if(typeof window !== undefined) {
       const item = localStorage.getItem(this.state.id);
       console.log('item --> ', item);
       if(item) {
@@ -67,30 +70,57 @@ export class GroupCollectionPage extends React.Component {
           localStorage.removeItem(this.state.id);
         }
       }
-    }
+    }*/
   };
+
+  componentDidUpdate(prevProps, prevState) {
+    //console.log('componentDidUpdate', prevProps);
+    // populate 'this.props.groups' after 'this.props.location' is resolved
+    if(isEmpty(prevProps.location) && !isEmpty(this.props.location)) {
+      this.searchGroups();
+    }
+  }
+
 
                                     /* SERVER REQUESTS */
 
   // search database for Groups
   searchGroups = (q={}) => {
+    const { location, geojson, } = this.props;
+
     const query = {
       ...q,
+      maxDistance: this.state.search.distance,
+      coords: geojson, 
       currentPage: this.state.pagination.currentPage,
       pageSize: this.state.pagination.pageSize,
     };
     this.props.dispatch(searchGroups(query));
   };
 
+  // update parent component search query
+  handleQueryChanged = (search) => {
+    this.setState({ search: {
+      ...search
+    }});
+  }
+
+
+
+  /* CREATE GROUP */
+
   // add new Group to database
   addGroup = (name, locData) => {
     const admin = this.props.currentUser._id;
 
     const location = locData.display_name.split(', ')[0];
-    const lat = locData.lat;
-    const lon = locData.lon;
+    const geoJSON = {
+      type: 'Point',
+      coordinates: [ Number.parseFloat(locData.lon), Number.parseFloat(locData.lat) ],
+      location, 
+    };
 
-    this.props.dispatch(createGroup({ name, location, lat, lon, admin }));
+    this.props.dispatch(createGroup({ name, geoJSON, admin }));
   };
 
   // query OSM for location suggestions
@@ -137,12 +167,12 @@ export class GroupCollectionPage extends React.Component {
   render() {
     const { location } = this.props;
 
-    const countryCode = location.address ? location.address.country_code : null;
+    const countryCode = location.properties ? location.address.country_code : null;
 
     return (
       <div>
         <GroupSearchBar search={this.handleSearch} displayType={this.state.displayType} changeDisplayType={this.changeDisplayType} 
-          location={this.props.location} />
+          address={this.props.location.address} distance={this.state.search.dispatch} />
         <GroupList groups={this.props.groups} displayType={this.state.displayType}/>
         <button className='btn btn-default fill-container' onClick={this.openModal}><span className='glyphicon glyphicon-plus click-cursor'></span></button>
         <Modal isVisible={this.state.showModal} close={this.closeModal}>
@@ -183,11 +213,15 @@ function mapDispatchToProps(dispatch) {
 function mapStateToProps(state) {
   return {
     currentUser: getCurrentUser(state),
-    location: getLocation(state),
-    suggestions: getAutocomplete(state), 
     groups: getGroups(state),
     groupCount: getGroupCount(state),
     lastGroup: getLastGroup(state), 
+
+    // geocoding 
+    location: getLocation(state),
+    geojson: getGeojson(state),
+    suggestions: getAutocomplete(state), 
+
   };
 }
 

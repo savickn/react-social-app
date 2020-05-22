@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 
 import { Link } from 'react-router-dom';
 
+import styles from './AlbumIcon.scss';
+
 import noPic from '../../../../shared/no-image-icon.png';
 
 // used to display thumbnail + info about an Album
@@ -13,7 +15,7 @@ class AlbumIcon extends React.Component {
 
     return (
       <Link to={`/albums/${this.props.albumId}`}>
-        <img src={image} width='100' height='150' />
+        <img src={image} width='105' height='130' className={styles.albumImg} />
       </Link>
     )
   }

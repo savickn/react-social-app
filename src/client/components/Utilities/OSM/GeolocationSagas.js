@@ -11,7 +11,7 @@ import axios from '../../../util/axiosCaller';
 /* Reverse Geocoding */
 
 function reverseGeocode(coords) {
-  const templateStr = `https://nominatim.openstreetmap.org/reverse?lat=${coords.lat}&lon=${coords.lon}&format=json`;
+  const templateStr = `https://nominatim.openstreetmap.org/reverse?lat=${coords.lat}&lon=${coords.lon}&format=geojson`;
   console.log(templateStr);
   return axios.get(templateStr)
     .then(res => res.data)
@@ -26,7 +26,7 @@ function* reverseHandler(action) {
   try {
     const res = yield call(reverseGeocode, action.coords);
     console.log('reverse res --> ', res);
-    yield put(reverseSuccess(res));
+    yield put(reverseSuccess(res.features[0]));
   } catch(err) {
     console.error('geocode err --> ', err);
   }

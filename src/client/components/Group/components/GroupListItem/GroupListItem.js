@@ -26,6 +26,7 @@ function GroupListItem(props) {
     <Link className={linkStyle} style={bgd} to={`/groups/${props.group._id}/`} >
       <span >
         <h3>{props.group.name}</h3>
+        <p>{props.group.location}</p>
         <p>{props.group.memberCount} Members</p>
       </span>
     </Link>

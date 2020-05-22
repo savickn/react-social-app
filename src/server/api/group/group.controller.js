@@ -8,11 +8,13 @@ import User from '../user/user.model';
 import * as util from './groups.util';
 const handleError = util.handleError;
 
-/* CRUD METHODS */
+/* SEARCH GROUPS */
 
 export const searchGroups = (req, res) => {
   console.log('searchGroups --> ', req.query);
   var query = {};
+
+  const coords = JSON.parse(req.query.coords);
 
   //const location = req.query.location;
   //const distance = req.query.distance;
@@ -22,33 +24,40 @@ export const searchGroups = (req, res) => {
   const page = req.query.currentPage - 1 || 0; // used to set 'offset' for pagination
   const offset = page * pageSize;
 
-
-  Group.count(function(err, count) {
-    if(err) return handleError(res, err);
-    Group.find(query)
-      .skip(offset)
-      .limit(pageSize)
-      .populate('admins', '_id name displayPicture')
-      .populate('members', '_id name displayPicture')
-      .populate('displayPicture')
-      .sort('-memberCount name')
-      .exec(function(err, groups) {
-        if(err) return handleError(res, err);
-        return res.status(200).header('total-groups', count).json({ groups, count });
-      });
-  });
-}
-
-export const getGroup = (req, res) => {
-  Group.findById(req.params.id)
-    .populate({ path: 'admins', populate: { path: 'user' }})
-    .populate({ path: 'members', populate: { path: 'user' }})
-    .populate({ path: 'profile', populate: { path: 'image' }})
-    .exec((err, group) => {
-      if(err) return handleError(res, err);
-      //console.log('getGroup --> ', group);
-      return res.status(200).json({group});
-  });
+  Group.aggregate([
+    { $geoNear: {
+        near: coords, 
+        distanceField: "dist.calculated",
+        maxDistance: req.query.maxDistance * 1000, 
+        key: 'geoJSON', 
+    }},
+    { $match: query }, 
+    { $facet: {
+        paginatedResults: [{$skip: offset}, {$limit: pageSize}], 
+        totalCount: [{$count: "count"}]
+    }}, 
+    { $lookup: {
+      from: 'profile',
+      localField: '_id',
+      foreignField: 'imageableId',
+      as: 'profile'
+    }}, 
+    /*{ $unwind: '$profile'},
+    { $lookup: {
+      from: 'picture',
+      localField: 'profile._id',
+      foreignField: 'parentId',
+      as: 'profile.image',
+    }} */
+  ])
+  .then(data => {
+    console.log('searchGroups success --> ', data);
+    const { paginatedResults, totalCount, } = data[0];
+    return res.status(200).json({groups: paginatedResults, count: totalCount[0].count, });
+  })
+  .catch(err => {
+    return handleError(res, err);
+  })
 }
 
 /*
@@ -57,7 +66,9 @@ export const getGroup = (req, res) => {
 * 
 */
 export const addGroup = async (req, res) => {
-  if (!req.body.name || !req.body.location || !req.body.lat || !req.body.lon || !req.body.admin) {
+  console.log('createGroup body --> ', req.body);
+
+  if (!req.body.name || !req.body.geoJSON || !req.body.admin) {
     return res.status(403).end('Invalid body arguments!');
   };
 
@@ -72,6 +83,24 @@ export const addGroup = async (req, res) => {
   });
 }
 
+
+
+/* FETCH ONE */
+
+export const getGroup = (req, res) => {
+  Group.findById(req.params.id)
+    .populate({ path: 'admins', populate: { path: 'user' }})
+    .populate({ path: 'members', populate: { path: 'user' }})
+    .populate({ path: 'profile', populate: { path: 'image' }})
+    .exec((err, group) => {
+      if(err) return handleError(res, err);
+      //console.log('getGroup --> ', group);
+      return res.status(200).json({group});
+  });
+}
+
+/* UPDATE */
+
 export const updateGroup = (req, res) => {
   console.log('updating group --> ', req.body);
   Group.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true, runValidators: true })
@@ -84,6 +113,8 @@ export const updateGroup = (req, res) => {
       return res.status(200).json({ group });
   });
 }
+
+/* DELETE */
 
 export const deleteGroup = (req, res) => {
   Group.findOneAndRemove({ _id: req.params.id }, (err, res) => {
@@ -136,6 +167,20 @@ export const leaveGroup = (req, res) => {
 
 
 
+
+  /*Group.count(function(err, count) {
+    if(err) return handleError(res, err);
+    Group.find(query)
+      .skip(offset)
+      .limit(pageSize)
+      .populate('members', '_id name displayPicture')
+      .populate('displayPicture')
+      .sort('-memberCount name')
+      .exec(function(err, groups) {
+        if(err) return handleError(res, err);
+        return res.status(200).header('total-groups', count).json({ groups, count });
+      });
+  });*/
 
 
 

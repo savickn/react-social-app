@@ -164,8 +164,7 @@ class EventPage extends React.Component {
               <h2>Attendees</h2>
               <div className={styles.attendeesContainer}>
                 {attendees.length > 0 && attendees.slice(0, 3).map(a => {
-                  //console.log(a);
-                  return <UserInfoPanel key={a.user._id} image={a.displayPicture} name={a.user.name} role={'sdfsdf'} />
+                  return <UserInfoPanel key={a.user._id} image={a.displayPicture} name={a.user.name} role={''} />
                 })}
                 {attendees.length > 3 && 
                   <Link to='' className='addIcon'>

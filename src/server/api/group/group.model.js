@@ -6,18 +6,22 @@ const GroupSchema = new Schema({
     type: String,
     required: true,
   },
-  location: { // e.g. city/country, to filter search results
-    type: String,
-    required: true,
+
+  geoJSON: {
+    type: {
+      type: String, // Don't do `{ location: { type: String } }`
+      enum: ['Point'], // 'location.type' must be 'Point'
+    },
+    coordinates: {
+      type: [Number],
+      index: '2dsphere',
+    }, 
+    location: { // e.g. CN Tower, 1983 Kipling Avenue
+      type: String,
+      required: true, 
+    },
   },
-  lat: {
-    type: String, 
-    required: true, 
-  }, 
-  lon: {
-    type: String,
-    required: true, 
-  }, 
+
   category: [{ // for search, e.g. Dining/Athletics/etc
     type: String,
   }],

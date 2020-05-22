@@ -22,7 +22,7 @@ const dayMap = {
 }
 
 export const getMonthName = (monthNumber) => {
-  const abbr = months[monthNumber - 1];
+  const abbr = months[monthNumber];
   //console.log('getMonthName --> ', monthNumber, abbr);
   return abbr;
 }
@@ -36,8 +36,8 @@ export const formatDate = (start, end) => {
   const monthName = getMonthName(startDate.getMonth());
   const abbr = monthName.substring(0, 3);
 
-  state['starttime'] = `${startDate.getHours()}:${startDate.getMinutes()}`;
-  state['endtime'] = `${endDate.getHours()}:${endDate.getMinutes()}`;
+  state['starttime'] = `${startDate.getHours()}:${(startDate.getMinutes() < 10 ? '0' : '') + startDate.getMinutes()}`;
+  state['endtime'] = `${endDate.getHours()}:${(endDate.getMinutes() < 10 ? '0' : '') + endDate.getMinutes()}`;
   state['day'] = `${startDate.getDate()}`;
   state['month'] = `${monthName}`;
   state['monthAbbr'] = abbr;

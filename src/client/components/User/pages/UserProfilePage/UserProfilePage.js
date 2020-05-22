@@ -67,8 +67,6 @@ export class UserProfilePage extends React.Component {
               return <img src={m.group.profile.image.path} height='50' width='50' />
             })}
           </div>
-
-
         </div>
 
         {/*

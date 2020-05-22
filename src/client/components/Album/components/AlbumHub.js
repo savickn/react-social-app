@@ -15,6 +15,8 @@ import { searchAlbumsRequest, createAlbumRequest, } from '../AlbumActions';
 import { getAlbums, getAlbumStatus, } from '../AlbumReducer';
 import { getCurrentUser, } from '../../User/AccountReducer';
 
+import styles from './AlbumHub.scss';
+
 // represents the root component that displays AlbumIcons and an AlbumForm
 class AlbumHub extends React.Component {
   constructor(props) {
@@ -22,6 +24,8 @@ class AlbumHub extends React.Component {
     this.state = {
       modalVisibility: false, 
       complete: false, // used to track if new Album is uploaded
+      //add thumbnail
+      //add permissions
     }
   }
 
@@ -72,10 +76,10 @@ class AlbumHub extends React.Component {
                                                 /* RENDER LOGIC */
 
   render() {
-    const { albums } = this.props;
+    const { albums, } = this.props;
 
     return (
-      <div className='albumHubContainer'>
+      <div className={styles.hubContainer}>
         {albums.slice(0, 3).map((a) => {
           return <AlbumIcon key={a._id} albumId={a._id} image={a.profile.image.path} />
         })}

@@ -26,6 +26,8 @@ class AlbumPage extends React.Component {
     const { album } = this.props;
     if(!album) return <div></div>
 
+    console.log('album --> ', album);
+
     return (
       <div>
         <div className='banner'>
@@ -33,8 +35,14 @@ class AlbumPage extends React.Component {
           <div>preview</div>
         </div>
         <div className='grid'>
-
-          
+          { album && album.pictures.map((pic) => {
+            console.log('pic --> ', pic);
+            return (
+              <div className='grid-element'> 
+                <img src={pic.path} height='100' width='100' />
+              </div>
+            )
+          })}
         </div>
       </div>
     )

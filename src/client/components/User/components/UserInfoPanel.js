@@ -15,11 +15,13 @@ import anonUser from '../anon_user.png';
 function UserInfoPanel(props) {
   const dpImage = props.image || anonUser;
 
-  return <div className={styles.panelContainer}>
-    <img src={dpImage} height='100' width='100' alt='user-image' />
-    <div>{props.name}</div>
-    <div>{props.role}</div>
-  </div>
+  return (
+    <div className={styles.panelContainer}>
+      <img src={dpImage} height='100' width='100' alt='user-image' className='img-round' />
+      <div>{props.name}</div>
+      <div>{props.role}</div>
+    </div>
+  );
 }
 
 // can add mutual groups, different styling options, etc

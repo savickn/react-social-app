@@ -24,40 +24,13 @@ import { takeLatest, put, call, fork, select } from 'redux-saga/effects';
 import { getAlbums } from './AlbumReducer';
 
 
-/* API CALLS */
+/* FETCH ONE */
 
 const fetchAlbum = (albumId) => {
   return axios.get(`/api/albums/${albumId}`)
     .then(res => res.data)
     .catch(err => { throw err; })
 }
-
-const searchAlbums = (query={}) => {
-  console.log('fetchAlbum query --> ', query);
-  return axios.get('/api/albums/', { params: query })
-  .then(res => res.data)
-  .catch(err => { throw err; })
-}
-
-const createAlbum = (data) => {
-  return axios.post('/api/albums/', data, {})
-  .then(res => res.data)
-  .catch(err => { throw err; })
-}
-
-const updateAlbum = (data) => {
-  return axios.put(`/api/albums/${data._id}`, data, {})
-  .then(res => res.data)
-  .catch(err => { throw err; })
-}
-
-const deleteAlbum = (albumId) => {
-  return axios.delete(`api/albums/${albumId}`)
-  .then(res => res.data)
-  .catch(err => { throw err; })
-}
-
-/* FETCH ONE */
 
 export function* fetchAlbumWatcher() {
   yield takeLatest(FETCH_ALBUM_REQUEST, fetchAlbumHandler);
@@ -66,6 +39,7 @@ export function* fetchAlbumWatcher() {
 function* fetchAlbumHandler(action) {
   try {
     const { album } = yield call(fetchAlbum, action.id);
+    console.log('fetchAlbum success --> ', album);
     yield put(fetchAlbumSuccess(album));
   } catch(err) {
     console.error('fetchAlbum err --> ', err);
@@ -75,29 +49,23 @@ function* fetchAlbumHandler(action) {
 
 /* SEARCHING */
 
+const searchAlbums = (query={}) => {
+  console.log('fetchAlbum query --> ', query);
+  return axios.get('/api/albums/', { params: query })
+  .then(res => res.data)
+  .catch(err => { throw err; })
+}
+
 export function* searchAlbumsWatcher() {
   yield takeLatest(SEARCH_ALBUMS_REQUEST, searchAlbumsHandler);
 }
 
 function* searchAlbumsHandler(action) {
   try {
-    // check reduxStore
-    const reduxAlbums = yield select(getAlbums);
-    console.log(reduxAlbums);
-  
-    // check localStorage if reduxStore is empty and localStorage cache is fresh
-
-
     // call API to retrieve immediate results
     const response = yield call(searchAlbums, action.query);
     let { albums, count } = response;
     yield put(searchAlbumsSuccess(albums, count));
-
-    // save results to localStorage
-
-
-    // prefetch additional results
-
 
   } catch(error) {
     yield put(searchAlbumsError(error));
@@ -105,6 +73,12 @@ function* searchAlbumsHandler(action) {
 }
 
 /* CREATING */
+
+const createAlbum = (data) => {
+  return axios.post('/api/albums/', data, {})
+  .then(res => res.data)
+  .catch(err => { throw err; })
+}
 
 export function* createAlbumWatcher() {
   yield takeLatest(CREATE_ALBUM_REQUEST, createAlbumHandler);
@@ -145,6 +119,12 @@ function* createAlbumHandler(action) {
 
 /* UPDATING */
 
+const updateAlbum = (data) => {
+  return axios.put(`/api/albums/${data._id}`, data, {})
+  .then(res => res.data)
+  .catch(err => { throw err; })
+}
+
 export function* updateAlbumWatcher() {
   yield takeLatest(UPDATE_ALBUM_REQUEST, updateAlbumHandler);
 }
@@ -159,6 +139,12 @@ function* updateAlbumHandler(action) {
 }
 
 /* DELETING */
+
+const deleteAlbum = (albumId) => {
+  return axios.delete(`api/albums/${albumId}`)
+  .then(res => res.data)
+  .catch(err => { throw err; })
+}
 
 export function* deleteAlbumWatcher() {
   yield takeLatest(DELETE_ALBUM_REQUEST, deleteAlbumHandler);

@@ -10,20 +10,22 @@ export class GroupCreateWidget extends Component {
     super(props);
     this.state = {
       name: '',
-      location: '',
+      location: { 
+        display_name: '', 
+      },
     };
   }
 
                               /* EVENT HANDLERS */
 
+  handleNameChange = (se) => {
+    this.setState({ name: se.target.value });
+  };
+
   selectLocation = (loc) => {
     console.log('select location --> ', loc);
     this.setState({ location: loc });
   }
-
-  handleNameChange = (se) => {
-    this.setState({ name: se.target.value });
-  };
 
   handleLocationChange = debounce((location) => {
     this.props.getSuggestions(location);
@@ -33,9 +35,8 @@ export class GroupCreateWidget extends Component {
     //se.preventDefault();
     const { name, location } = this.state;
 
-    if (this.canBeSubmitted()) {
+    if(this.canBeSubmitted()) {
       this.props.addGroup(name, location);
-      this.setState({ name: '', location: '', });
     }
   };
 
@@ -52,7 +53,7 @@ export class GroupCreateWidget extends Component {
     //const shouldRender = this.props.shouldRender ? styles['form-container'] : styles['hide-form'];
     const isEnabled = this.canBeSubmitted();
 
-    const locationString = location ? `${location.display_name.split(', ')[0]}, ${location.address.state}, ${location.address.country}`: '';
+    //const locationString = location.address ? `${location.display_name.split(', ')[0]}, ${location.address.state}, ${location.address.country}`: '';
 
     return (
       <div id="groupForm">

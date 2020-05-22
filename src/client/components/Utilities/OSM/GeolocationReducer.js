@@ -9,7 +9,8 @@ const initialState = {
   lookup: {}, // represents geocode search result
   autocomplete: [], // represents autocomplete results
   location: {}, // represents reverse lookup results
-}
+  geoJSON: {}, // represents 'geometry' field with return type of 'geojson'
+};
 
 const GeolocationReducer = (state=initialState, action) => {
   switch(action.type) {
@@ -26,7 +27,8 @@ const GeolocationReducer = (state=initialState, action) => {
     case REVERSE_SUCCESS:
       return {
         ...state, 
-        location: action.data
+        location: action.data.properties, 
+        geoJSON: action.data.geometry, 
       }
     default:
       return state;
@@ -35,6 +37,8 @@ const GeolocationReducer = (state=initialState, action) => {
 
 export const getGeocode = (state) => state.osm.geocode;
 export const getAutocomplete = (state) => state.osm.autocomplete;
+
 export const getLocation = (state) => state.osm.location;
+export const getGeojson = (state) => state.osm.geoJSON;
 
 export default GeolocationReducer;
