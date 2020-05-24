@@ -14,9 +14,10 @@ const loaders = require('./webpack.loaders');
 
 const prodRules = [
   loaders.babelLoader,
+  // FOR THIRD-PARTY CSS
   {
     test: /\.(css|scss|sass)$/,
-    include: /\.global/,
+    exclude: /src/,
     use: [
       {
         loader: MiniCssExtractPlugin.loader,
@@ -26,9 +27,24 @@ const prodRules = [
       'sass-loader',
     ]
   }, 
+  // FOR GLOBAL CSS
   {
     test: /\.(css|scss|sass)$/,
-    exclude: /\.global/,
+    include: /\.global/,
+    exclude: /node_modules/,
+    use: [
+      {
+        loader: MiniCssExtractPlugin.loader,
+      },
+      loaders.cssLoaderForGlobals,
+      loaders.postcssLoader,
+      'sass-loader',
+    ]
+  }, 
+  // FOR MODULAR CSS
+  {
+    test: /\.(css|scss|sass)$/,
+    exclude: /(\.global)|(node_modules)/,
     use: [
       {
         loader: MiniCssExtractPlugin.loader,

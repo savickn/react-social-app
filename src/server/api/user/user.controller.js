@@ -90,6 +90,20 @@ export const getMe = (req, res) => {
   .exec(function(err, user) { // don't ever give out the password or salt
     if (err) return res.status(500).send(err);
     if (!user) return res.status(401).send('Unauthorized');
+    console.log('getMe --> ', user);
+
+    const groupCount = user.groups.length;
+    const eventCount = user.events.length;
+
+    // remove dead references
+    user.groups = user.groups.filter((m) => m.group != null);
+    user.events = user.events.filter((i) => i.event != null);
+
+    // save changes to database if dead references are found
+    if(user.groups.length !== groupCount || user.groups.length !== eventCount) {
+      user.save();
+    }
+
     return res.status(200).json(user);
   });
 };

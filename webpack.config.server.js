@@ -68,7 +68,7 @@ module.exports = function(env) {
         },
         {
           test: /\.(css|scss)$/,
-          exclude: /node_modules/,
+          //exclude: /node_modules/,
           use: [
             'css-loader',
             'sass-loader'

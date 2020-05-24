@@ -3,7 +3,11 @@
 .groupContainer {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-evenly;
+  justify-content: flex-start;
+
+  & > * {
+    margin-right: 10px;
+  }
 }
 
 

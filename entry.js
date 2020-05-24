@@ -1,7 +1,10 @@
 
 if(process.env.NODE_ENV === 'production') {
   console.log('serving from ./dist in production');
-  process.env.manifest = JSON.stringify(require('./dist/manifest.json'));
+  if(process.env.NODE_MODE === 'SSR') {
+    process.env.manifest = JSON.stringify(require('./dist/manifest.json'));
+  }
+  
   require('./dist/server.bundle.js');
 } else {
   console.log('registering babel');

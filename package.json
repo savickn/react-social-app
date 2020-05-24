@@ -12,12 +12,19 @@
     "analyze:prod": "webpack --config ./webpack.config.prod.js --env.mode=analyze --env.env=production",
     "analyze:dev": "webpack --config ./webpack.config.dev.js --env.mode=analyze --env.env=development",
     "dev-server": "webpack-dev-server --config ./webpack.config.dev.js --mode development --hot --port 3000",
-    "build-client": "webpack --config ./webpack.config.client.js --env.mode=SSR --env.env=production",
-    "build-server": "webpack --config ./webpack.config.server.js --env.mode=SSR --env.env=production",
-    "build": "npm run clean && npm run build-client && npm run build-server && npm run start:prod",
+    "build-client:ssr": "webpack --config ./webpack.config.client.js --env.mode=SSR --env.env=production",
+    "build-server:ssr": "webpack --config ./webpack.config.server.js --env.mode=SSR --env.env=production",
+    "build:ssr": "npm run clean && npm run build-client:ssr && npm run build-server:ssr && npm run start:prod",
+    
+    "build-client:spa": "webpack --config ./webpack.config.client.js --env.mode=SPA --env.env=production",
+    "build-server:spa": "webpack --config ./webpack.config.server.js --env.mode=SPA --env.env=production",
+    "build:spa": "npm run clean && npm run build-client:spa && npm run build-server:spa && npm run start:prod:spa",
+
     "start:dev": "cross-env NODE_MODE=SPA NODE_ENV=development BABEL_DISABLE_CACHE=1 nodemon ./entry.js",
     "start:debug": "cross-env NODE_MODE=SPA NODE_ENV=development BABEL_DISABLE_CACHE=1 nodemon --inspect ./entry.js",
     "start:prod": "cross-env NODE_MODE=SSR NODE_ENV=production node ./entry.js",
+    "start:prod:spa": "cross-env NODE_MODE=SPA NODE_ENV=production node ./entry.js",
+
     "dev": "npm run clean && npm run start:dev",
     "dev:debug": "npm run clean && npm run start:debug",
     "test:all": "cross-env NODE_ENV=test jest --config=jest.config.js",

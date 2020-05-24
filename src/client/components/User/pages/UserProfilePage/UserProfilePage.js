@@ -15,6 +15,8 @@ import { getCurrentUser } from '../../AccountReducer';
 
 import styles from './UserProfilePage.scss';
 
+import noPic from '../../../../../shared/no-image-icon.png';
+
 export class UserProfilePage extends React.Component {
 
   /* UI logic */
@@ -47,24 +49,31 @@ export class UserProfilePage extends React.Component {
 
     return (
       <div className='container'>
-
-        <div className='sidebar'>
-          <div>
-          <Profile 
-                profileId={this.props.currentUser.profile} 
+        <div className='banner'>
+          <div className='left'>
+            <Profile 
+                profileId={this.props.currentUser.profile._id} 
                 imageableId={this.props.currentUser._id} 
                 imageableType='User'
               />
+            <div>{currentUser.name}</div>
+            <div>{currentUser.location}</div>
+            <div>bio</div>
           </div>
-          <div>{currentUser.name}</div>
-          <div>{currentUser.location}</div>
-          <div>bio</div>
+          <div className='right'>
+            <h3>Interests:</h3>
+            { currentUser.interests.map((i) => {
+              <div>{i}</div>
+            })}
+          </div>
         </div>
 
         <div className='content'>
+          <h3>Groups:</h3>
           <div className={styles.groupContainer}>
             { currentUser.groups.map((m) => {
-              return <img src={m.group.profile.image.path} height='50' width='50' />
+              const imgSrc = m.group.profile ? m.group.profile.image.path : noPic;
+              return <img src={imgSrc} height='200' width='200' />
             })}
           </div>
         </div>
