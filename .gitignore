@@ -3,3 +3,4 @@ dist/
 coverage/
 src/server/public
 *.lock
+src/server/config/local.env.js
