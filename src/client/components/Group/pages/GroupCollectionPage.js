@@ -100,9 +100,12 @@ export class GroupCollectionPage extends React.Component {
 
   // update parent component search query
   handleQueryChanged = (search) => {
+    console.log('queryChanged!');
     this.setState({ search: {
       ...search
-    }});
+    }}, () => {
+      this.searchGroups();
+    });
   }
 
 
@@ -172,7 +175,7 @@ export class GroupCollectionPage extends React.Component {
     return (
       <div>
         <GroupSearchBar search={this.handleSearch} displayType={this.state.displayType} changeDisplayType={this.changeDisplayType} 
-          address={this.props.location.address} distance={this.state.search.dispatch} />
+          address={this.props.location.address} distance={this.state.search.dispatch} changeQuery={this.handleQueryChanged} />
         <GroupList groups={this.props.groups} displayType={this.state.displayType}/>
         <button className='btn btn-default fill-container' onClick={this.openModal}><span className='glyphicon glyphicon-plus click-cursor'></span></button>
         <Modal isVisible={this.state.showModal} close={this.closeModal}>

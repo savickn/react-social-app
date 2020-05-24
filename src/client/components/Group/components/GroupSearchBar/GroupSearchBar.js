@@ -26,19 +26,19 @@ export class GroupSearchBar extends Component {
   }
 
   handleLocationChange = (location) => {
-    this.setState({location: location});
+    this.setState({location: location}, () => {
+      this.props.changeQuery(this.state)
+    });
   }
 
   handleDistanceChange = (distance) => {
-    this.setState({distance: distance});
+    this.setState({distance: distance}, () => {
+      this.props.changeQuery(this.state)
+    });
   }
 
 
   /* EVENT HANDLERS */
-
-  handleLocationChange = () => {
-
-  }
 
   handleDisplayChange = (type) => {
     console.log('display type', type);
@@ -83,7 +83,7 @@ export class GroupSearchBar extends Component {
             <MenuItem eventKey="10">10</MenuItem>
             <MenuItem eventKey="25">25</MenuItem>
             <MenuItem eventKey="50">50</MenuItem>
-            <MenuItem eventKey="100">100</MenuItem>
+            <MenuItem eventKey="500">500</MenuItem>
           </NavDropdown>
            kilometers of
           <NavDropdown id='location-dropdown' className={styles['inline']} title={location} noCaret>
@@ -107,6 +107,7 @@ GroupSearchBar.propTypes = {
   search: PropTypes.func.isRequired,
   displayType: PropTypes.string.isRequired,
   changeDisplayType: PropTypes.func.isRequired,
+  changeQuery: PropTypes.func.isRequired, 
 };
 
 export default GroupSearchBar;
