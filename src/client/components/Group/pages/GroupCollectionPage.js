@@ -23,6 +23,9 @@ import { getLocation, getAutocomplete, getGeojson, } from '../../Utilities/OSM/G
 import { getGroups, getGroupCount, getLastGroup } from '../GroupReducer';
 import { getCurrentUser, } from '../../User/AccountReducer';
 
+
+import styles from './GroupCollectionPage.scss';
+
 export class GroupCollectionPage extends React.Component {
   constructor(props) {
     super(props);
@@ -35,6 +38,7 @@ export class GroupCollectionPage extends React.Component {
 
       // for custom Groups search
       search: {
+        query: '',
         distance: 50, 
       }, 
       pagination: {
@@ -134,9 +138,9 @@ export class GroupCollectionPage extends React.Component {
 
                                     /* STATE HANDLERS */
 
-  changeDisplayType = (value) => {
-    if(['Groups', 'Calender'].includes(value)) {
-      this.setState({displayType: value});
+  changeDisplayType = (val) => {
+    if(['Groups', 'Calender'].includes(val)) {
+      this.setState({ displayType: val });
     };
   };
 
@@ -174,10 +178,19 @@ export class GroupCollectionPage extends React.Component {
 
     return (
       <div>
+        <div className={styles.bannerToggle}>
+          <div className={styles.toggleBtn} onClick={() => this.changeDisplayType('Groups')}>Groups</div>
+          <div className={styles.toggleBtn} onClick={() => this.changeDisplayType('Calender')}>Calender</div>
+        </div>
+
         <GroupSearchBar search={this.handleSearch} displayType={this.state.displayType} changeDisplayType={this.changeDisplayType} 
           address={this.props.location.address} distance={this.state.search.dispatch} changeQuery={this.handleQueryChanged} />
+        
         <GroupList groups={this.props.groups} displayType={this.state.displayType}/>
-        <button className='btn btn-default fill-container' onClick={this.openModal}><span className='glyphicon glyphicon-plus click-cursor'></span></button>
+        <div className={styles.modalBtn}>
+          <button className={`btn btn-default`} onClick={this.openModal}><span className='glyphicon glyphicon-plus click-cursor'></span></button>
+        </div>
+        
         <Modal isVisible={this.state.showModal} close={this.closeModal}>
           <GroupCreateWidget addGroup={this.addGroup} getSuggestions={this.getSuggestions} locationSuggestions={this.props.suggestions} />
         </Modal>

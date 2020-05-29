@@ -8,7 +8,7 @@ const options = {
   fallback: <div> Loading... </div>
 };
 
-export const HomeView = loadable(() => import('./components/GroupHomeView/HomeView'), options);
+//export const HomeView = loadable(() => import('./components/GroupHomeView/HomeView'), options);
 export const MemberView = loadable(() => import('./components/GroupMemberView/MemberView'), options);
 export const EventView = loadable(() => import('../Event/pages/EventCollectionPage'), options);
 //export const AlbumView = loadable(() => import('./components/App/components/Home/HomePage'), options);

@@ -20,6 +20,8 @@ import { myMembership } from '../MembershipReducer';
 
 import noImg from '../../../../shared/no_image.jpg';
 
+import styles from './GroupDisplayPage.scss';
+
 export class GroupDisplayPage extends React.Component {
   constructor(props) {
     super(props);
@@ -100,23 +102,20 @@ export class GroupDisplayPage extends React.Component {
       <React.Fragment>
         
         {/* BANNER */}
-        <div className='groupBanner'>
-          <div className='col1'>
+        <div className={styles.groupBanner}>
+          <div className={styles.groupImg}>
             <Profile profileId={profileId} imageableId={group._id} imageableType='Group' />
           </div>
-          <div className='col2'>
-            <h2>{this.props.groupName}</h2>
-            <div>Location: {group.location}</div>
+          <div className={styles.groupInfo}>
+            <div className={styles.groupName}>{this.props.group.name}</div>
+            <div>Location: {group.geoJSON.location}</div>
             <div>Members: {group.memberCount}</div>
           </div>
         </div>
 
         {/* NAVBAR */}
-        <Navbar>
+        <Navbar className={'background-full-width'} fluid>
           <Nav>
-            <LinkContainer to={`/groups/${this.props.group._id}`}>
-              <NavItem eventKey={1}>About</NavItem>
-            </LinkContainer>
             <LinkContainer to={`/groups/${this.props.group._id}/events`}>
               <NavItem eventKey={1}>Events</NavItem>
             </LinkContainer>
@@ -140,7 +139,7 @@ export class GroupDisplayPage extends React.Component {
         
         {/* VIEWS */}
         <Switch>
-          <Route exact path="/groups/:groupId" component={HomeView} />
+          { /* <Route exact path="/groups/:groupId" component={HomeView} /> */ }
           <Route path="/groups/:groupId/members" component={MemberView} /> 
           <Route path="/groups/:groupId/events" render={(props) =>
             <EventView {...props} groupId={this.props.group._id} groupDp={noImg} /> 

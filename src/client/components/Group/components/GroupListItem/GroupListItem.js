@@ -23,7 +23,7 @@ function GroupListItem(props) {
   let linkStyle = `unstyled-link ${styles['flex-group-element']}`;
   
   return (
-    <Link className={linkStyle} style={bgd} to={`/groups/${props.group._id}/`} >
+    <Link className={linkStyle} style={bgd} to={`/groups/${props.group._id}/events`} >
       <span >
         <h3>{props.group.name}</h3>
         <p>{props.group.location}</p>

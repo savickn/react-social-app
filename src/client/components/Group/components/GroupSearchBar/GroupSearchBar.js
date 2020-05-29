@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Nav, NavItem, NavDropdown, MenuItem } from 'react-bootstrap';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSearch } from '@fortawesome/free-solid-svg-icons'
+
+
 import styles from './GroupSearchBar.module.scss';
 console.log('searchbar styles --> ', styles);
 
@@ -17,22 +21,24 @@ export class GroupSearchBar extends Component {
 
   /* FORM HANDLERS */
 
+  // change search text
+
   handleQueryChange = (se) => {
-    this.setState({query: se.target.value});
+    this.setState({ query: se.target.value });
   }
 
   handleClearQuery = (se) => {
-    this.setState({query: ''});
+    this.setState({ query: ''} );
   }
 
   handleLocationChange = (location) => {
-    this.setState({location: location}, () => {
+    this.setState({ location: location }, () => {
       this.props.changeQuery(this.state)
     });
   }
 
   handleDistanceChange = (distance) => {
-    this.setState({distance: distance}, () => {
+    this.setState({ distance: distance }, () => {
       this.props.changeQuery(this.state)
     });
   }
@@ -47,7 +53,7 @@ export class GroupSearchBar extends Component {
 
   handleSubmit = (se) => {
     if (this.hasQuery()) {
-      this.props.search(query);
+      this.props.search(this.query);
     }
   };
 
@@ -69,7 +75,9 @@ export class GroupSearchBar extends Component {
 
     return (
       <div className={styles['flex-search-bar']}>
-        <div className={`inner-addon right-addon`}>
+        
+        { /*
+        <div className={`${styles.textSearch} inner-addon right-addon`}>
           {
             hasQuery ?
             <i className='glyphicon glyphicon-search' onClick={this.handleSubmit}></i> :
@@ -77,6 +85,19 @@ export class GroupSearchBar extends Component {
           }
           <input type='search' className={`form-control`} onChange={this.handleQueryChange} value={this.state.query} />
         </div>
+        */ }
+
+        <div className={styles.searchBtn} onClick={this.handleSubmit}>
+          <FontAwesomeIcon icon={faSearch} /> 
+        </div>
+
+        <div className={styles.searchInput}>
+        { /* add 'x' FontAwesome button} */ }
+
+          <input type='search' name='search' onChange={this.handleQueryChange} value={this.state.query}
+            placeholder='Text Search' className='form-control' aria-describedby='basic-addon1' />
+        </div>
+
         <div className={styles['location-input']}>
            within
           <NavDropdown id='distance-dropdown' className={styles['inline']} title={this.state.distance} activeKey={this.state.distance} onSelect={this.handleDistanceChange} noCaret>
@@ -89,12 +110,6 @@ export class GroupSearchBar extends Component {
           <NavDropdown id='location-dropdown' className={styles['inline']} title={location} noCaret>
             <MenuItem eventKey="5"> Not Your Location? </MenuItem>
           </NavDropdown>
-        </div>
-        <div className={styles['toggle-display-type']}>
-          <Nav bsStyle="pills" activeKey={this.props.displayType} onSelect={this.handleDisplayChange}>
-            <NavItem eventKey='Groups'>Groups</NavItem>
-            <NavItem eventKey='Calender'>Calender</NavItem>
-          </Nav>
         </div>
       </div>
     );
@@ -111,3 +126,12 @@ GroupSearchBar.propTypes = {
 };
 
 export default GroupSearchBar;
+
+/*
+        <div className={styles['toggle-display-type']}>
+          <Nav bsStyle="pills" activeKey={this.props.displayType} onSelect={this.handleDisplayChange}>
+            <NavItem eventKey='Groups'>Groups</NavItem>
+            <NavItem eventKey='Calender'>Calender</NavItem>
+          </Nav>
+        </div>
+        */

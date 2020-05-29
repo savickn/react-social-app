@@ -34,6 +34,7 @@ export default (
     <Route path='/users/login' component={LoginPage} />
     <Route path='/users/new' component={SignUpPage} />
     <ProtectedRoute path='/users/:userId' component={ProfilePage} />
+    
     <Route exact path='/groups' component={GroupCollectionPage} />
     <Route exact path='/groups/:groupId/events/:eventId' component={EventDisplayPage} />
     <ProtectedRoute path='/groups/:groupId' component={GroupDisplayPage} />

@@ -216,7 +216,7 @@ class EventPage extends React.Component {
               <div className='grid-list-elem'><FontAwesomeIcon icon={faMap} className='list-icon' /> <span className='list-content'> {evt.location} </span></div>
               <iframe width="250"
                       height="250" 
-                      src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyCpq4jPk_kzCr-oIfSvyDwio7ZS-KVLENI
+                      src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBU9RYKDNi8bcLp4IP-4GvWUEnCIqEMa7E
                         &q=${evt.location}`}
                       allowFullScreen>
               </iframe>
