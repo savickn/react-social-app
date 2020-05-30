@@ -47,6 +47,8 @@ export default function(app) {
 
   /* ASSETS */
 
+  console.log('rootDir --> ', config.root);
+
   app.set('appPath', path.resolve(config.root, 'dist')); 
   app.set('staticDir', path.resolve(config.root, 'src/server/public'));
   app.use(express.static(app.get('appPath'))); // serves static files from 'dist' dir 
