@@ -47,19 +47,23 @@ export default function(app) {
 
   /* ASSETS */
 
-  console.log('rootDir --> ', config.root);
+  console.log('rootDir --> ', path.resolve(config.root));
 
   app.set('appPath', path.resolve(config.root, 'dist')); 
   app.set('staticDir', path.resolve(config.root, 'src/server/public'));
   app.use(express.static(app.get('appPath'))); // serves static files from 'dist' dir 
   app.use(express.static(app.get('staticDir'))); // serves images from 'public dir'
 
+  //console.log('appDir --> ', path.resolve(config.root));
+  //console.log('staticDir --> ', path.resolve(config.root));
+
   if(env === 'production') {
+    // should probably copy favicon to 'dist' and point to the copy in production
     app.use(favicon(path.resolve(config.root, 'dist/favicon.ico'))); 
   }
 
   if(env === 'development') {
-    app.use(favicon(path.resolve(config.root, 'src/favicon.ico'))); // should probably copy favicon to 'dist' and point to the copy in production
+    app.use(favicon(path.resolve(config.root, 'src/favicon.ico'))); 
     app.use(errorHandler()); // must be last
   }
 
