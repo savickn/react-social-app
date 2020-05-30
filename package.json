@@ -25,8 +25,8 @@
     "start:prod:ssr": "cross-env NODE_MODE=SSR NODE_ENV=production node ./entry.js",
     "start:prod:spa": "cross-env NODE_MODE=SPA NODE_ENV=production node ./entry.js",
 
-    "start": "cross-env NODE_MODE=SPA NODE_ENV=production node ./entry.js",
-    "heroku-postbuild": "npm run build:spa",
+    "start": "node ./entry.js",
+    "heroku-postbuild": "npm run build-client:spa && npm run build-server:spa",
 
     "dev": "npm run clean && npm run start:dev",
     "dev:debug": "npm run clean && npm run start:debug",
