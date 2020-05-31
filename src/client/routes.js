@@ -19,7 +19,6 @@ const CommentTest = loadable(() => import('./components/Comment//components/Comm
 
 const AdminPage = loadable(() => import('./components/App/components/Admin/AdminPage'), options);
 const HomePage = loadable(() => import('./components/App/components/Home/HomePage'), options);
-const AboutComponent = loadable(() => import('./components/StaticPages/about'), options);
 const LoginPage = loadable(() => import('./components/User/pages/UserLoginPage/UserLoginPage'), options);
 const SignUpPage = loadable(() => import('./components/User/pages/UserCreatePage/UserCreatePage'), options);
 const ProfilePage = loadable(() => import('./components/User/pages/UserProfilePage/UserProfilePage'), options);
@@ -39,7 +38,6 @@ export default (
     <Route exact path='/groups/:groupId/events/:eventId' component={EventDisplayPage} />
     <ProtectedRoute path='/groups/:groupId' component={GroupDisplayPage} />
     <Route path='/albums/:albumId' component={AlbumDisplayPage} />
-    <Route path='/about' component={AboutComponent} />
 
     <ProtectedRoute path="/admin" component={AdminPage} role='admin' />
     <ProtectedRoute path="/modalwizard" component={ModalWizardPage} role='admin' />

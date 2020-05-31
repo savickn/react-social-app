@@ -15,19 +15,15 @@
     "build-client:ssr": "webpack --config ./webpack.config.client.js --env.mode=SSR --env.env=production",
     "build-server:ssr": "webpack --config ./webpack.config.server.js --env.mode=SSR --env.env=production",
     "build:ssr": "npm run clean && npm run build-client:ssr && npm run build-server:ssr && npm run start:prod:ssr",
-    
     "build-client:spa": "webpack --config ./webpack.config.client.js --env.mode=SPA --env.env=production",
     "build-server:spa": "webpack --config ./webpack.config.server.js --env.mode=SPA --env.env=production",
     "build:spa": "npm run clean && npm run build-client:spa && npm run build-server:spa && npm run start:prod:spa",
-
     "start:dev": "cross-env NODE_MODE=SPA NODE_ENV=development BABEL_DISABLE_CACHE=1 nodemon ./entry.js",
     "start:debug": "cross-env NODE_MODE=SPA NODE_ENV=development BABEL_DISABLE_CACHE=1 nodemon --inspect ./entry.js",
     "start:prod:ssr": "cross-env NODE_MODE=SSR NODE_ENV=production node ./entry.js",
     "start:prod:spa": "cross-env NODE_MODE=SPA NODE_ENV=production node ./entry.js",
-
     "start": "node ./entry.js",
     "heroku-postbuild": "npm run build-client:spa && npm run build-server:spa",
-
     "dev": "npm run clean && npm run start:dev",
     "dev:debug": "npm run clean && npm run start:debug",
     "test:all": "cross-env NODE_ENV=test jest --config=jest.config.js",
@@ -40,6 +36,7 @@
   "license": "MIT",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "1.2.26",
+    "@fortawesome/free-regular-svg-icons": "^5.13.0",
     "@fortawesome/free-solid-svg-icons": "5.5.0",
     "@fortawesome/react-fontawesome": "0.1.8",
     "@loadable/component": "~5.0.1",

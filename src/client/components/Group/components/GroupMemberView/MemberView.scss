@@ -7,7 +7,10 @@
 
   display: grid;
   grid-template-columns: 20% 80%;
-  grid-column-gap: 10px;
+  grid-column-gap: 1rem;
+
+  grid-template-areas: 
+    'sidebar main';
 }
 
 // represents only the Sidebar
@@ -17,7 +20,7 @@
   padding: 5px;
   border-radius: 5px;
 
-  grid-column: 1;
+  grid-area: sidebar;
   background-color: white;
 
   display: flex;
@@ -38,40 +41,53 @@
   }
 }
 
-// represents only the MemberList 
-.memberList {
-  grid-column: 2;
+// contains searchContainer + list of UserInfoPanels
+.mainSection {
+  grid-area: main;
   
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
+
+  & > * {
+    padding: 5px 0px;
+  }
 }
 
 
-.memberSearch {
+
+.searchContainer {
   display: flex;
-
   position: relative;
-
   width: 100%;
-  padding: 5px;
 
-  border-radius: 5px;
+  padding: 15px;
+  background-color: white;
+  border-radius: 10px;
+}
+
+.searchInput {
+  padding: 1rem;
+
+  border: none;
+  
+  position: relative;
+  left: 1.5rem;
 }
 
 .leftIcon {
   content: "";
   position: absolute;
-  left: 10px;
-  top: 0;
-  bottom: 0;
-  width: 20px;
 
-}
+  left: 2rem;
+  top: 50%;
+  transform: translate(-50%, -50%);
 
-.searchInput {
-  padding: 10px;
+  font-size: 2rem;
+  color: rgb(133, 133, 133);
+
+  cursor: pointer;
 }
 
 

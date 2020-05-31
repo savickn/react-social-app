@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircle, faSearch, } from '@fortawesome/free-solid-svg-icons'
-
+import { debounce } from 'lodash';
 
 
 import UserInfoPanel from '../../../User/components/UserInfoPanel';
@@ -18,32 +18,46 @@ class GroupMemberView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      searchString: '',
       searchMode: 'All', // can be 'All' or 'Organizers'
     }
   }
 
   // query Users api by passing GroupId (can use 'select' in Saga to cancel API call if Users in Redux store)
   componentWillMount() {
-    this.queryMembers();
-    //const groupId = this.props.match.params.groupId;
-    //this.props.dispatch(searchMembershipsRequest({ group: groupId }));
+    this.fetchMembers();
   }
 
                                           /* Component Logic */
 
   // used to query the server
-  queryMembers = () => {
+  fetchMembers = () => {
     const groupId = this.props.match.params.groupId;
-    this.props.dispatch(searchMembershipsRequest({ group: groupId }));
+    const { searchMode, searchString, } = this.state;
+
+    const query = {
+      groupId,
+      searchMode,
+      searchString, 
+    };
+
+    this.props.dispatch(searchMembershipsRequest(query));
   }
 
   // used to query specific groups of users (e.g. Normal vs. Admin users)
   changeSearchMode = (value) => {
     this.setState({ searchMode: value }, () => {
-      // re-query server
-      this.queryMembers();
+      this.fetchMembers();
     });
   }
+
+  // used to handle changes to text input
+  handleQueryChange = debounce((text) => {
+    console.log('queryChanged');
+    this.setState({ searchString: text }, () => {
+      this.fetchMembers();
+    })
+  }, 1000)
 
                                           /* Styling Logic */
 
@@ -56,7 +70,6 @@ class GroupMemberView extends React.Component {
   render() {
     const { members } = this.props;
     if(!members) return <div></div>;
-    console.log('memberView members --> ', members);
 
     const { searchMode } = this.state;
 
@@ -80,13 +93,14 @@ class GroupMemberView extends React.Component {
             </div>
           </div>
 
-          <div className={styles.memberSearch}>
-            <input type='text' placeholder='Search members...' />
-            <FontAwesomeIcon icon={faSearch} className={styles.leftIcon} />
-          </div>
+          <div className={styles.mainSection}>
+            <div className={styles.searchContainer}>
+              <input type='text' placeholder='Search members...' className={styles.searchInput} 
+                onChange={(e) => this.handleQueryChange(e.target.value)} />
+              <FontAwesomeIcon icon={faSearch} className={styles.leftIcon}  />
+            </div>
 
-          {/* renders list of members */}
-          <div className={styles.memberList}>
+            {/* renders list of members */}
             {members && members.map((m) => {
               return <UserInfoPanel user={m.user} />;
             })}

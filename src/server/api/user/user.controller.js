@@ -16,10 +16,14 @@ export const getUsers = (req, res) => {
 
   User.count(query, function(err, count) {
     if(err) return handleError(err);
-    User.find(query, function(err, users) {
-      if(err) return handleError(err);
-      return res.status(200).json({users, count});
-    });
+    User.find(query)
+      .select('-salt -hashedPassword -provider')
+      .then((users) => {
+        return res.status(200).json({users, count});
+      })
+      .catch((err) => {
+        return handleError(res, err);
+      })
   })
 };
 
@@ -62,50 +66,50 @@ export const addUser = (req, res) => {
 // used to retrieve the currently logged-in user via JSON token 
 export const getMe = (req, res) => {
   User.findOne({_id: req.user._id})
-  .select('-salt -hashedPassword -provider')
-  .populate({
-    path: 'groups',
-    populate: {
-      path: 'group',
+    .select('-salt -hashedPassword -provider')
+    .populate({
+      path: 'groups',
       populate: {
-        path: 'profile',
+        path: 'group',
         populate: {
-          path: 'image'
+          path: 'profile',
+          populate: {
+            path: 'image'
+          }
         }
       }
-    }
-  })
-  .populate({
-    path: 'events',
-    populate: {
-      path: 'event'
-    }
-  })
-  .populate({
-    path: 'profile',
-    populate: {
-      path: 'image'
-    }
-  })
-  .exec(function(err, user) { // don't ever give out the password or salt
-    if (err) return res.status(500).send(err);
-    if (!user) return res.status(401).send('Unauthorized');
-    console.log('getMe --> ', user);
+    })
+    .populate({
+      path: 'events',
+      populate: {
+        path: 'event'
+      }
+    })
+    .populate({
+      path: 'profile',
+      populate: {
+        path: 'image'
+      }
+    })
+    .exec(function(err, user) { // don't ever give out the password or salt
+      if (err) return res.status(500).send(err);
+      if (!user) return res.status(401).send('Unauthorized');
+      console.log('getMe --> ', user);
 
-    const groupCount = user.groups.length;
-    const eventCount = user.events.length;
+      const groupCount = user.groups.length;
+      const eventCount = user.events.length;
 
-    // remove dead references
-    user.groups = user.groups.filter((m) => m.group != null);
-    user.events = user.events.filter((i) => i.event != null);
+      // remove dead references
+      user.groups = user.groups.filter((m) => m.group != null);
+      user.events = user.events.filter((i) => i.event != null);
 
-    // save changes to database if dead references are found
-    if(user.groups.length !== groupCount || user.groups.length !== eventCount) {
-      user.save();
-    }
+      // save changes to database if dead references are found
+      if(user.groups.length !== groupCount || user.groups.length !== eventCount) {
+        user.save();
+      }
 
-    return res.status(200).json(user);
-  });
+      return res.status(200).json(user);
+    });
 };
 
 export const deleteUser = (req, res) => {

@@ -17,10 +17,18 @@ export const MembershipSchema = new Schema({
     enum: ['admin', 'member'], 
     required: true, 
   },
+  description: {
+    type: String, 
+  }, 
+
   // used for private groups that require acceptance
   /*verified: {
 
   },*/ 
+  //questions: [String],
+  //answers: [String], 
+}, {
+  timestamps: { createdAt: 'created_at', updatedAt: 'updated_at', },
 });
 
 /* Validations */

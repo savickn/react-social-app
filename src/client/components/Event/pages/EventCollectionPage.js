@@ -25,7 +25,7 @@ class EventCollectionPage extends React.Component {
   
   constructor(props) {
     super(props);
-    console.log('EventCollectionPage props --> ', props);
+    //console.log('EventCollectionPage props --> ', props);
     this.state = {
       modalVisibility: false, 
       searchMode: 'Upcoming', 
@@ -35,7 +35,7 @@ class EventCollectionPage extends React.Component {
   }
 
   componentDidMount() {
-    if(this.props.events.length < 1) {
+    if(!this.props.events.length > 0) {
       this.queryEvents();
     }
   }
@@ -79,6 +79,43 @@ class EventCollectionPage extends React.Component {
 
   changeListMode = (se) => {
     this.setState({listMode: se.target.innerText});
+  }
+
+
+  // determines whether to show/hide Attend button
+  canAttend = () => {
+    const { currentUser, attendees, } = this.props;
+    if(!currentUser) return false;
+
+    const userArr = attendees.map((a) => a.user._id);
+    //console.log(userArr);
+
+    return !userArr.includes(currentUser._id);
+  }
+
+  // used by external User to create an Invite object (basically request to attend)
+  attendEvent = (e) => {
+    const { evt, currentUser } = this.props;
+
+    const invite = {
+      event: evt._id,
+      user: currentUser._id, 
+      issueType: 'User',
+      accepted: true, 
+      verified: !evt.inviteOnly, // either automatically verify... or send to verification queue 
+
+      attending: true, // for testing purposes... remove later
+    };
+
+    console.log('attendEvent inviteObj --> ', invite);
+
+    if(this.canAttend()) {
+      this.props.dispatch(createInviteRequest(invite));
+    }
+  }
+
+  navigateToEvent = (url) => {
+    this.props.history.push(url);
   }
 
 
@@ -159,7 +196,8 @@ class EventCollectionPage extends React.Component {
             {/* renders list of events from this.props.events */}
             <div className={styles.eventList}>
               {this.props.events.map((evt) => {
-                return <EventInfo key={evt._id} evt={evt} groupId={this.props.groupId} />
+                return <EventInfo key={evt._id} evt={evt} groupId={this.props.groupId} 
+                  handleNavigate={this.navigateToEvent} handleAttend={this.attendEvent} />
               })}
             </div>
           </div>

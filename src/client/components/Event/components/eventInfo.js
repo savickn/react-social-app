@@ -13,9 +13,18 @@ class EventInfo extends React.Component {
 
   /* Event Handlers */
 
+  // used to create an Invite
   attendEvent = (e) => {
-    console.log('attend event');
+    e.cancelBubble = true;
+    if(e.stopPropagation) e.stopPropagation();
     this.props.handleAttend();
+  }
+
+  // used to navigate to EventDisplayPage
+  navigateToPage = (e) => {
+    const { evt, groupId, } = this.props;
+    const url = `/groups/${groupId}/events/${evt._id}`;
+    this.props.handleNavigate(url);
   }
 
   /* Render Logic */
@@ -28,10 +37,11 @@ class EventInfo extends React.Component {
 
     const startDate = new Date(evt.start);
 
-    console.log('eventInfo evt --> ', evt);
+    // console.log('eventInfo evt --> ', evt);
+    // to={`/groups/${groupId}/events/${evt._id}`}
 
     return (
-        <Link className={`${styles.eventContainer} unstyled-link`} to={`/groups/${groupId}/events/${evt._id}`} >
+        <div className={`${styles.eventContainer} unstyled-link`} onClick={this.navigateToPage}>
           <div className={styles.eventGrid}>
             <div className={styles.eventDetails}>
               <div>{startDate.toDateString()}</div>
@@ -52,7 +62,7 @@ class EventInfo extends React.Component {
             </div>
             <button className={`btn btn-md btn-default ${styles.btnAttend}`} onClick={this.attendEvent}> Attend </button>
           </div>
-        </Link>
+        </div>
     );
   }
 }
@@ -61,6 +71,8 @@ EventInfo.propTypes = {
   evt: PropTypes.object.isRequired,
   groupId: PropTypes.string.isRequired, 
   profileImg: PropTypes.string.isRequired, 
+
+  handleNavigate: PropTypes.func.isRequired, 
   handleAttend: PropTypes.func.isRequired, 
 };
 

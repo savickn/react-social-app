@@ -6,7 +6,8 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClock, faDollarSign, faMap, faCalender, faLocationArrow, faPlus, } from '@fortawesome/free-solid-svg-icons'
 
-import UserInfoPanel from '../../User/components/UserInfoPanel';
+//import UserInfoPanel from '../../User/components/UserInfoPanel';
+import UserCard from '../../User/components/UserCard';
 import CommentHub from '../../Comment/components/CommentHub';
 import AlbumHub from '../../Album/components/AlbumHub';
 
@@ -163,8 +164,9 @@ class EventPage extends React.Component {
             <div>
               <h2>Attendees</h2>
               <div className={styles.attendeesContainer}>
-                {attendees.length > 0 && attendees.slice(0, 3).map(a => {
-                  return <UserInfoPanel key={a.user._id} image={a.displayPicture} name={a.user.name} role={''} />
+                {attendees.length > 0 && attendees.slice(0, 3).map((a) => {
+                  return <UserCard user={a.user} />
+                  //return <UserInfoPanel key={a.user._id} image={a.displayPicture} name={a.user.name} role={''} />
                 })}
                 {attendees.length > 3 && 
                   <Link to='' className='addIcon'>
@@ -193,7 +195,7 @@ class EventPage extends React.Component {
             
             {/* GROUP INFO */}
             <div className={`foreground ${styles.groupSidebar}`}>
-              <Link to={`/groups/${group._id}`}>
+              <Link to={`/groups/${group._id}/events`}>
                 <img src={groupImg} width='50' height='50' />
               </Link>
               <div>{group.name}</div>

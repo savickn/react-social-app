@@ -62,9 +62,6 @@ export function Header(props, context) {
               <NavItem eventKey={4}>Explore</NavItem>
             </LinkContainer>
           }
-          <LinkContainer to="/about">
-            <NavItem eventKey={6}> About </NavItem>
-          </LinkContainer>
           {isLoggedIn &&
             <NavDropdown eventKey={7} title="Profile" id="basic-nav-dropdown">
               <LinkContainer to={`/users/${props.currentUser._id}`}>

@@ -40,6 +40,8 @@ export const InviteSchema = new Schema({
     type: Boolean, 
     default: false, 
   }, 
+}, {
+  timestamps: { createdAt: 'created_at', updatedAt: 'updated_at', },
 });
 
 /* Validations */

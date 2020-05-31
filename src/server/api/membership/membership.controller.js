@@ -3,13 +3,36 @@ import Membership from './membership.model';
 
 /* 
 * returns collection of Memberships based on req.query (or returns all Memberships by default)
+* search by: group/user/role/user.name/
 */
 export const searchMemberships = (req, res) => {
   console.log('searchMemberships req.query --> ', req.query);
-  
-  Membership.find(req.query)
-    .populate('user')
-    .then(memberships => res.status(200).json({ memberships }))
+  const { userId, groupId, searchMode, searchString, } = req.query;
+
+  const query = {};
+
+  if(userId) query['user'] = userId;
+  if(groupId) query['group'] = groupId;
+  if(searchMode === 'Organizers') query['role'] = 'admin';
+
+
+  const userQuery = {};
+
+  if(searchString.length > 0) {
+    const regex = new RegExp(searchString, 'i');
+    userQuery['name'] = regex;
+  }
+
+  Membership.find(query)
+    .populate({
+      path: 'user',
+      match: userQuery,
+    })
+    .then(data => {
+      console.log('searchMemberships json --> ', data);
+      const memberships = data.filter((m) => m.user !== null)
+      return res.status(200).json({ memberships })
+    })
     .catch(err => {
       console.log('searchMemberships err --> ', err);
       return res.status(500).send(err);
