@@ -11,6 +11,22 @@ const EventSchema = new Schema({
     type: String,
     required: true,
   },
+
+  geoJSON: {
+    type: {
+      type: String, // Don't do `{ location: { type: String } }`
+      enum: ['Point'], // 'location.type' must be 'Point'
+    },
+    coordinates: {
+      type: [Number],
+      index: '2dsphere',
+    }, 
+    location: { // e.g. CN Tower, 1983 Kipling Avenue
+      type: String,
+      required: true, 
+    },
+  },
+
   location: { // should maybe be an embedded document
     type: String,
     required: true,

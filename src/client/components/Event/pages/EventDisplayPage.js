@@ -185,7 +185,7 @@ class EventPage extends React.Component {
             {/* COMMENTS */}
             <div className='comments'>
               <h2>Comments</h2>
-              <CommentHub parentId={this.props.evt._id} />
+              <CommentHub parentId={this.props.evt._id} parentType={'Event'} />
             </div>
           </div>
 
@@ -196,7 +196,7 @@ class EventPage extends React.Component {
             {/* GROUP INFO */}
             <div className={`foreground ${styles.groupSidebar}`}>
               <Link to={`/groups/${group._id}/events`}>
-                <img src={groupImg} width='50' height='50' />
+                <img src={groupImg} width='50' height='50' rounded />
               </Link>
               <div>{group.name}</div>
             </div>
@@ -241,7 +241,7 @@ class EventPage extends React.Component {
               }
               { canAttend ? 
                 <button className='btn btn-md btn-default' onClick={this.attendEvent}>Attend</button>
-                : null
+                : <div>You are attending!</div>
               }
             </div>
           </div>

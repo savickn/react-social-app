@@ -9,31 +9,32 @@ const CommentSchema = new Schema({
     ref: 'User',
     required: true
   },
-  parent: {
-    type: Schema.Types.ObjectId,
-    //ref: 'Commentable', ??? 
-    required: true, 
-  }, 
   content: {
     type: String,
     required: true
   },
   upvotes: [UpvoteSchema],
-  //comments --> for replies
+  replies: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Comment',
+  }],
 
-  createdOn: {
-    type: Date,
-    required: true
-  },
-  /*editedOn: {
-    type: Date, 
+  parent: {
+    type: Schema.Types.ObjectId,
+    //ref: 'Commentable', ??? 
     required: true, 
-  }, */
+  }, 
+  parentType: {
+    type: String,
+    required: true, 
+  }, 
 
   /*embeddedText: [String],
   customText: [String], */
 
 
+}, {
+  timestamps: { createdAt: 'created_at', updatedAt: 'updated_at', },
 });
 
 /*
@@ -66,12 +67,12 @@ CommentSchema
 * PRE/POST Hooks
 */
 
-/*CommentSchema.pre('save', (next) => {
-  mongoose.model('Commentable')
-    .findByIdAndUpdate(this.parent, { $pushToSet: { comments: this._id} })
-    .then()
-    .catch()
-})*/
+CommentSchema.pre('save', function(next) {
+  mongoose.model(this.parentType)
+    .findByIdAndUpdate(this.parent, { $pushToSet: { replies: this._id} })
+    .then(() => next())
+    .catch((err) => next(err)) 
+})
 
 /*
 * Methods

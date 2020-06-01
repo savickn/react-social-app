@@ -47,7 +47,7 @@ class CommentComponent extends React.Component {
   render() {
     const { comment, } = this.props;
 
-    const thumbnail = null || noPic;
+    const thumbnail = comment.author.profile.image.path || noPic;
 
     return (
       <div className={styles.container}>
@@ -58,7 +58,7 @@ class CommentComponent extends React.Component {
         <div className={styles.comment}>
           <div className={`foreground ${styles.content}`}>
             <div className={styles.author}>
-              Author
+              {comment.author.name}
             </div>
             <div className='content'>
               {comment.content}
@@ -69,7 +69,7 @@ class CommentComponent extends React.Component {
             <div className={`action-text`}>Reply</div>
             <div className={`action-text`}>Embed</div>
             <div className={styles.aux}>
-              <div className={styles.date}>Date</div>
+              <div className={styles.date}>{comment.created_at}</div>
               <div className={styles.likes}>
                 <UpvoteControl score={0} handleVote={this.handleVote} />
               </div>
@@ -85,12 +85,15 @@ class CommentComponent extends React.Component {
 CommentComponent.propTypes = {
   comment: PropTypes.shape({
     content: PropTypes.string.isRequired, 
+    author: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+    }),
+    created_at: PropTypes.string.isRequired,
     //score: PropTypes.number.isRequired, 
   }).isRequired, 
 
   //isExpandable: PropTypes.bool.isRequired,
-
-
+  getReplies: PropTypes.func.isRequired, 
 };
 
 export default CommentComponent;

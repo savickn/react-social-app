@@ -12,7 +12,7 @@ import { addCommentRequest, searchCommentsRequest } from '../CommentActions';
 import { getCurrentUser } from '../../User/AccountReducer';
 
 
-// can be embedded as child to support commenting (e.g. posting/viewing)
+// can be embedded as child to support commenting (e.g. on Event or Group)
 export class CommentHub extends React.Component {
 
                         /* LIFECYCLE METHODS */
@@ -23,21 +23,29 @@ export class CommentHub extends React.Component {
   }
 
   componentDidMount() {
-    this.props.dispatch(searchCommentsRequest(/* parentId */ ));
+    const { parentId } = this.props;
+    this.searchComments(parentId);
   }
 
-                        /* EVENT HANDLERS */
+                        /* SEARCH COMMENTS */
+
+  // dispatch AJAX request to API
+  searchComments(parentId) {
+    this.props.dispatch(searchCommentsRequest({ parent: parentId }));
+  }
+
+                        /* CREATE COMMENT */
   
   createComment = (data) => {
     const comment = {
       author: this.props.currentUser._id, 
       parent: this.props.parentId, 
+      parentType: data.parentType || this.props.parentType,
       content: data.content,
     }
     console.log('createComment --> ', comment);
     this.props.dispatch(addCommentRequest(comment));
   }
-
 
                         /* RENDER LOGIC */
 
@@ -57,11 +65,12 @@ export class CommentHub extends React.Component {
 
 CommentHub.propTypes = {
   parentId: PropTypes.string.isRequired, 
+  parentType: PropTypes.string.isRequired, 
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state, props) {
   return {
-    comments: getComments(state), 
+    comments: getComments(state, props.parentId), 
     currentUser: getCurrentUser(state), 
   }
 }

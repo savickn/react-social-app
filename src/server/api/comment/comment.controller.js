@@ -1,19 +1,31 @@
+
 import Comment from './comment.model';
-import sanitizeHtml from 'sanitize-html';
 
 /*
 ** retrieve a collection of Comments (with optional search criteria)
 */
 export function searchComments(req, res) {
+  console.log('searchComments req.query --> ', req.query);
 
   // searchByAuthor
   // filterByDate
   // sortByUpvotes
 
-  Comment.find().exec((err, comments) => {
-    if (err) return res.status(500).send(err);
-    return res.json({ comments });
-  });
+  // add pagination
+
+  Comment.find(req.query)
+    .populate({
+      path: 'author',
+      select: '_id name profile',
+      populate: {
+        path: 'profile',
+        populate: {
+          path: 'image',
+        }
+      }
+    })
+      .then((comments) => res.status(200).json({ comments }))
+      .catch(err => handleError(res, err))
 }
 
 /*
@@ -31,26 +43,42 @@ export function getComment(req, res) {
 ** create a Comment
 */
 export function createComment(req, res) {
+  console.log('createComment req.body --> ', req.body);
   const data = req.body;
   if (!data.author || !data.content || !data.parent) {
     return res.status(403).end('Unable to create Comment. Invalid arguments!');
   }
-
-  data.createdOn = new Date();
   
-  Comment.create(data, (err, comment) => {
-    if (err) return res.status(500).send(err);
-    return res.json({ comment });
-  });
+  Comment.create(data)
+    .then(async (comment) => {
+      await comment.populate({
+        path: 'author',
+        select: '_id name profile',
+        populate: {
+          path: 'profile',
+          populate: {
+            path: 'image',
+          }
+        }
+      }).execPopulate();
+      console.log('comment --> ', comment);
+      return res.status(201).json({ comment })
+    })
+    .catch(err => handleError(res, err)) 
 }
 
 
 /*
 ** delete a Comment
 */ 
-export function deleteComment(req, res) {
-  Comment.findOneAndRemove({ _id: req.params.id }).exec((err, comment) => {
-    if(err) return res.status(500).send(err);
-    return res.status(200).end();
-  });
+export const deleteComment = (req, res) => {
+  Comment.findOneAndRemove({ _id: req.params.id })
+    .then(() => res.status(203).end())
+    .catch(err => handleError(res, err))
+}
+
+
+function handleError(res, err) {
+  console.log('err --> ', err);
+  return res.status(500).send(err);
 }

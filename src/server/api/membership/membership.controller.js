@@ -94,10 +94,10 @@ export const removeMembership = async (req, res) => {
   try {
     const membership = await Membership.findById(req.params.id);
     await membership.remove();
-    return res.status(203).end()
+    return res.status(203).end();
   } catch(err) {
     console.log('removeMembership err --> ', err);
-      return res.status(500).send(err);
+    return res.status(500).send(err);
   }
 } 
 
