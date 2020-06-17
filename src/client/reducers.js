@@ -12,8 +12,9 @@ import invites from './components/Event/InviteReducer';
 import upload from './components/Upload/UploadReducer';
 import comments from './components/Comment/CommentReducer';
 import profiles from './components/Profile/ProfileReducer';
-
 import albums from './components/Album/AlbumReducer';
+
+import chat from './components/Chat/ChatReducer';
 
 //import wizard
 import alerts from './components/Utilities/Alert/alertReducer';
@@ -24,13 +25,13 @@ import osm from './components/Utilities/OSM/GeolocationReducer';
 
 // return list of Reducers which will be combined via 'combineReducers'
 let reducers = {
-  app,
   //todos,
+  //test,
+  app,
   users,
   groups,
   events,
   account,
-  //test,
   alerts,
   modal,
   page,
@@ -41,6 +42,7 @@ let reducers = {
   profiles, 
   albums, 
   osm, 
+  chat, 
 };
 
 export default reducers;

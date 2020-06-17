@@ -12,8 +12,9 @@ const options = {
   //fallback: <div> Loading... </div>
 };
 
-const OSMPage = loadable(() => import('./components/Prototypes/OpenStreetMap'), options)
-const ModalWizardPage = loadable(() => import('./components/Prototypes/ModalWizardTestPage'), options)
+const ChatTest = loadable(() => import('./components/Prototypes/ChatTest'), options);
+const OSMPage = loadable(() => import('./components/Prototypes/OpenStreetMap'), options);
+const ModalWizardPage = loadable(() => import('./components/Prototypes/ModalWizardTestPage'), options);
 const StylesTest = loadable(() => import('./components/Prototypes/StylesTestPage'), options);
 const CommentTest = loadable(() => import('./components/Comment//components/CommentHub'), options);
 
@@ -44,6 +45,7 @@ export default (
     <ProtectedRoute path="/stylesTest" component={StylesTest} role='admin' />
     <ProtectedRoute path="/commentTest" component={CommentTest} role='admin' />
     <ProtectedRoute path="/openstreetmap" component={OSMPage} role='admin' />
+    <ProtectedRoute path="/socketio" component={ChatTest} role='admin' />
   </Switch>
 )
 

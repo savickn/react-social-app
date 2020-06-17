@@ -7,10 +7,34 @@ import {
   SEARCH_COMMENTS_REQUEST, ADD_COMMENT_REQUEST,
   searchCommentsSuccess, searchCommentsFailure,  
   addCommentSuccess, addCommentFailure, 
+  TOGGLE_UPVOTE_REQUEST, toggleUpvoteSuccess,
+  fetchCommentSuccess, FETCH_COMMENT_REQUEST, 
 } from './CommentActions';
 
+/* FETCH ONE */
 
-/* AJAX REQUESTS */
+function fetchComment(id) {
+  return axios.get(`/api/comments/${id}`)
+    .then(res => res.data)
+    .catch(err => { throw err; })
+}
+
+function* fetchCommentWatcher() {
+  yield takeLatest(FETCH_COMMENT_REQUEST, fetchCommentHandler);
+}
+
+function* fetchCommentHandler(action) {
+  try {
+    const res = yield call(fetchComment, action.id);
+    console.log(res);
+    yield put(fetchCommentSuccess(res.comment));
+  } catch(err) {
+    console.log('fetchComment err --> ', err);
+  }
+}
+
+
+/* SEARCHING */
 
 function searchComments(query={}) {
   return axios.get('/api/comments/', {
@@ -19,15 +43,6 @@ function searchComments(query={}) {
     .then(res => res.data)
     .catch(err => { throw err; })
 }
-
-function addComment(data) {
-  return axios.post('/api/comments/', data)
-    .then(res => res.data)
-    .catch(err => { throw err; })
-}
-
-
-/* SEARCHING */
 
 function* searchCommentsWatcher() {
   yield takeLatest(SEARCH_COMMENTS_REQUEST, searchCommentsHandler);
@@ -46,6 +61,12 @@ function* searchCommentsHandler(action) {
 
 /* CREATING */
 
+function addComment(data) {
+  return axios.post('/api/comments/', data)
+    .then(res => res.data)
+    .catch(err => { throw err; })
+}
+
 function* addCommentWatcher() {
   yield takeLatest(ADD_COMMENT_REQUEST, addCommentHandler);
 }
@@ -60,8 +81,31 @@ function* addCommentHandler(action) {
   }
 }
 
+/* UPVOTE */
+
+function toggleUpvote(commentId, authorId) {
+  return axios.patch(`/api/comments/${commentId}/upvote`, { authorId })
+    .then(res => res.data)
+    .catch(err => { throw err; })
+}
+
+function* toggleUpvoteWatcher() {
+  yield takeLatest(TOGGLE_UPVOTE_REQUEST, toggleUpvoteHandler);
+}
+
+function* toggleUpvoteHandler(action) {
+  try {
+    const res = yield call(toggleUpvote, action.payload.commentId, action.payload.authorId);
+    yield put(toggleUpvoteSuccess(res.comment));
+  } catch(err) {
+    console.log('toggleUpvoteError --> ', err);
+  }
+}
+
 
 export default [
+  fork(fetchCommentWatcher),
+  fork(toggleUpvoteWatcher),
   fork(addCommentWatcher),
   fork(searchCommentsWatcher), 
 ]

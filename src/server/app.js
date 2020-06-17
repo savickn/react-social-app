@@ -1,11 +1,13 @@
 
 import Express from 'express';
+import { Server } from 'http';
 import mongoose from 'mongoose';
 import Sequelize from 'sequelize';
 
 import config from './config/environment';
 
 const app = new Express();
+const server = Server(app);
 
 if (process.env.NODE_ENV === 'development') {
   console.log('using webpack-dev-middleware');
@@ -34,7 +36,6 @@ console.log(`node_env --> ${process.env.NODE_ENV}`);
 //console.log(`manifest --> ${process.env.manifest}`);
 //console.log(`loadable --> ${process.env.loadableManifest}`);
 
-
 mongoose.Promise = global.Promise;
 
 mongoose.connect(config.mongo.uri, (error) => {
@@ -44,7 +45,28 @@ mongoose.connect(config.mongo.uri, (error) => {
   };
 })
 
-/*const sequelize = new Sequelize({
+require('./express').default(app);
+require('./routes').default(app);
+require('./socket').default(server);
+
+
+if(process.env.NODE_MODE === 'SSR') {
+  require('./ssr').default(app);
+}
+
+server.listen(config.port, (error) => {
+  if(!error) {
+    console.log(`Express is running on port ${config.port}`);
+  }
+});
+
+export default app;
+
+
+/* SEQUELIZE */
+
+/*
+const sequelize = new Sequelize({
   database: config.sequelize.dbName,
   username: config.sequelize.username,
   password: config.sequelize.password,
@@ -60,18 +82,6 @@ sequelize
   })
   .catch(err => {
     console.error('Unable to connect to the database:', err);
-  });*/
+  });
+*/
 
-require('./express').default(app);
-require('./routes').default(app);
-if(process.env.NODE_MODE === 'SSR') {
-  require('./ssr').default(app);
-}
-
-app.listen(config.port, (error) => {
-  if(!error) {
-    console.log(`Express is running on port ${config.port}`);
-  }
-});
-
-export default app;

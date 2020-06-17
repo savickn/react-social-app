@@ -10,10 +10,11 @@ export const UpvoteSchema = new Schema({
     ref: 'User',
     required: true
   },
-  /*upvoteable: { // used to specify object containing this Upvote if used via Reference
-    type: Schema.Types.ObjectId,
-    required: true
-  }*/
 }, { _id: false }); //having no '_id' helps prevent duplicate likes
 
 export default mongoose.model('Upvote', UpvoteSchema);
+
+/*upvoteable: { // used to specify object containing this Upvote if used via Reference
+  type: Schema.Types.ObjectId,
+  required: true
+}*/

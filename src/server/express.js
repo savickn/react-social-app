@@ -9,11 +9,11 @@ import methodOverride from 'method-override';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import errorHandler from 'errorhandler';
+import cors from 'cors';
 
 import config from './config/environment';
 
-
-import { ipTracker } from './util/ipMiddleware';
+import { ipTracker, } from './util/ipMiddleware';
 
 export default function(app) {
   console.log('registering express');
@@ -29,6 +29,8 @@ export default function(app) {
   app.use(methodOverride());
   app.use(cookieParser());
   app.use(morgan('dev'));
+
+  app.use(cors())
 
   /*app.use(session({
     secret: config.secrets.session,

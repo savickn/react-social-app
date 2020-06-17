@@ -31,7 +31,7 @@ export class GroupCollectionPage extends React.Component {
     super(props);
     this.state = {
       showModal: false,
-      displayType: 'Groups', // can be 'Groups' or 'Calender'
+      displayType: 'Groups', // can be 'Groups' or 'Calendar'
       id: md5('Groups').toString(base64), // used to identify pagination/etc, should maybe be converted into mongoose virtual method
       createGroupState: 'None', // represents stage of creation process (e.g. None = hide modal, Group = create group, DisplayPic = create picture)
 
@@ -139,7 +139,7 @@ export class GroupCollectionPage extends React.Component {
                                     /* STATE HANDLERS */
 
   changeDisplayType = (val) => {
-    if(['Groups', 'Calender'].includes(val)) {
+    if(['Groups', 'Calendar'].includes(val)) {
       this.setState({ displayType: val });
     };
   };
@@ -180,7 +180,7 @@ export class GroupCollectionPage extends React.Component {
       <div>
         <div className={styles.bannerToggle}>
           <div className={styles.toggleBtn} onClick={() => this.changeDisplayType('Groups')}>Groups</div>
-          <div className={styles.toggleBtn} onClick={() => this.changeDisplayType('Calender')}>Calender</div>
+          <div className={styles.toggleBtn} onClick={() => this.changeDisplayType('Calendar')}>Calendar</div>
         </div>
 
         <GroupSearchBar search={this.handleSearch} displayType={this.state.displayType} changeDisplayType={this.changeDisplayType} 

@@ -14,9 +14,7 @@ class AlbumIcon extends React.Component {
     const image = this.props.image || noPic;
 
     return (
-      <Link to={`/albums/${this.props.albumId}`}>
-        <img src={image} width='105' height='130' className={styles.albumImg} />
-      </Link>
+      <img src={image} width='105' height='130' className={styles.albumImg} />
     )
   }
 }
@@ -27,3 +25,9 @@ AlbumIcon.propTypes = {
 }
 
 export default AlbumIcon;
+
+{ /*
+  <Link to={`/albums/${this.props.albumId}`}>
+    <img src={image} width='105' height='130' className={styles.albumImg} />
+  </Link>
+  */ }

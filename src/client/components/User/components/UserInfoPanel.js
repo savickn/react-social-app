@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCommentAlt } from '@fortawesome/free-regular-svg-icons'
 
-
 import styles from './UserInfoPanel.scss';
 
 import anonUser from '../anon_user.png';
@@ -14,10 +13,10 @@ import anonUser from '../anon_user.png';
 // used to link to User and show summary of important info
 class UserInfoPanel extends React.Component {
   
+  // used to open ChatView between two Users
   messageUser = (e) => {
-    console.log('message');
-    e.cancelBubble = true;
-    if(e.stopPropagation) e.stopPropagation();
+    e.preventDefault();
+    this.props.startChat(this.props.user._id);
   }
 
   render() {
@@ -63,14 +62,15 @@ class UserInfoPanel extends React.Component {
 }
 
 // can add mutual groups, different styling options, etc
-
 UserInfoPanel.propTypes = {
   user: PropTypes.shape({
     _id: PropTypes.string.isRequired,
-    image: PropTypes.string.isRequired,
+    //image: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired, 
     role: PropTypes.string.isRequired, 
-  })
+  }),
+
+  startChat: PropTypes.func, 
 };
 
 export default UserInfoPanel;

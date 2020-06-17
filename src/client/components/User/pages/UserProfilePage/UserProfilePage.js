@@ -13,11 +13,18 @@ import { updateUserRequest } from '../../UserActions';
 import { getUploadStatus, getUploadErrors } from '../../../Upload/UploadReducer';
 import { getCurrentUser } from '../../AccountReducer';
 
+import { fetchUserRequest, } from '../../UserActions';
+import { getUserById } from '../../UserReducer';
+
 import styles from './UserProfilePage.scss';
 
 import noPic from '../../../../../shared/no-image-icon.png';
 
 export class UserProfilePage extends React.Component {
+
+  componentDidMount() {
+    this.props.dispatch(fetchUserRequest(this.props.match.params.userId));
+  }
 
   /* UI logic */
 
@@ -48,37 +55,63 @@ export class UserProfilePage extends React.Component {
     //console.log('profilePage dp --> ', dp);
 
     return (
-      <div className='container'>
-        <div className='banner'>
-          <div className='left'>
-            <Profile 
-                profileId={this.props.currentUser.profile._id} 
-                imageableId={this.props.currentUser._id} 
-                imageableType='User'
-              />
-            <div>{currentUser.name}</div>
-            <div>{currentUser.location}</div>
-            <div>bio</div>
-          </div>
-          <div className='right'>
-            <h3>Interests:</h3>
-            { currentUser.interests.map((i) => {
-              <div>{i}</div>
-            })}
-          </div>
+      <div className={styles.profileContainer}>
+        <div className={styles.userInfo}>
+          <Profile 
+              profileId={currentUser.profile ? currentUser.profile._id : null} 
+              imageableId={currentUser._id} 
+              imageableType='User'
+            />
+          <div>{currentUser.name}</div>
+          <div>{currentUser.location}</div>
+          <div>bio</div>
+        
+          <h3>Interests:</h3>
+          { currentUser.interests.map((i) => {
+            <div>{i}</div>
+          })}
         </div>
 
-        <div className='content'>
-          <h3>Groups:</h3>
+        <div className={styles.userGroups}>
           <div className={styles.groupContainer}>
             { currentUser.groups.map((m) => {
               const imgSrc = m.group.profile ? m.group.profile.image.path : noPic;
-              return <img src={imgSrc} height='200' width='200' />
+              return (
+                <Link to={`/groups/${m.group._id}/events`} className={styles.groupElem}>
+                  <img src={imgSrc} height='200' width='200' />
+                  <div>{m.group.name}</div>
+                </Link>
+              )
             })}
           </div>
         </div>
+      </div>
+    );
+  }
+};
 
-        {/*
+UserProfilePage.propTypes = {
+  currentUser: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    role: PropTypes.string.isRequired,
+    location: PropTypes.string,
+    bio: PropTypes.string,
+    groups: PropTypes.arrayOf(PropTypes.object).isRequired,
+    interests: PropTypes.arrayOf(PropTypes.string).isRequired,
+  }).isRequired,
+};
+
+const mapStateToProps = (state, props) => {
+  return {
+    currentUser: getUserById(state, props.match.params.userId), 
+    uploadStatus: getUploadStatus(state),
+    uploadErrors: getUploadErrors(state), 
+  }
+}
+
+export default connect(mapStateToProps)(UserProfilePage);
+
+/*
         <div className={styles.profileContainer}>
           <div className={styles.profileContent}>
             <div className={styles.infoGrid}>
@@ -112,35 +145,7 @@ export class UserProfilePage extends React.Component {
             </div>
           </div>
         </div>
-              */ }
-
-      </div>
-      
-    );
-  }
-};
-
-UserProfilePage.propTypes = {
-  currentUser: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    role: PropTypes.string.isRequired,
-    location: PropTypes.string,
-    bio: PropTypes.string,
-    groups: PropTypes.arrayOf(PropTypes.object).isRequired,
-    interests: PropTypes.arrayOf(PropTypes.string).isRequired,
-  }).isRequired,
-};
-
-const mapStateToProps = (state, props) => {
-  return {
-    currentUser: getCurrentUser(state), 
-    uploadStatus: getUploadStatus(state),
-    uploadErrors: getUploadErrors(state), 
-  }
-}
-
-export default connect(mapStateToProps)(UserProfilePage);
-
+              */ 
 
 
 /* OLD 

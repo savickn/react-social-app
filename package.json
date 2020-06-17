@@ -41,6 +41,7 @@
     "@fortawesome/react-fontawesome": "0.1.8",
     "@loadable/component": "~5.0.1",
     "@loadable/server": "~5.1.0",
+    "async-redis": "^1.1.7",
     "axios": "0.18.1",
     "body-parser": "1.18.2",
     "bootstrap": "3.3.7",
@@ -48,6 +49,7 @@
     "compression": "1.7.4",
     "connected-react-router": "5.0.1",
     "cookie-parser": "1.4.4",
+    "cors": "^2.8.5",
     "cross-env": "5.1.6",
     "crypto-js": "3.1.9-1",
     "errorhandler": "1.5.1",
@@ -84,7 +86,9 @@
     "rosie": "2.0.1",
     "sanitize-html": "1.19.3",
     "sequelize": "~5.2.11",
-    "serve-favicon": "2.5.0"
+    "serve-favicon": "2.5.0",
+    "socket.io": "2.3.0",
+    "socket.io-client": "2.3.0"
   },
   "devDependencies": {
     "@babel/cli": "7.1.5",

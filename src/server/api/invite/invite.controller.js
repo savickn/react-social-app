@@ -13,7 +13,16 @@ export const searchInvites = (req, res) => {
   // issueType (e.g. an invite or request)
 
   Invite.find(req.query)
-    .populate('user')
+    .populate({
+      path: 'user',
+      select: '_id name profile',
+      populate: {
+        path: 'profile',
+        populate: {
+          path: 'image',
+        }
+      }
+    })
     .then(invites => res.status(200).json({ invites }))
     .catch(err => {
       console.error('searchInvites err --> ', err);
@@ -80,9 +89,12 @@ export const updateInvite = (req, res) => {
 
   Invite.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true, })
     .then(invite => res.status(200).json({ invite }))
-    .catch(err => {
-      console.error('updateInvite err --> ', err);
-      return res.status(500).send(err);
-    })
+    .catch(err => handleError(res, err))
+}
+
+
+function handleError(res, err) {
+  console.error('invite err --> ', err);
+  return res.status(500).send(err);
 }
 

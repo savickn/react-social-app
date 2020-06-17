@@ -6,7 +6,7 @@ import Membership from './membership.model';
 * search by: group/user/role/user.name/
 */
 export const searchMemberships = (req, res) => {
-  console.log('searchMemberships req.query --> ', req.query);
+  //console.log('searchMemberships req.query --> ', req.query);
   const { userId, groupId, searchMode, searchString, } = req.query;
 
   const query = {};
@@ -29,7 +29,7 @@ export const searchMemberships = (req, res) => {
       match: userQuery,
     })
     .then(data => {
-      console.log('searchMemberships json --> ', data);
+      //console.log('searchMemberships json --> ', data);
       const memberships = data.filter((m) => m.user !== null)
       return res.status(200).json({ memberships })
     })

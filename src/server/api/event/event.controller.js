@@ -67,17 +67,34 @@ export const getEvent = (req, res) => {
         }
       }
     })
-    .exec((err, event) => {
-      if(err) return handleError(res, err);
+    /*.populate({
+      path: 'invites',
+      //match: { attending: true },
+      //perDocumentLimit: 4,
+      populate: {
+        path: 'user',
+        select: '_id name profile role',
+        populate: {
+          path: 'profile',
+          populate: {
+            path: 'image',
+          }
+        }
+      }
+    })*/
+    .then((event) => {
+      console.log('getEvent --> ', event);
       return res.status(200).json({event});
-    });
+    })
+    .catch(err => handleError(res, err))
 }
 
 /*
 ** create new Event
 */
 export const addEvent = (req, res) => {
-  if (!req.body.title || !req.body.description || !req.body.location || !req.body.start || !req.body.end || !req.body.creator || !req.body.group) {
+  console.log(req.body);
+  if (!req.body.title || !req.body.description || !req.body.geoJSON || !req.body.start || !req.body.end || !req.body.creator || !req.body.group) {
     return res.status(500).end('Invalid request body arguments!');
   };
 

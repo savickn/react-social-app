@@ -1,6 +1,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 import styles from './UserCard.scss';
 
@@ -11,12 +12,12 @@ class UserCard extends React.Component {
 
   render() {
     const { user } = this.props;
-    const pic = user.profile || anonUser;
+    const pic = user.profile ? user.profile.image.path : anonUser;
 
-    console.log(user);
+    //console.log('usercard user --> ', user);
 
     return (
-      <div className={styles.cardContainer}>
+      <Link to={`/users/${user._id}`} className={`${styles.cardContainer} unstyled-link`}>
         <div>
           <img src={pic} width='75' height='75' />
         </div>
@@ -27,7 +28,7 @@ class UserCard extends React.Component {
         <div>shared groups</div> 
         */ 
         }
-      </div>
+      </Link>
     );
   }
 }

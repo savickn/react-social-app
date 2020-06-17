@@ -11,6 +11,7 @@ import UserInfoPanel from '../../../User/components/UserInfoPanel';
 
 import { searchMembershipsRequest } from '../../MembershipActions';
 import { getMemberships } from '../../MembershipReducer';
+import { openConnection } from '../../../Chat/ChatActions';
 
 import styles from './MemberView.scss';
 
@@ -59,6 +60,13 @@ class GroupMemberView extends React.Component {
     })
   }, 1000)
 
+
+  // open ChatView with Member
+  openChat = (userId) => {
+    console.log('openChat');
+    this.props.dispatch(openConnection(userId));
+  }
+
                                           /* Styling Logic */
 
   styleSidebarElement = (text) => {
@@ -102,11 +110,29 @@ class GroupMemberView extends React.Component {
 
             {/* renders list of members */}
             {members && members.map((m) => {
-              return <UserInfoPanel user={m.user} />;
+              return <UserInfoPanel key={m._id} user={m.user} startChat={this.openChat} />;
             })}
           </div>
         </div>
       </div>  
+    );
+  }
+}
+
+const mapStateToProps = (state) => {
+  return {
+    members: getMemberships(state), 
+  };
+}
+
+GroupMemberView.propTypes = {
+  members: PropTypes.array.isRequired,
+};
+
+export default connect(mapStateToProps)(GroupMemberView);
+
+
+
 
 
       /*<div className='container'>
@@ -127,18 +153,3 @@ class GroupMemberView extends React.Component {
           </div>
         </div>
             </div> */ 
-    );
-  }
-}
-
-const mapStateToProps = (state) => {
-  return {
-    members: getMemberships(state),
-  };
-}
-
-GroupMemberView.propTypes = {
-  members: PropTypes.array.isRequired,
-};
-
-export default connect(mapStateToProps)(GroupMemberView);

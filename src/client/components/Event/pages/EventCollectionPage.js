@@ -15,6 +15,8 @@ import PaginationScroll from '../../Utilities/PaginationScroll/PaginationScroll'
 import { createEventRequest, searchEventsRequest, clearCollection } from '../EventActions';
 import { getEvents, getEventCount } from '../EventReducer';
 import { getCurrentUser } from '../../User/AccountReducer';
+import { getAutocomplete, getLocation, getGeojson } from '../../Utilities/OSM/GeolocationReducer';
+import { autocompleteRequest, } from '../../Utilities/OSM/GeolocationActions';
 
 import styles from './EventCollectionPage.scss';
 
@@ -123,9 +125,29 @@ class EventCollectionPage extends React.Component {
 
   addEvent = (eventData) => {
     console.log('eventDate --> ', eventData);
+    const locData = eventData.location;
+
+    const location = locData.display_name.split(', ')[0];
+    const geoJSON = {
+      type: 'Point',
+      coordinates: [ Number.parseFloat(locData.lon), Number.parseFloat(locData.lat) ],
+      location, 
+    };
+
+    eventData.geoJSON = geoJSON;
+    delete eventData.location;
+
     this.props.dispatch(createEventRequest(eventData));
     this.closeModal();
   }
+
+
+  // query OSM for location suggestions
+  getSuggestions = (query) => {
+    const country_code = this.props.location.address.country_code;
+    this.props.dispatch(autocompleteRequest({ location: query, country_code }));
+  }
+
 
                                   /* Modal Logic */
 
@@ -210,7 +232,8 @@ class EventCollectionPage extends React.Component {
         
         {/* conditionally render EventForm within Modal */}
         <Modal isVisible={this.state.modalVisibility} close={this.closeModal}>
-          <EventForm creatorId={this.props.currentUser._id} groupId={this.props.groupId} createEvent={this.addEvent} />
+          <EventForm creatorId={this.props.currentUser._id} groupId={this.props.groupId} createEvent={this.addEvent}
+            getSuggestions={this.getSuggestions} locationSuggestions={this.props.suggestions}  />
         </Modal>
       </div>
     );
@@ -228,6 +251,11 @@ const mapStateToProps = (state, props) => {
     currentUser: getCurrentUser(state),
     events: getEvents(state), // returns Array 
     eventCount: getEventCount(state), 
+
+    // geocoding 
+    location: getLocation(state),
+    geojson: getGeojson(state),
+    suggestions: getAutocomplete(state), 
   };
 }
 

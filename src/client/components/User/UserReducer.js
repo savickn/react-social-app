@@ -109,7 +109,7 @@ const UserReducer = (state = initialState, action) => {
 }
 
 export const getUsers = (state) => state.users.collection;
-export const getUserById = (state, id) => state.users.collection.filter(user => user.cuid === id)[0];
+export const getUserById = (state, id) => state.users.collection.filter(user => user._id === id)[0];
 export const getUserErrors = (state) => state.users.errors;
 
 export default UserReducer;

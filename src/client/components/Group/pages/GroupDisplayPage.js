@@ -49,10 +49,10 @@ export class GroupDisplayPage extends React.Component {
 
   // sets currentUser's role in this.state (e.g. 'admin/member/none')
   setRole() {
-    console.log('setRole props --> ', this.props);
+    //console.log('setRole props --> ', this.props);
     const membership = this.props.membership;
     const role = membership ? membership.role : 'none';
-    console.log('setRole --> ', role);
+    //console.log('setRole --> ', role);
     this.setState({ role });
   }
 
@@ -90,7 +90,7 @@ export class GroupDisplayPage extends React.Component {
     const { group } = this.props;
     if(!group) return(<div></div>);
 
-    console.log('groupDisplay state --> ', this.state);
+    //console.log('groupDisplay state --> ', this.state);
 
     //const dp = this.props.group.displayPicture ? this.props.group.displayPicture.path : this.state.altImg;
     const profileId = group.profile ? group.profile._id : null;

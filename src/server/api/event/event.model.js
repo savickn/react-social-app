@@ -27,10 +27,10 @@ const EventSchema = new Schema({
     },
   },
 
-  location: { // should maybe be an embedded document
+  /*location: { // should maybe be an embedded document
     type: String,
     required: true,
-  },
+  },*/
   start: {
     type: Date,
     required: true,
@@ -55,9 +55,10 @@ const EventSchema = new Schema({
     ref: 'Group',
     required: true,
   },
-  /*comments: [{
-
-  }],*/
+  comments: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Comment',
+  }],
   
   /* ATTENDANCE */
   // type --> e.g. Open

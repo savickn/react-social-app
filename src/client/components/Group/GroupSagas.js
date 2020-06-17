@@ -40,7 +40,7 @@ function* fetchGroupHandler(action) {
   try {
     const response = yield call(fetchGroupAjax, action.id);
     let { group } = response;
-    console.log('fetchGroupSaga --> ', group);
+    //console.log('fetchGroupSaga --> ', group);
     yield put(fetchGroupSuccess(group));
   } catch(error) {
     yield put(fetchGroupError(error));

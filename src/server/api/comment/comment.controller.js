@@ -32,10 +32,32 @@ export function searchComments(req, res) {
 ** retrieve a single Comment (is this necessary???)
 */
 export function getComment(req, res) {
-  Comment.findOne({ _id: req.params.id }).exec((err, comment) => {
-    if (err) res.status(500).send(err);
-    res.json({ comment });
-  });
+  Comment.findById(req.params.id)
+    .populate({
+      path: 'comments',
+      populate: {
+        path: 'author',
+        select: '_id name profile',
+        populate: {
+          path: 'profile',
+          populate: {
+            path: 'image',
+          }
+        }
+      }
+    })
+    .populate({
+      path: 'author',
+      select: '_id name profile',
+      populate: {
+        path: 'profile',
+        populate: {
+          path: 'image',
+        }
+      }
+    })
+      .then(comment => res.status(200).json({ comment }))
+      .catch(err => handleError(res, err))
 }
 
 
@@ -66,6 +88,32 @@ export function createComment(req, res) {
     })
     .catch(err => handleError(res, err)) 
 }
+
+/*
+** toggle upvote
+*/
+export const toggleUpvote = async (req, res) => {
+  try {
+    console.log(req.body);
+    const c = await Comment.findById(req.params.id);
+    c.toggleUpvote(req.body.authorId);
+    const comment = await c.save();
+    await comment.populate({
+      path: 'author',
+      select: '_id name profile',
+      populate: {
+        path: 'profile',
+        populate: {
+          path: 'image',
+        }
+      }
+    }).execPopulate();
+    return res.status(200).json({ comment });
+  } catch(err) {
+    return handleError(res, err);
+  }
+}
+
 
 
 /*

@@ -46,7 +46,7 @@ class EventInfo extends React.Component {
             <div className={styles.eventDetails}>
               <div>{startDate.toDateString()}</div>
               <div className={styles.titleText}>{evt.title}</div>
-              <div>{evt.location}</div>
+              <div>{evt.geoJSON.location}</div>
             </div>
             <div className={styles.eventImage}>
               <img src={dp} />

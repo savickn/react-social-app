@@ -13,39 +13,14 @@ import axios from '../../util/axiosCaller';
 import { setAuthToken } from '../../util/AuthService';
 import { takeLatest, put, call, fork } from 'redux-saga/effects';
 
-/* AJAX REQUESTS */
+
+/* FETCH ONE */
 
 const fetchUser = (id) => {
   return axios.get(`api/users/${id}`)
     .then(res => res.data)
     .catch(err => { throw err; })
 }
-
-const searchUsersAjax = (query) => {
-  return axios.get('api/users/', { params: query })
-  .then(res => res.data)
-  .catch((err) => { throw err; })
-}
-
-const addUserAjax = (user) => {
-  return axios.post('api/users/', user)
-  .then(res => res.data )
-  .catch(err => { throw err; })
-}
-
-const updateUserAjax = (user) => {
-  return axios.put(`api/users/${user._id}`, user)
-  .then(res => res.data)
-  .catch(err => { throw err; })
-}
-
-const deleteUserAjax = (userId) => {
-  return axios.delete(`api/users/${userId}`)
-  .then(res => res.data)
-  .catch(err => { throw err; })
-}
-
-/* FETCH ONE */
 
 export function* fetchUserWatcher() {
   yield takeLatest(FETCH_USER_REQUEST, fetchUserHandler);
@@ -54,13 +29,20 @@ export function* fetchUserWatcher() {
 function* fetchUserHandler(action) {
   try {
     const { user } = yield call(fetchUser, action.id);
+    console.log('fetchUser --> ', user);
     yield put(fetchUserSuccess(user));
   } catch(err) {
     console.error('fetchUser err --> ', err);
   }
 }
 
-/* SEARCH USERS */
+/* SEARCH */
+
+const searchUsersAjax = (query) => {
+  return axios.get('api/users/', { params: query })
+  .then(res => res.data)
+  .catch((err) => { throw err; })
+}
 
 export function* searchUsersWatcher() {
   yield takeLatest(SEARCH_USERS_REQUEST, searchUsersHandler);
@@ -76,7 +58,13 @@ function* searchUsersHandler(action) {
   }
 }
 
-/* CREATE USER */
+/* CREATE */
+
+const addUserAjax = (user) => {
+  return axios.post('api/users/', user)
+  .then(res => res.data )
+  .catch(err => { throw err; })
+}
 
 export function* addUserWatcher() {
   yield takeLatest(SIGN_UP_REQUEST, addUserHandler);
@@ -95,7 +83,13 @@ function* addUserHandler(action) {
   }
 }
 
-/* UPDATE USER */
+/* UPDATE */
+
+const updateUserAjax = (user) => {
+  return axios.put(`api/users/${user._id}`, user)
+  .then(res => res.data)
+  .catch(err => { throw err; })
+}
 
 export function* updateUserWatcher() {
   yield takeLatest(UPDATE_USER_REQUEST, updateUserHandler);
@@ -111,7 +105,15 @@ function* updateUserHandler(action) {
   } 
 }
 
-/* DELETE USER */ 
+
+
+/* DELETE */ 
+
+const deleteUserAjax = (userId) => {
+  return axios.delete(`api/users/${userId}`)
+  .then(res => res.data)
+  .catch(err => { throw err; })
+}
 
 export function* deleteUserWatcher() {
   yield takeLatest(DELETE_USER_REQUEST, deleteUserHandler);

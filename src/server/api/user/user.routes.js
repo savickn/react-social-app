@@ -6,7 +6,7 @@ const router = new Router();
 router.get('/', controller.getUsers);
 router.post('/', controller.addUser);
 router.get('/me', auth.isAuthenticated(), controller.getMe);
-router.get('/:cuid', controller.getUser);
+router.get('/:id', controller.getUser);
 router.delete('/:cuid', controller.deleteUser);
 
 export default router;

@@ -39,6 +39,12 @@ class CommentForm extends React.Component {
     };
     this.props.handleSubmit(comment);
   }
+
+  getReplyText = () => {
+    const { reply } = this.props;
+    return `Replying to ${reply.author.name}: "${reply.content.slice(0, 50)}"`;
+  }
+
   
   render() {
     const thumbnail = this.props.userImg || noPic;
@@ -50,7 +56,15 @@ class CommentForm extends React.Component {
         <div className='icon'>
           <Image width='50' height='50' src={thumbnail} rounded />
         </div>
-        <textarea className='form-control' ref={this.contentRef} placeholder='Comment...'/>
+        
+        <div className={styles.commentBox}>
+          { this.props.reply ? 
+            <p>{this.getReplyText()}</p>
+            : null
+          }  
+          <textarea className='form-control' ref={this.contentRef} placeholder='Comment...'/>
+        </div>
+
         <div className='click-cursor' onClick={this.createComment}>
           <FontAwesomeIcon icon={faPlay} size={"2x"} />
         </div>
@@ -62,6 +76,7 @@ class CommentForm extends React.Component {
 CommentForm.propTypes = {
   handleSubmit: PropTypes.func.isRequired, 
   userImg: PropTypes.string, 
+  reply: PropTypes.object, 
 };
 
 export default CommentForm;

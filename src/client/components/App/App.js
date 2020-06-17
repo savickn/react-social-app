@@ -12,6 +12,7 @@ import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
 import Alert from '../Utilities/Alert/alert';
 import Spinner from '../Utilities/Spinner/spinkit';
+import ChatContainer from '../Chat/components/ChatContainer';
 
 //import { switchLanguage } from '../../modules/Intl/IntlActions';
 import { logOut } from '../User/AccountActions';
@@ -100,7 +101,8 @@ export class App extends React.Component {
             <div className='container'>
               {routes}
             </div>
-            <DevTools />
+            <ChatContainer currentUser={this.props.currentUser} />
+            {/* <DevTools /> */}
             <Footer />
           </div>
         }

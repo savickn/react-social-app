@@ -10,8 +10,9 @@ import Modal from '../../Utilities/Modal/modal';
 
 import AlbumForm from './AlbumForm';
 import AlbumIcon from './AlbumIcon';
+import PhotoViewer from './PhotoViewer';
 
-import { searchAlbumsRequest, createAlbumRequest, } from '../AlbumActions';
+import { searchAlbumsRequest, createAlbumRequest, fetchAlbumRequest, } from '../AlbumActions';
 import { getAlbums, getAlbumStatus, } from '../AlbumReducer';
 import { getCurrentUser, } from '../../User/AccountReducer';
 
@@ -26,6 +27,10 @@ class AlbumHub extends React.Component {
       complete: false, // used to track if new Album is uploaded
       //add thumbnail
       //add permissions
+      
+      viewerVisibility: false, 
+      activeAlbum: null, 
+      activeAlbumId: null, 
     }
   }
 
@@ -36,9 +41,18 @@ class AlbumHub extends React.Component {
   }
 
   // update 'state.complete' if 'props.status === created'
-  componentWillUpdate(prevProps, prevState) {
-    if(this.props.status === 'created' && prevProps.status !== 'created') {
+  componentDidUpdate(prevProps, prevState) {
+    // designed for AlbumForm but not used atm
+    /*if(this.props.status === 'created' && prevProps.status !== 'created') {
       this.setState({ complete: true })
+    }*/
+
+    if(this.props.status === 'idle' && prevProps.status === 'loading') {
+      // used to open PhotoViewer once 'activeAlbum' is loaded
+      this.setState({ 
+        activeAlbum: this.props.albums.filter(a => a._id === this.state.activeAlbumId)[0],
+        viewerVisibility: true,
+      }); 
     }
   }
 
@@ -47,10 +61,7 @@ class AlbumHub extends React.Component {
 
   // used to create Album
   createAlbum = (data) => {
-    console.log('createAlbum --> ', data);
-
     const { currentUser, imageableId, imageableType } = this.props;
-
     this.props.dispatch(createAlbumRequest({
       author: currentUser._id, 
       name: data.name, 
@@ -73,23 +84,46 @@ class AlbumHub extends React.Component {
     this.setState({ modalVisibility: false });
   }
 
+                                                /* PHOTO VIEWER */
+
+  // used to open PhotoViewer and set 'activeAlbum'
+  openPhotoViewer = (album) => {
+    const { activeAlbum } = this.state;
+
+    this.setState({ 
+      activeAlbumId: album._id,
+    }, () => this.props.dispatch(fetchAlbumRequest(album._id)));
+  }
+
+  closePhotoViewer = () => {
+    this.setState({ viewerVisibility: false });
+  }
+
                                                 /* RENDER LOGIC */
 
   render() {
     const { albums, } = this.props;
 
     return (
-      <div className={styles.hubContainer}>
-        {albums.slice(0, 3).map((a) => {
-          return <AlbumIcon key={a._id} albumId={a._id} image={a.profile.image.path} />
-        })}
-        <button className='addIcon' onClick={this.openModal}>
-          <FontAwesomeIcon icon={faPlus} />
-        </button>
+      <div>
+        <div className={styles.imgContainer}>
+          {albums.slice(0, 5).map((a) => {
+            return (
+              <div onClick={() => this.openPhotoViewer(a)}>
+                <AlbumIcon key={a._id} albumId={a._id} image={a.profile.image.path} />
+              </div>
+            )
+          })}
+          <button className='addIcon' onClick={this.openModal}>
+            <FontAwesomeIcon icon={faPlus} />
+          </button>
+        </div>
 
         <Modal isVisible={this.state.modalVisibility} close={this.closeModal} >
           <AlbumForm handleSubmit={this.createAlbum} complete={this.state.complete} />
         </Modal>
+
+        <PhotoViewer close={this.closePhotoViewer} isVisible={this.state.viewerVisibility} album={this.state.activeAlbum} />
       </div>
     )
   }

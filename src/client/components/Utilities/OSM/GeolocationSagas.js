@@ -12,7 +12,7 @@ import axios from '../../../util/axiosCaller';
 
 function reverseGeocode(coords) {
   const templateStr = `https://nominatim.openstreetmap.org/reverse?lat=${coords.lat}&lon=${coords.lon}&format=geojson`;
-  console.log(templateStr);
+  //console.log(templateStr);
   return axios.get(templateStr)
     .then(res => res.data)
     .catch(err => { throw err; })
@@ -25,7 +25,7 @@ function* reverseWatcher() {
 function* reverseHandler(action) {
   try {
     const res = yield call(reverseGeocode, action.coords);
-    console.log('reverse res --> ', res);
+    //console.log('reverse res --> ', res);
     yield put(reverseSuccess(res.features[0]));
   } catch(err) {
     console.error('geocode err --> ', err);
@@ -40,7 +40,7 @@ function autocomplete(query) {
 
   const templateStr = `https://nominatim.openstreetmap.org/search?q=${query.location}${restrictions}&format=json&addressdetails=1`;
 
-  console.log('autocompleteStr --> ', templateStr);
+  //console.log('autocompleteStr --> ', templateStr);
 
   return axios.get(templateStr)
     .then(res => res.data)

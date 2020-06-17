@@ -20,6 +20,7 @@ export function Header(props, context) {
   );*/
   const isLoggedIn = props.authStatus === 'authenticated'; //isEmpty(props.currentUser) ? true : false;
   console.log('isLoggedIn? --> ', isLoggedIn);
+  console.log('currentUser --> ', props.currentUser);
 
   const header = `${styles['header']}`;
 

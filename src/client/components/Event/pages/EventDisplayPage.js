@@ -129,7 +129,7 @@ class EventPage extends React.Component {
     const status = this.getEventStatus(evt.start, evt.end);
     const date = formatDate(evt.start, evt.end);
 
-    console.log('eventPage attendees --> ', attendees);
+    //console.log('eventPage attendees --> ', attendees);
 
     return (
       <div className={`${styles.eventPage} background`}>
@@ -161,6 +161,8 @@ class EventPage extends React.Component {
               <h2>Details</h2>
               <p>{evt.description}</p>
             </div>
+
+            {/* ATTENDEES */}
             <div>
               <h2>Attendees</h2>
               <div className={styles.attendeesContainer}>
@@ -215,11 +217,11 @@ class EventPage extends React.Component {
               {hasPrice && 
                 <div className='grid-list-elem'><FontAwesomeIcon icon={faDollarSign} className='list-icon' /> <span className='list-content'> price </span></div>
               }
-              <div className='grid-list-elem'><FontAwesomeIcon icon={faMap} className='list-icon' /> <span className='list-content'> {evt.location} </span></div>
+              <div className='grid-list-elem'><FontAwesomeIcon icon={faMap} className='list-icon' /> <span className='list-content'> {evt.geoJSON.location} </span></div>
               <iframe width="250"
                       height="250" 
                       src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBU9RYKDNi8bcLp4IP-4GvWUEnCIqEMa7E
-                        &q=${evt.location}`}
+                        &q=${evt.geoJSON.location}`}
                       allowFullScreen>
               </iframe>
             </div>

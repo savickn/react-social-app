@@ -1,10 +1,5 @@
 
 
-
-
-
-
-
 .panelContainer {
   display: flex;
   flex-direction: column;
@@ -48,7 +43,8 @@
 
 
 .msgBtn {
-  z-index: 100;
+  position: relative;
+  z-index: 1;
 
   &:hover {
     box-shadow: 5px black;

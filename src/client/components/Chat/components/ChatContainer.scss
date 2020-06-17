@@ -1,0 +1,15 @@
+
+.chatContainer {
+  width: 100%;
+
+
+  position: fixed;
+  bottom: 0px;
+
+  display: flex;
+  flex-direction: row-reverse;
+
+  & > * {
+    padding: 1rem 2rem;
+  }
+}

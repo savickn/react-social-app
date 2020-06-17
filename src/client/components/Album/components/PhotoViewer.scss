@@ -1,0 +1,89 @@
+
+.hidden {
+  display: none;
+}
+
+// represents the entire full-screen
+.fullscreen {
+  //display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.75); /* Black w/ opacity */
+}
+
+// represents the section of the modal that has content
+.content {
+  display: grid;
+  grid-template-rows: 5% 75% 20%;
+  grid-template-areas: 
+    "title"
+    "img"
+    "strip";
+
+  background-color: black;
+  padding: 1rem;
+  margin: 15% auto; /* 15% from the top and centered */
+  border-radius: 5px;
+  width: 80%; /* Could be more or less, depending on screen size */
+  height: 90%;
+
+  overflow-x: hidden;
+}
+
+.titleStrip {
+  grid-area: title;
+
+  color: rgba(255, 255, 255, 0.692)
+}
+
+// represents main image
+.activeImg {
+  grid-area: img;
+
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+
+  &:hover > .navBtn {
+    visibility: visible;
+
+    //position: relative;
+
+  }
+}
+
+.navBtn {
+  visibility: hidden;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  transition: all 0.2s ease;
+}
+
+
+// list of thumbnails
+.photoStrip {
+  grid-area: strip;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: nowrap;
+  overflow: hidden;
+
+  &:hover {
+
+  }
+}
+
+.selectedThumbnail {
+  border: 2px solid rgb(235, 173, 2);
+}

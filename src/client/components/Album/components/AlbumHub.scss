@@ -1,5 +1,9 @@
 
-.hubContainer {
+
+.imgContainer {
+  display: flex;
+  flex-wrap: wrap;
+
   & > * {
     padding-right: 10px;
   }

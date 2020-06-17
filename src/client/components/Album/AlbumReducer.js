@@ -25,95 +25,53 @@ const initialState = {
 // must set 'len' from server response header
 const AlbumReducer = (state = initialState, action) => {
   switch (action.type) {
-    case FETCH_ALBUM_REQUEST : 
+    
+    // set 'status = loading'
+    case FETCH_ALBUM_REQUEST :
       return {
-        ...state, 
+        ...state,
+        status: 'loading', 
       }
+    // set 'status = idle'
     case FETCH_ALBUM_SUCCESS : 
       return {
         ...state, 
-        data: [...state.data, action.album]
+        status: 'idle',
+        data: updateByObjectId(state.data, action.album)
       }
       
-    case SEARCH_ALBUMS_REQUEST :
-      return {
-        ...state,
-        status: 'loading',
-        errors: null,
-      };
     case SEARCH_ALBUMS_SUCCESS :
-      console.log('state.data --> ', state.data);
-      console.log('payload.albums --> ', action.payload.albums);
       return {
         ...state,
-        status: 'idle',
         data: [/*...state.data,*/ ...action.payload.albums],
         len: action.payload.count
       };
-    case SEARCH_ALBUMS_ERROR :
-      return {
-        ...state,
-        status: 'error',
-        errors: action.errors,
-      };
     
-    case CREATE_ALBUM_REQUEST :
-      return {
-        ...state,
-        status: 'loading',
-        errors: null
-      };
     case CREATE_ALBUM_SUCCESS :
       return {
         ...state,
-        status: 'created',
         data: [action.album, ...state.data],
         len: state.len + 1,
       };
     case CREATE_ALBUM_ERROR :
       return {
         ...state,
-        status: 'error',
         errors: action.errors,
       };
 
-    case UPDATE_ALBUM_REQUEST :
-      return {
-        ...state, 
-        status: 'loading', 
-        errors: null
-      };
     case UPDATE_ALBUM_SUCCESS : 
       return {
         ...state, 
-        status: 'idle',
         data: updateByObjectId(state.data, action.album),
       };
-    case UPDATE_ALBUM_ERROR : 
-      return {
-        ...state, 
-        status: 'error',
-        errors: action.errors,
-      };
 
-    case DELETE_ALBUM_REQUEST : 
-      return {
-        ...state,
-        status: 'loading',
-        errors: null,
-      };
     case DELETE_ALBUM_SUCCESS :
       return {
         ...state,
         data: removeByObjectId(state.data, action.id),
         len: state.len - 1,
       };
-    case DELETE_ALBUM_ERROR : 
-      return {
-        ...state,
-        status: 'error',
-        errors: action.errors,
-      };
+
     default:
       return state;
   }

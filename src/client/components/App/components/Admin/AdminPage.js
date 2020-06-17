@@ -14,6 +14,7 @@ class AdminPage extends React.Component {
         <Link to="/modalwizard">Modal Wizard</Link> <br />
         <Link to="/stylesTest">Styles</Link> <br />
         <Link to="/openstreetmap">OpenStreetMap</Link> <br />
+        <Link to="/socketio">Socketio</Link> <br />
         
 
         <Link to="/commentTest">Comment Test</Link>

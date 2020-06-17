@@ -67,10 +67,10 @@ export function searchUsersFailure(errors) {
 
 /* FETCH ONE */
 
-export function fetchUserRequest(query) {
+export function fetchUserRequest(id) {
   return {
     type: FETCH_USER_REQUEST,
-    query, 
+    id, 
   }
 }
 

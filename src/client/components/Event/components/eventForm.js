@@ -2,6 +2,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { debounce } from 'lodash';
 
 import styles from './eventForm.scss';
 
@@ -34,10 +35,6 @@ class EventForm extends React.Component {
     this.setState({description: se.target.value});
   };
 
-  handleLocationChange = (se) => {
-    this.setState({location: se.target.value});
-  };
-
   handleStartDateChange = (se) => {
     this.setState({startDate: se.target.value});
   };
@@ -57,6 +54,18 @@ class EventForm extends React.Component {
   handleCostChange = (se) => {
     this.setState({cost: se.target.value});
   };
+
+  //
+  selectLocation = (loc) => {
+    console.log('select location --> ', loc);
+    this.setState({ location: loc });
+  }
+
+  handleLocationChange = debounce((loc) => {
+    console.log('locationChange --> ', loc);
+    this.props.getSuggestions(loc);
+  }, 1000);
+
 
   /* Helper Methods */ 
 
@@ -101,10 +110,7 @@ class EventForm extends React.Component {
       creator: this.props.creatorId, 
     };
     this.saveToLocalStorage();
-    if (this.canBeSubmitted()) {
-      this.props.createEvent(eventArgs);
-      //this.resetState();
-    }
+    this.props.createEvent(eventArgs);
   };
 
   // used to reset state
@@ -130,10 +136,29 @@ class EventForm extends React.Component {
           <label htmlFor="description"> Description: </label>
           <textarea id='description' className='form-control' value={this.state.description} onChange={this.handleDescriptionChange} />
         </div>
+        
+        { /*
         <div className='form-field'>
           <label htmlFor='location'> Location: </label>
           <input type='text' id='location' className='form-control' value={this.state.location} onChange={this.handleLocationChange} />
         </div>
+        */ }
+        
+        <div className='form-group'>
+          <label htmlFor='location'> Location:</label>
+          <input type='text' onChange={(e) => this.handleLocationChange(e.target.value)} id="location" className='form-control' />
+        </div>
+        {this.props.locationSuggestions.map((l, idx) => {
+          return (
+            <div className={`${styles.suggestion} ${this.state.location.place_id === l.place_id ? styles.selected : ''}`} 
+              onClick={() => this.selectLocation(l)}>
+                {l.display_name}
+            </div>
+          );
+        })}
+
+
+
         <div className='form-field'>
           <label htmlFor='startTime'> Start Time: </label>
           <input type='date' id='startDate' className='form-control' value={this.state.startDate} onChange={this.handleStartDateChange} />
@@ -154,6 +179,9 @@ EventForm.propTypes = {
   creatorId: PropTypes.string.isRequired,
   groupId: PropTypes.string.isRequired, 
   createEvent: PropTypes.func.isRequired, 
+
+  getSuggestions: PropTypes.func.isRequired, // func to query osm for suggestions when user input changes
+  locationSuggestions: PropTypes.array.isRequired, // an array of osm objects
 };
 
 export default EventForm;
