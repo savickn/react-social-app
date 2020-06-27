@@ -13,6 +13,10 @@ export const searchAlbums = async (req, res) => {
     query.imageableId = req.params.imageableId;
   }
 
+  if(req.query.imageableId) {
+    query.imageableId = req.query.imageableId;
+  }
+
   const pageSize = req.query.pageSize || 5; // used for pagination
   const page = req.query.currentPage - 1 || 0; // used to set 'offset' for pagination
   const offset = page * pageSize;

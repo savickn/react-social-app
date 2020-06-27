@@ -12,6 +12,7 @@ import UserInfoPanel from '../../../User/components/UserInfoPanel';
 import { searchMembershipsRequest } from '../../MembershipActions';
 import { getMemberships } from '../../MembershipReducer';
 import { openConnection } from '../../../Chat/ChatActions';
+import { getCurrentUser } from '../../../User/AccountReducer';
 
 import styles from './MemberView.scss';
 
@@ -62,9 +63,9 @@ class GroupMemberView extends React.Component {
 
 
   // open ChatView with Member
-  openChat = (userId) => {
-    console.log('openChat');
-    this.props.dispatch(openConnection(userId));
+  openChat = (user) => {
+    console.log('openChat --> ', user);
+    this.props.dispatch(openConnection(user));
   }
 
                                           /* Styling Logic */
@@ -76,7 +77,7 @@ class GroupMemberView extends React.Component {
                                           /* Render Logic */
   
   render() {
-    const { members } = this.props;
+    const { members, currentUser } = this.props;
     if(!members) return <div></div>;
 
     const { searchMode } = this.state;
@@ -110,7 +111,7 @@ class GroupMemberView extends React.Component {
 
             {/* renders list of members */}
             {members && members.map((m) => {
-              return <UserInfoPanel key={m._id} user={m.user} startChat={this.openChat} />;
+              return <UserInfoPanel key={m._id} user={m.user} startChat={this.openChat} currentUserId={currentUser._id} />;
             })}
           </div>
         </div>
@@ -122,6 +123,7 @@ class GroupMemberView extends React.Component {
 const mapStateToProps = (state) => {
   return {
     members: getMemberships(state), 
+    currentUser: getCurrentUser(state),
   };
 }
 

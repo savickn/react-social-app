@@ -1,6 +1,14 @@
 
 import _ from 'lodash';
 
+// adds element to array without duplicates-ish
+export const insertByObjectId = (array, newElem) => {
+  return [...array.filter(elem => {
+    elem._id !== newElem._id;
+  }), newElem]
+}
+
+
 // accepts an Array of Mongoose objects (or sometimes an Array of ObjectIds) and an ObjectId 
 export const matchByObjectId = (arr, id) => {
   console.log('matchbyid --> ', arr, id);
@@ -27,6 +35,10 @@ export const removeByObjectId = (arr, id) => {
 
 // used to merge two arrays without duplicates, WORKING WELL
 export const mergeArrays = (originalArr, newArr) => {
+  console.log('original --> ', originalArr);
+  console.log('new --> ', newArr);
+
+
   let copyArr = [...originalArr];
   let ids = new Set(originalArr.map(o => o._id)); // list of original IDs
   return newArr.filter(n => !ids.has(n._id)).concat(copyArr);

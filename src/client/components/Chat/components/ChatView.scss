@@ -2,9 +2,13 @@
 /* container for each open chat box */
 
 .chatView {
+  pointer-events: auto;
+
   position: relative;
-  width: 30%;
-  z-index: 100;
+  width: 35%;
+  z-index: 1000;
+
+  min-width: 320px;
 
 }
 
@@ -25,22 +29,96 @@
 
 }
 
+/* username, etc */
+
 .chatHeader {
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
+  justify-content: space-between;
 
   padding: 1rem;
   border-bottom: 1px grey solid;
-
 }
 
+.controls {
+  display: flex;
+  align-items: center;
+
+  & > * {
+    padding: 0rem 0.25rem;
+  }
+}
+
+.headerInfo {
+  display: flex;
+  align-items: center;
+
+  & > * {
+    margin-right: 0.5rem;
+  }
+}
+
+
+/* actual comments */
+
 .chatBody {
+  padding: 1rem 0rem;
+
   display: flex;
   flex-direction: column;
   flex: 1;
 
+  overflow: auto;
+
+  & > * {
+    margin: 0.25rem 0rem;
+  }
 }
+
+.alignRight {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.alignLeft {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.commentRight {
+  max-width: 75%;
+
+  border-radius: 1rem;
+  padding: 1rem;
+  margin-right: 1rem;
+
+  background-color: rgb(0,120,255);
+  color: white;
+}
+
+.commentLeft {
+  max-width: 75%;
+
+  border-radius: 1rem;
+  padding: 1rem;
+
+  background-color: white;
+  color: black;
+}
+
+.messageDate {
+  display: flex;
+  justify-content: center;
+
+  & > span {
+    font-size: 1.1rem;
+  }
+}
+
+
+/* input + emoji controls */
 
 .chatFooter {
   display: flex;
@@ -55,7 +133,9 @@
   }
 }
 
-
+.input {
+  flex: 1;
+}
 
 /* minimized chat window */
 

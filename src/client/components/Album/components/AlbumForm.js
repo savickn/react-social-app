@@ -2,7 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Profile from '../../Profile/Profile';
+import Profile from '../../Profile/components/Profile';
 import Upload from '../../Upload/components/upload';
 
 import { readFileAsync } from '../../../util/utilFuncs';

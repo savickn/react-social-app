@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 //import Upload from '../../../Upload/components/upload';
-import Profile from '../../../Profile/Profile';
+import Profile from '../../../Profile/components/Profile';
 
 import { uploadRequest } from '../../../Upload/UploadActions';
 import { updateUserRequest } from '../../UserActions';

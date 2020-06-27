@@ -8,7 +8,7 @@ import {
   DELETE_EVENT_REQUEST, DELETE_EVENT_SUCCESS, 
 } from './EventActions';
 
-import { updateByObjectId, removeByObjectId, mergeArrays } from '../../util/utilFuncs';
+import { updateByObjectId, removeByObjectId, mergeArrays, insertByObjectId } from '../../util/utilFuncs';
 
 /* Status can be:
 * idle -> no request
@@ -64,7 +64,8 @@ const EventReducer = (state = initialState, action) => {
       return {
         ...state,
         status: 'idle',
-        collection: mergeArrays(state.collection, [action.event]), 
+        collection: insertByObjectId(state.collection, action.event)
+        //mergeArrays(state.collection, [action.event]), 
       };
 
     /* SEARCH EVENTS */
@@ -72,12 +73,14 @@ const EventReducer = (state = initialState, action) => {
     case SEARCH_EVENTS_REQUEST:
       return {
         ...state,
+        collection: [],
         status: 'pending',
       };
     case SEARCH_EVENTS_SUCCESS:
       return {
         status: 'idle',
-        collection: mergeArrays(state.collection, action.payload.events),
+        collection: action.payload.events,
+        //collection: mergeArrays(state.collection, action.payload.events),
         len: action.payload.count, 
         errors: null, 
       };

@@ -6,7 +6,7 @@ import {
   DELETE_GROUP_REQUEST, DELETE_GROUP_SUCCESS, DELETE_GROUP_ERROR,
 } from './GroupActions';
 
-import { updateByObjectId, removeByObjectId, matchByObjectId, } from '../../util/utilFuncs';
+import { updateByObjectId, removeByObjectId, matchByObjectId, insertByObjectId, } from '../../util/utilFuncs';
 
 const initialState = { 
   status: 'idle',
@@ -36,7 +36,7 @@ const GroupReducer = (state = initialState, action) => {
       return {
         ...state,
         status: 'idle',
-        data: [...state.data, action.group],
+        data: insertByObjectId(state.data, action.group),
         lastGroup: null, 
       };
     case FETCH_GROUP_ERROR : 
@@ -49,6 +49,7 @@ const GroupReducer = (state = initialState, action) => {
     case SEARCH_GROUPS_REQUEST :
       return {
         ...state,
+        data: [],
         status: 'loading',
         errors: null,
       };

@@ -17,6 +17,7 @@ import { getEvents, getEventCount } from '../EventReducer';
 import { getCurrentUser } from '../../User/AccountReducer';
 import { getAutocomplete, getLocation, getGeojson } from '../../Utilities/OSM/GeolocationReducer';
 import { autocompleteRequest, } from '../../Utilities/OSM/GeolocationActions';
+import { createInviteRequest } from '../InviteActions';
 
 import styles from './EventCollectionPage.scss';
 
@@ -37,9 +38,7 @@ class EventCollectionPage extends React.Component {
   }
 
   componentDidMount() {
-    if(!this.props.events.length > 0) {
-      this.queryEvents();
-    }
+    this.queryEvents();
   }
 
                                 /* Component logic */
@@ -84,20 +83,22 @@ class EventCollectionPage extends React.Component {
   }
 
 
-  // determines whether to show/hide Attend button
-  canAttend = () => {
-    const { currentUser, attendees, } = this.props;
+  /* EVENT ATTENDANCE */
+
+  // determines whether to show/hide Attend button... WORKING
+  canAttend = (evt) => {
+    const { currentUser, } = this.props;
     if(!currentUser) return false;
 
-    const userArr = attendees.map((a) => a.user._id);
+    const userArr = evt.invites.map((a) => a.user ? a.user._id : null);
     //console.log(userArr);
 
     return !userArr.includes(currentUser._id);
   }
 
   // used by external User to create an Invite object (basically request to attend)
-  attendEvent = (e) => {
-    const { evt, currentUser } = this.props;
+  attendEvent = (evt) => {
+    const { currentUser } = this.props;
 
     const invite = {
       event: evt._id,
@@ -111,7 +112,7 @@ class EventCollectionPage extends React.Component {
 
     console.log('attendEvent inviteObj --> ', invite);
 
-    if(this.canAttend()) {
+    if(this.canAttend(evt)) {
       this.props.dispatch(createInviteRequest(invite));
     }
   }
@@ -183,7 +184,6 @@ class EventCollectionPage extends React.Component {
     //console.log('eventCollectionState --> ', this.state);
 
     const { searchMode } = this.state;
-    
 
     return (
       <div className={styles.eventsContainer}>
@@ -218,17 +218,17 @@ class EventCollectionPage extends React.Component {
             {/* renders list of events from this.props.events */}
             <div className={styles.eventList}>
               {this.props.events.map((evt) => {
+                const canAttend = this.canAttend(evt);
                 return <EventInfo key={evt._id} evt={evt} groupId={this.props.groupId} 
-                  handleNavigate={this.navigateToEvent} handleAttend={this.attendEvent} />
+                  handleNavigate={this.navigateToEvent} handleAttend={this.attendEvent} canAttend={canAttend} />
               })}
+              {/* conditionally render pagination */}
+              { this.hasEventsToLoad() && 
+                <button className='btn btn-default' onClick={this.loadMore}>Show More</button>
+              }
             </div>
           </div>
         </div>
-
-        {/* conditionally render pagination */}
-        { this.hasEventsToLoad() && 
-          <button onClick={this.loadMore}>Show More</button>
-        }
         
         {/* conditionally render EventForm within Modal */}
         <Modal isVisible={this.state.modalVisibility} close={this.closeModal}>

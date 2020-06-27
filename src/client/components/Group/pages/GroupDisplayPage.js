@@ -5,7 +5,7 @@ import { Switch, Route } from 'react-router-dom';
 import { Navbar, Nav, NavItem, MenuItem, NavDropdown } from 'react-bootstrap'; 
 import { LinkContainer } from 'react-router-bootstrap';
 
-import Profile from '../../Profile/Profile';
+import Profile from '../../Profile/components/Profile';
 
 import { HomeView, MemberView, EventView } from '../GroupRoutes';
 import axios from '../../../util/axiosCaller';

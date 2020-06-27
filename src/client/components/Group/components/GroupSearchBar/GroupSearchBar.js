@@ -16,6 +16,8 @@ export class GroupSearchBar extends Component {
       query: '',
       location: 'Toronto, Ontario', // should auto-detect if possible
       distance: 50, // should default to 10 miles
+      changeLocation: false, 
+      dropdownState: false, 
     };
   }
 
@@ -57,6 +59,24 @@ export class GroupSearchBar extends Component {
     }
   };
 
+  // open manual location form
+  changeMyLocation = (e) => {
+    this.setState({ changeLocation: true });
+  }
+
+  // used to manually change your location (if not auto-detected/etc)
+  handleMyLocChange = () => {
+
+  }
+
+
+  /* DROPDOWN LOGIC */
+
+  toggleDropdown = (state) => {
+    this.setState({ dropdownState: state });
+  }
+
+
   /* RENDER LOGIC */
 
   hasQuery = () => {
@@ -70,6 +90,8 @@ export class GroupSearchBar extends Component {
   }
 
   render() {
+    const { dropdownState } = this.state;
+
     const hasQuery = this.hasQuery();
     const location = this.parseLocation();
 
@@ -107,8 +129,13 @@ export class GroupSearchBar extends Component {
             <MenuItem eventKey="500">500</MenuItem>
           </NavDropdown>
            kilometers of
-          <NavDropdown id='location-dropdown' className={styles['inline']} title={location} noCaret>
-            <MenuItem eventKey="5"> Not Your Location? </MenuItem>
+          <NavDropdown id='location-dropdown' className={styles['inline']} title={location} open={dropdownState} noCaret >
+            <MenuItem eventKey="5" onClick={this.changeMyLocation}> Not Your Location? </MenuItem>
+            { this.state.changeLocation && 
+              <MenuItem>
+                <input type='text'  />
+              </MenuItem>    
+            }
           </NavDropdown>
         </div>
       </div>

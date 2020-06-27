@@ -3,6 +3,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
+import Icon from '../../Profile/components/Icon';
+
 import DateUtil from '../../../util/DateUtil';
 
 import styles from './eventInfo.scss';
@@ -17,7 +19,7 @@ class EventInfo extends React.Component {
   attendEvent = (e) => {
     e.cancelBubble = true;
     if(e.stopPropagation) e.stopPropagation();
-    this.props.handleAttend();
+    this.props.handleAttend(this.props.evt);
   }
 
   // used to navigate to EventDisplayPage
@@ -55,12 +57,17 @@ class EventInfo extends React.Component {
               {evt.description}
             </div>
             <div className={styles.attendees}>
-              <div>
-                <span></span>
-                <span> Attendees</span>
+              <div className={styles.attendeeImages}>
+                { evt.invites.slice(0, 3).map(i => {
+                  const path = i.user && i.user.profile ? i.user.profile.image.path : null;
+                  return <Icon path={path} />
+                })}
+                <div> {evt.invites.length} Attendees</div>
               </div>
             </div>
-            <button className={`btn btn-md btn-default ${styles.btnAttend}`} onClick={this.attendEvent}> Attend </button>
+            { this.props.canAttend &&  
+              <button className={`btn btn-md btn-default ${styles.btnAttend}`} onClick={this.attendEvent}> Attend </button>
+            }
           </div>
         </div>
     );
@@ -73,6 +80,8 @@ EventInfo.propTypes = {
   profileImg: PropTypes.string.isRequired, 
 
   handleNavigate: PropTypes.func.isRequired, 
+
+  canAttend: PropTypes.bool.isRequired,
   handleAttend: PropTypes.func.isRequired, 
 };
 

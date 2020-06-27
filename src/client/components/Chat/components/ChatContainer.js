@@ -18,6 +18,12 @@ class ChatContainer extends React.Component {
     this.state = {};
   }
 
+  // 
+  componentDidMount() {
+
+  }
+
+
   // close existing ChatView
   closeConnection = (userId) => {
     console.log('closing --> ', userId);
@@ -29,8 +35,8 @@ class ChatContainer extends React.Component {
 
     return (
       <div className={styles.chatContainer}>
-        { this.props.connections.map((conn, idx) => {
-          return <ChatView key={idx} close={this.closeConnection} userId={conn.userId} currentUser={this.props.currentUser} />
+        { this.props.connections.map((conn) => {
+          return <ChatView key={conn.user._id} close={this.closeConnection} user={conn.user} currentUser={this.props.currentUser} />
         })}
       </div>
     )

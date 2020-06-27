@@ -33,9 +33,25 @@ export const searchEvents = (req, res) => {
   Event.count(query, function(err, count) {
     if(err) return handleError(res, err);
     Event.find(query)
-      .skip(offset)
+      .skip(Number.parseInt(offset))
       .limit(Number.parseInt(pageSize))
-      .populate('creator attendees notGoing waitlist', '_id name displayPicture')
+      .populate({
+        path: 'invites',
+        match: { 
+          attending: true, 
+          verified: true, 
+          accepted: true, 
+        },
+        populate: {
+          path: 'user',
+          select: '_id name profile',
+          populate: {
+            path: 'profile',
+            populate: { path: 'image' }
+          }
+        }
+
+      })
       .populate({
         path: 'profile', 
         populate: { path: 'image' }

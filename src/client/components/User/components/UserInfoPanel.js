@@ -16,11 +16,11 @@ class UserInfoPanel extends React.Component {
   // used to open ChatView between two Users
   messageUser = (e) => {
     e.preventDefault();
-    this.props.startChat(this.props.user._id);
+    this.props.startChat(this.props.user);
   }
 
   render() {
-    const { user, image, } = this.props;
+    const { user, image, currentUserId } = this.props;
     const dpImage = image || anonUser;
 
     return (
@@ -37,9 +37,11 @@ class UserInfoPanel extends React.Component {
             { /* <div>join date</div> */ }
           </div>
 
-          <div className={styles.msgBtn} onClick={this.messageUser} >
-            <FontAwesomeIcon icon={faCommentAlt} size='2x' />
-          </div>
+          { user._id !== currentUserId ?
+            <div className={styles.msgBtn} onClick={this.messageUser} >
+              <FontAwesomeIcon icon={faCommentAlt} size='2x' />
+            </div> : null
+          }
         </div>
 
         { /* optionally show common groups */ }
@@ -70,6 +72,7 @@ UserInfoPanel.propTypes = {
     role: PropTypes.string.isRequired, 
   }),
 
+  currentUserId: PropTypes.string, 
   startChat: PropTypes.func, 
 };
 

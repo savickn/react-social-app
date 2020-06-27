@@ -127,12 +127,11 @@ class EventForm extends React.Component {
   render() {
     return (
       <div id="eventForm">
-        <h2 className={styles['form-title']}>Create a new event!</h2>
-        <div className='form-field'>
+        <div className={styles.field}>
           <label htmlFor="title"> Title: </label>
           <input type='text' id='title' className='form-control' value={this.state.title} onChange={this.handleTitleChange} />
         </div>
-        <div className='form-field'>
+        <div className={styles.field}>
           <label htmlFor="description"> Description: </label>
           <textarea id='description' className='form-control' value={this.state.description} onChange={this.handleDescriptionChange} />
         </div>
@@ -144,7 +143,7 @@ class EventForm extends React.Component {
         </div>
         */ }
         
-        <div className='form-group'>
+        <div className={styles.field}>
           <label htmlFor='location'> Location:</label>
           <input type='text' onChange={(e) => this.handleLocationChange(e.target.value)} id="location" className='form-control' />
         </div>
@@ -159,17 +158,19 @@ class EventForm extends React.Component {
 
 
 
-        <div className='form-field'>
+        <div className={styles.field}>
           <label htmlFor='startTime'> Start Time: </label>
           <input type='date' id='startDate' className='form-control' value={this.state.startDate} onChange={this.handleStartDateChange} />
           <input type='time' id='startTime' className='form-control' value={this.state.startTime} onChange={this.handleStartTimeChange} />
         </div>
-        <div className='form-field'>
+        <div className={styles.field}>
           <label htmlFor='endTime'> End Time: </label>
           <input type='date' id='endDate' className='form-control' value={this.state.endDate} onChange={this.handleEndDateChange} />
           <input type='time' id='endTime' className='form-control' value={this.state.endTime} onChange={this.handleEndTimeChange} />
         </div>
-        <button className='btn btn-md btn-default' onClick={this.handleSubmit}> Create Event </button>
+        <div className={styles.submit}>
+          <button className={`btn btn-md btn-default`} onClick={this.handleSubmit}> Create Event </button>
+        </div>
       </div>
     );
   };

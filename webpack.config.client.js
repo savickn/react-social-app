@@ -10,7 +10,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const ManifestPlugin = require('webpack-manifest-plugin');
 const LoadablePlugin = require('@loadable/webpack-plugin');
 
-const loaders = require('./webpack.loaders');
+const loaders = require('./webpack.loaders'); 
 
 const prodRules = [
   loaders.babelLoader,

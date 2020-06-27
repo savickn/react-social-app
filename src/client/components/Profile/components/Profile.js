@@ -3,13 +3,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import axios from '../../util/axiosCaller';
+import axios from '../../../util/axiosCaller';
 
-import Upload from '../Upload/components/upload';
+import Upload from '../../Upload/components/upload';
 
-import { uploadRequest } from '../Upload/UploadActions';
-import { fetchProfileRequest, createProfileRequest, } from './ProfileActions';
-import { getProfileById } from './ProfileReducer';
+import { uploadRequest } from '../../Upload/UploadActions';
+import { fetchProfileRequest, createProfileRequest, } from '../ProfileActions';
+import { getProfileById } from '../ProfileReducer';
 
 import noPic from './anon_user.png';
 import styles from './Profile.scss';
@@ -24,6 +24,7 @@ class Profile extends React.Component {
     super(props);
     this.state = {
       id: null, 
+      upload: null, 
     };
   }
 
@@ -47,6 +48,15 @@ class Profile extends React.Component {
       imageableType: this.props.imageableType, 
     };
 
+    // change image client-side
+    const file = formData.get('avatar');
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      this.setState({ upload: reader.result });
+    }
+    reader.readAsDataURL(file);
+
+    // save to server
     this.props.dispatch(createProfileRequest(profile, formData));
   }
 
@@ -55,6 +65,9 @@ class Profile extends React.Component {
   // used to determine which image to show (e.g. Profile vs. preview vs. default)
   getPic = () => {
     const { profile, preview, } = this.props;
+    const { upload } = this.state;
+
+    if(upload) return upload;
 
     if(profile) {
       return profile.image.path;
@@ -72,7 +85,7 @@ class Profile extends React.Component {
       <React.Fragment>
         <Upload handleUpload={this.createProfile} multiple={false}>
           <div>
-            <img src={dp} width='150' height='150' />
+            <img src={dp} width='150' height='150' className={styles.profilePic} />
           </div>
         </Upload>
       </React.Fragment>

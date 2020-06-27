@@ -51,7 +51,7 @@ function* fetchGroupHandler(action) {
                             /* SEARCHING */
 
 const searchGroupsAjax = (query={}) => {
-  console.log('fetchGroup query --> ', query);
+  console.log('searchGroup query --> ', query);
   return axios.get('/api/groups/', { params: query })
     .then(res => res.data)
     .catch(err => { throw err; })

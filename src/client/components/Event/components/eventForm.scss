@@ -14,3 +14,22 @@
 .selected {
   border: 3px solid lighten($color: #000000, $amount: 50);
 }
+
+
+/* custom form styling */
+
+.field {
+  padding: 0.5rem 0rem;
+}
+
+.input {
+
+}
+
+.submit {
+  padding: 0.5rem 0rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+

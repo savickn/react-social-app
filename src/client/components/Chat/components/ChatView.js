@@ -2,10 +2,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import io from 'socket.io-client';
+import Moment from 'moment';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGrinAlt } from '@fortawesome/free-regular-svg-icons'
-import { faUpload } from '@fortawesome/free-solid-svg-icons';
-
+import { faUpload, faWindowClose, faWindowMinimize, faCircle } from '@fortawesome/free-solid-svg-icons';
 
 import styles from './ChatView.scss';
 
@@ -18,19 +19,24 @@ class ChatView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      mySocket: null, 
+      sockets: {}, // e.g. userId: { socketId, connected }  
       roomKey: null, 
-      expanded: false, 
+
+      expanded: true, 
       messages: [],
     };
     this.chatRef = React.createRef();
   }
 
   componentDidMount() {
+    const { user, currentUser } = this.props;
+
     socket = io.connect(ENDPOINT);
     
     const roomData = {
-      otherUser: this.props.userId,
-      currentUser: this.props.currentUser._id, 
+      otherUser: user._id,
+      currentUser: currentUser._id, 
     };
 
     // connect
@@ -38,26 +44,81 @@ class ChatView extends React.Component {
       console.log('connected to chat server');
     });
 
-    // join socket io room
+    // create/join a Room
     socket.emit('createRoom', roomData);
 
-    // get roomKey response from server
-    socket.on('joinedRoom', ({ key }) => {
+    /*
+    ** server should emit 'joined' event
+    ** subscribe to updates from Room (e.g. messages, users)
+    */
+    socket.on('server:userJoined', ({ key, socketId }) => {
       console.log('key --> ', key);
-      this.setState({ roomKey: key }, () => {
+
+      this.setState({ roomKey: key, mySocket: socketId }, () => {
+        // acknowledge that user is connected
+        //socket.emit('client:broadcastStatusChange', { key, socketId, userId: currentUser._id })
+
         // listen for messages from server
-        socket.emit('readyForMessages', { key });
+        socket.emit('client:requestMessages', { key });
+        socket.emit('client:requestUsers', { key });
+        //socket.emit('client:requestStatus', { key, socketId });
       })
     });
 
+    // called when User joins/leaves the room
+    socket.on('server:userStateChange', ({ userId, socketId, connected }) => {
+      const sockets = this.state.sockets;
+      sockets[userId] = { socketId, connected };
+      this.setState({ sockets });
+    })
+
+
+    // used to track which Users are connected to Room (e.g. online... away... offline)... prob NOT necessary
+    socket.on('server:sendUsers', ({ users }) => {
+      console.log('sendUsers --> ', users);
+      this.setState({ sockets: users });
+    })
+
+
+
+                                            /* SOCKET IO LISTENERS */
+
+    // 
+    socket.on('server:broadcastStatus', ({ userId, socketId, connected }) => {
+      const user = Object.keys(this.state.sockets).filter(k => k === userId)
+      const sockets = this.state.sockets;
+      sockets[userId] = { socketId, connected };
+      console.log(sockets);
+
+      this.setState({ sockets });
+    })
+
     // receive messages
-    socket.on('sendMessages', ({ messages }) => {
+    socket.on('server:sendMessages', ({ messages }) => {
       //console.log('sendMessages --> ', messages);
       this.setState({ messages });
     })
+
+    // receive onlineStatus of other User
+    // states --> online, away (how??), offline 
+    socket.on('server:sendStatus', ({ socketId, userId }) => {
+      console.log(socketId, userId);
+    })
   }
 
-  /* SOCKET IO EMITTERS */
+  // is this correct???
+  /*componentWillUnmount() {
+    socket.disconnect();
+  }*/
+
+
+                                          /* SOCKET IO EMITTERS */
+
+  // used to notify server that user has logged off/etc
+  userStateChanged = () => {
+    socket.emit();
+  }
+ 
 
   // get messages from server
   getMessages = () => {
@@ -67,20 +128,13 @@ class ChatView extends React.Component {
 
   // save message to server
   addMessage = () => {
-    const data = { message: this.chatRef.current.value, key: this.state.roomKey };
+    const data = { message: this.chatRef.current.value, key: this.state.roomKey, userId: this.props.currentUser._id };
     socket.emit('addMessage', data);
     this.chatRef.current.value = '';
   }
-  
-  /* SOCKET IO LISTENERS */
 
+                                            /* EVENT HANDLERS */
 
-
-
-  // is this correct???
-  /*componentWillUnmount() {
-    socket.disconnect();
-  }*/
 
   // used to minimize the chat window
   minimizeChat = () => {
@@ -95,7 +149,7 @@ class ChatView extends React.Component {
   // used to close a connection
   handleClose = (e) => {
     e.preventDefault();
-    this.props.close(this.props.userId);
+    this.props.close(this.props.user._id);
   }
 
   handleAddMessage = (e) => {
@@ -104,9 +158,26 @@ class ChatView extends React.Component {
     }
   }
 
+                                            /* VIEW CONDITIONALS */
+
+  // checks if other user is connected
+  isConnected = (userId) => {
+    const { sockets } = this.state;
+    
+    console.log(userId)
+    console.log('sockets --> ', sockets);
+
+    console.log(sockets[userId]);
+
+    return sockets[userId] && sockets[userId].connected;
+  }
+
   render() {
-    const { expanded, messages, } = this.state;
-    const { userId, currentUser, } = this.props;
+    const { expanded, messages, connected } = this.state;
+    const { user, currentUser, } = this.props;
+
+    const isConnected = this.isConnected(user._id);
+    console.log(isConnected);
 
     return (
       <div className={styles.chatView}>
@@ -115,21 +186,52 @@ class ChatView extends React.Component {
           /* displayed when chat is expanded */
           <div className={styles.expandedWindow} >
             <div className={styles.chatHeader}>
-              <div>img</div>
-              <div>{userId}</div>
-              <div onClick={this.minimizeChat}>x</div>
+              <div className={styles.headerInfo}>
+                { isConnected ? 
+                  <FontAwesomeIcon icon={faCircle} color='green' />
+                  : 
+                  <FontAwesomeIcon icon={faCircle} color='grey' />
+                }
+                <div>{user.name}</div>
+              </div>
+
+              <div className={styles.controls}>
+                <div onClick={this.minimizeChat} className='click-cursor'>
+                  <FontAwesomeIcon icon={faWindowMinimize} />
+                </div>
+                <div onClick={this.handleClose} className='click-cursor'>
+                  <FontAwesomeIcon icon={faWindowClose} />
+                </div>
+              </div>
             </div>
 
             <div className={styles.chatBody}>
-              { messages.map(msg => {
-                return <div>{msg}</div>
+              { messages.map((msg, idx) => {
+                const prev = JSON.parse(messages[Math.max(0, idx - 1)]);
+                const m = JSON.parse(msg);
+                const isCurrentUser = m.userId === currentUser._id; 
+                const prevDate = new Date(prev.date);
+                const currentDate = new Date(m.date)
+
+                return (
+                  <div className='messageContainer'> 
+                    { currentDate.getHours() !== prevDate.getHours() || currentDate.getMinutes() !== prevDate.getMinutes() ?
+                      <div className={styles.messageDate}>
+                        <span> { Moment(new Date(currentDate)).format("MMM D, YYYY, h:mm a") } </span>
+                      </div> : null
+                    }
+                    <div className={isCurrentUser ? styles.alignRight : styles.alignLeft}>
+                      <span className={isCurrentUser ? styles.commentRight : styles.commentLeft}>{m.message}</span>
+                    </div>
+                  </div>
+                );
               })}
             </div>
 
             <div className={styles.chatFooter}>
               <FontAwesomeIcon icon={faUpload} size='2x' />
               <FontAwesomeIcon icon={faGrinAlt} size='2x' />
-              <div>
+              <div className={styles.input}>
                 <input type='text' placeholder='Aa' className='form-control' 
                   onKeyUp={this.handleAddMessage} ref={this.chatRef} />
               </div>
@@ -140,9 +242,13 @@ class ChatView extends React.Component {
 
           /* displayed when chat is minimized */
           <div className={styles.minimizedWindow} onClick={this.expandChat}>
-            <div className='onlineStatus'></div>
-            <div className='userName'>{userId}</div>
-            <div className='exitBtn' onClick={this.handleClose}>x</div>
+            <div className='onlineStatus'>
+
+            </div>
+            <div className='userName'>{user.name}</div>
+            <div className='exitBtn' onClick={this.handleClose}>
+              <FontAwesomeIcon icon={faWindowClose} />
+            </div>
           </div>
         }
       </div>
@@ -151,8 +257,8 @@ class ChatView extends React.Component {
 }
 
 ChatView.propTypes = {
-  userId: PropTypes.string.isRequired,
-  currentUser: PropTypes.string.isRequired, 
+  user: PropTypes.object.isRequired,
+  currentUser: PropTypes.object.isRequired, 
   
   close: PropTypes.func.isRequired, 
 }
