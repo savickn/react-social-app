@@ -83,7 +83,7 @@ class CommentComponent extends React.Component {
   render() {
     const { comment, } = this.props;
 
-    const thumbnail = comment.author.profile.image.path || noPic;
+    const thumbnail = comment.author.profile && comment.author.profile.image ? comment.author.profile.image.path : noPic;
 
     const hasReplies = this.hasReplies();
     const areRepliesLoaded = this.areRepliesLoaded();

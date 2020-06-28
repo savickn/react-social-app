@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import styles from './GroupList.module.scss';
+import styles from './GroupList.scss';
 
 import GroupListItem from './GroupListItem/GroupListItem';
 

@@ -6,8 +6,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 
 
-import styles from './GroupSearchBar.module.scss';
-console.log('searchbar styles --> ', styles);
+import styles from './GroupSearchBar.scss';
+//console.log('searchbar styles --> ', styles);
 
 export class GroupSearchBar extends Component {
   constructor() {
@@ -16,7 +16,6 @@ export class GroupSearchBar extends Component {
       query: '',
       location: 'Toronto, Ontario', // should auto-detect if possible
       distance: 50, // should default to 10 miles
-      changeLocation: false, 
       dropdownState: false, 
     };
   }
@@ -61,7 +60,11 @@ export class GroupSearchBar extends Component {
 
   // open manual location form
   changeMyLocation = (e) => {
-    this.setState({ changeLocation: true });
+    console.log(e);
+    //e.preventDefault();
+    e.stopPropagation();
+
+    //this.setState({ changeLocation: true });
   }
 
   // used to manually change your location (if not auto-detected/etc)
@@ -129,13 +132,11 @@ export class GroupSearchBar extends Component {
             <MenuItem eventKey="500">500</MenuItem>
           </NavDropdown>
            kilometers of
-          <NavDropdown id='location-dropdown' className={styles['inline']} title={location} open={dropdownState} noCaret >
-            <MenuItem eventKey="5" onClick={this.changeMyLocation}> Not Your Location? </MenuItem>
-            { this.state.changeLocation && 
+          <NavDropdown id='location-dropdown' className={styles['inline']} title={location} defaultOpen={dropdownState} noCaret >
+            <MenuItem eventKey="5" onClick={this.changeMyLocation}> Change Your Location? </MenuItem>
               <MenuItem>
-                <input type='text'  />
-              </MenuItem>    
-            }
+                <input type='text' className='form-control' />
+              </MenuItem> 
           </NavDropdown>
         </div>
       </div>

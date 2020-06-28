@@ -12,7 +12,7 @@ import {
 import axios from '../../util/axiosCaller';
 import { setAuthToken } from '../../util/AuthService';
 import { takeLatest, put, call, fork } from 'redux-saga/effects';
-
+import { push } from 'connected-react-router';
 
 /* FETCH ONE */
 
@@ -77,6 +77,7 @@ function* addUserHandler(action) {
     yield call(setAuthToken, response.token);
     yield put(signUpSuccess(response.user));
     yield put({ type: "TOKEN_AUTH" });
+    yield put(push('/groups'));
   } catch (err) {
     console.log('Err --> ', err);
     yield put(signUpFailure(err));

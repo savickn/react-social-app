@@ -125,6 +125,12 @@ class EventCollectionPage extends React.Component {
                                   /* Event Form Logic */
 
   addEvent = (eventData) => {
+    // guard against already expired Events
+    if(eventData.start < new Date()) {
+      return;
+    }
+
+
     console.log('eventDate --> ', eventData);
     const locData = eventData.location;
 

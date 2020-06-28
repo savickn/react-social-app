@@ -9,7 +9,7 @@ import {
 const initialState = {
   status: 'idle',
   data: [],
-  myMembership: null,
+  myMembership: null, // what does this represent???
   errors: null, 
 }
 

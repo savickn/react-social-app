@@ -7,6 +7,10 @@ export const searchEvents = (req, res) => {
   console.log('searchEvents query --> ', req.query);
   var query = {};
 
+  if(req.query.group) {
+    query['group'] = req.query.group;
+  }
+
   const now = new Date();
   switch(req.query.searchMode) {
     case 'Upcoming':

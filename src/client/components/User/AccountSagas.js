@@ -42,11 +42,12 @@ function* loginHandler(action) {
 
     // redirect back to protectedPage or to homePage
     const protectedRoute = localStorage.getItem('ProtectedRoute');
-    protectedRoute ? yield put(push(protectedRoute)) : yield put(push('/'));
+    protectedRoute ? yield put(push(protectedRoute)) : yield put(push('/groups'));
   } catch (error) {
     yield call(removeAuthToken);
     console.log('error --> ', error);
     yield put({ type: "LOG_IN_FAILURE", error });
+    yield put(push('/login'));
   }
 }
 

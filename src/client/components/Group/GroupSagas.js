@@ -104,6 +104,7 @@ function* createGroupHandler(action) {
     // create Group
     const { group } = yield call(createGroupAjax, action.data); 
     console.log('createGroupRes --> ', group);
+    group.members.push(action.data.admin); // optimistic loading of currentUser as a member
     yield put(createGroupSuccess(group));
 
     // create Membership for admin User

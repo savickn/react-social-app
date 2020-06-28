@@ -81,17 +81,19 @@ export function* createEventWatcher() {
 function* createEventHandler(action) {
   try {
     const { event } = yield call(createEventAjax, action.data);
-    yield put(createEventSuccess(event));
-    
-    // create an Invite for the Creator
-    yield put(createInviteRequest({
+    const initialInvite = {
       event: event._id, 
       user: event.creator, 
       issueType: 'Admin', 
       accepted: true,
       verified: true, 
-      attending: true, 
-    }));
+      attending: true,
+    };
+    event.invites.push(initialInvite) // for optimistic loading 
+    yield put(createEventSuccess(event));
+    
+    // create an Invite for the Creator
+    yield put(createInviteRequest(initialInvite));
   } catch (err) {
     console.log('createEvent err --> ', err);
     yield put(eventError(err));

@@ -108,9 +108,10 @@ class AlbumHub extends React.Component {
       <div>
         <div className={styles.imgContainer}>
           {albums.slice(0, 5).map((a) => {
+            const img = a.profile && a.profile.image ? a.profile.image.path : null;
             return (
               <div onClick={() => this.openPhotoViewer(a)}>
-                <AlbumIcon key={a._id} albumId={a._id} image={a.profile.image.path} />
+                <AlbumIcon key={a._id} albumId={a._id} image={img} />
               </div>
             )
           })}

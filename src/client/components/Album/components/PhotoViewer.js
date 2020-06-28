@@ -22,14 +22,14 @@ class PhotoViewer extends React.Component {
 
   // used to check for initial open (via change in 'isVisible') to set 'activeImg'
   componentDidUpdate(prevProps) {
-    
+
     // NOT WORKING
-    /*if(this.props.album && !prevProps.album) {
+    if(this.props.album && this.props.album._id && prevProps.album && !prevProps.album._id) {
       console.log('setActiveImg');
       this.setState({
         activeImg: this.props.album.pictures[0], // set activeImg
       })
-    }*/
+    }
   }
 
   // close the PhotoViewer

@@ -183,17 +183,22 @@ export class GroupCollectionPage extends React.Component {
           <div className={styles.toggleBtn} onClick={() => this.changeDisplayType('Calendar')}>Calendar</div>
         </div>
 
+        {/* Search Bar */}
         <GroupSearchBar search={this.handleSearch} displayType={this.state.displayType} changeDisplayType={this.changeDisplayType} 
           address={this.props.location.address} distance={this.state.search.dispatch} changeQuery={this.handleQueryChanged} />
-        
+
+        {/* Group List */}
         <GroupList groups={this.props.groups} displayType={this.state.displayType}/>
-        <div className={styles.modalBtn}>
-          <button className={`btn btn-default`} onClick={this.openModal}><span className='glyphicon glyphicon-plus click-cursor'></span></button>
-        </div>
-        
+
+        {/* Modal */}
         <Modal isVisible={this.state.showModal} close={this.closeModal}>
           <GroupCreateWidget addGroup={this.addGroup} getSuggestions={this.getSuggestions} locationSuggestions={this.props.suggestions} />
         </Modal>
+        <div className={styles.modalBtn}>
+          <button className={`btn btn-default`} onClick={this.openModal}><span className='glyphicon glyphicon-plus click-cursor'></span></button>
+        </div>
+
+        {/* Pagination */}
         <Pagination currentPage={this.state.pagination.currentPage} pageSize={this.state.pagination.pageSize} 
           collectionSize={this.props.groupCount} changePagination={this.handlePaginationChange} />
       </div>
@@ -244,7 +249,7 @@ function mapStateToProps(state) {
 GroupCollectionPage.propTypes = {
   groups: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string.isRequired,
-    location: PropTypes.string.isRequired,
+    //location: PropTypes.string.isRequired,
   })).isRequired,
   dispatch: PropTypes.func.isRequired,
 };

@@ -60,7 +60,7 @@ class EventInfo extends React.Component {
               <div className={styles.attendeeImages}>
                 { evt.invites.slice(0, 3).map(i => {
                   const path = i.user && i.user.profile ? i.user.profile.image.path : null;
-                  return <Icon path={path} />
+                  return <Icon key={i._id} path={path} />
                 })}
                 <div> {evt.invites.length} Attendees</div>
               </div>

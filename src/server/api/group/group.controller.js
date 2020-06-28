@@ -27,6 +27,7 @@ export const searchGroups = (req, res) => {
   Group.aggregate([
     { $geoNear: {
         near: coords, 
+        spherical: true,
         distanceField: "dist.calculated",
         maxDistance: req.query.maxDistance * 1000, 
         key: 'geoJSON', 
@@ -79,7 +80,7 @@ export const addGroup = async (req, res) => {
 
   group.save((err, group) => {
     if(err) return util.handleError(res, err);
-    return res.json({group});
+    return res.json({ group });
   });
 }
 
