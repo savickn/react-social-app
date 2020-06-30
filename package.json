@@ -54,7 +54,7 @@
     "errorhandler": "1.5.1",
     "express": "4.16.4",
     "express-fileupload": "1.0.0",
-    "express-jwt": "5.3.1",
+    "express-jwt": "6.0.0",
     "express-session": "1.15.6",
     "history": "4.7.2",
     "jsonwebtoken": "8.3.0",
