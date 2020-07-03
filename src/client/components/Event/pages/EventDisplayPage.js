@@ -1,4 +1,6 @@
 
+import env from '../../../../server/config/local.env';
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -14,7 +16,6 @@ import AlbumHub from '../../Album/components/AlbumHub';
 import { createInviteRequest, searchInviteRequest } from '../InviteActions';
 import { fetchEventRequest, updateEventRequest } from '../EventActions';
 import { fetchGroup } from '../../Group/GroupActions';
-
 
 import { getCurrentUser } from '../../User/AccountReducer';
 import { getGroupById } from '../../Group/GroupReducer';
@@ -220,7 +221,7 @@ class EventPage extends React.Component {
               <div className='grid-list-elem'><FontAwesomeIcon icon={faMap} className='list-icon' /> <span className='list-content'> {evt.geoJSON.location} </span></div>
               <iframe width="250"
                       height="250" 
-                      src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBU9RYKDNi8bcLp4IP-4GvWUEnCIqEMa7E
+                      src={`https://www.google.com/maps/embed/v1/place?key=${env.googleApi}
                         &q=${evt.geoJSON.location}`}
                       allowFullScreen>
               </iframe>
@@ -253,40 +254,41 @@ class EventPage extends React.Component {
   }
 }
 
-  // used to parse a list of Users that is currently set to attend the event (e.g. creator + verified invites)
-  // returns empty Array by default
-  // getAttendees = () => {
-  //   return [this.props.evt.creator, ...this.props.attendees];
-  // }
+// used to parse a list of Users that is currently set to attend the event (e.g. creator + verified invites)
+// returns empty Array by default
+// getAttendees = () => {
+//   return [this.props.evt.creator, ...this.props.attendees];
+// }
 
 /*
-
 <Link to={`/groups/${evt.group.id}`}>
-                <img src={groupImg} width='50' height='50' />
-              </Link>
-              */
-
+  <img src={groupImg} width='50' height='50' />
+</Link>
+*/
 
 /*
 <div><FontAwesomeIcon icon={faClock} /><span className='left-padded'> datetime </span></div>
-            <div><FontAwesomeIcon icon={faDollarSign} /> <span className='left-padded'> price </span></div>
-            <div><FontAwesomeIcon icon={faMap} /> <span className='left-padded'> location </span></div>
-            */
+<div><FontAwesomeIcon icon={faDollarSign} /> <span className='left-padded'> price </span></div>
+<div><FontAwesomeIcon icon={faMap} /> <span className='left-padded'> location </span></div>
+*/
 
 /*
 <div className={styles.info}>
-            <div>{status} Meetup</div>
-            <div>{evt.title}</div>
-            <div>Hosted By: {evt.creator.name}</div>
-            <div>From: {evt.group.name}</div> 
-          </div>*/
+  <div>{status} Meetup</div>
+  <div>{evt.title}</div>
+  <div>Hosted By: {evt.creator.name}</div>
+  <div>From: {evt.group.name}</div> 
+</div>
+*/
 
-  // used to add a User to the list of Attendees
-  // OLD
-  /*attendEvent = () => {
-    const attendees = [...this.props.evt.attendees, this.props.currentUser._id];
-    this.props.dispatch(updateEventRequest(this.props.evt._id, {attendees}));
-  } */
+// used to add a User to the list of Attendees
+// OLD
+/*
+attendEvent = () => {
+  const attendees = [...this.props.evt.attendees, this.props.currentUser._id];
+  this.props.dispatch(updateEventRequest(this.props.evt._id, {attendees}));
+} 
+*/
       
 
 EventPage.propTypes = {
@@ -320,34 +322,36 @@ export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(EventPag
 
 /*
 calculateState = () => {
-    const { start, end } = this.props.evt;
+  const { start, end } = this.props.evt;
 
-    const eventState = this.getEventState(start, end);
-    const dateObj = this.formatDate(start, end);
-    
-    const state = {
-      eventState, 
-      starttime: dateObj.starttime,
-      endtime: dateObj.endtime,
-      day: dateObj.day, 
-      month: dateObj.month, 
-      monthAbbr: dateObj.month.slice[0, 3], 
-      year: dateObj.year, 
-      date: dateObj.date, 
-    };
-    console.log('EventDisplayPage state --> ', state);
-    this.setState(state);
-  }
+  const eventState = this.getEventState(start, end);
+  const dateObj = this.formatDate(start, end);
+  
+  const state = {
+    eventState, 
+    starttime: dateObj.starttime,
+    endtime: dateObj.endtime,
+    day: dateObj.day, 
+    month: dateObj.month, 
+    monthAbbr: dateObj.month.slice[0, 3], 
+    year: dateObj.year, 
+    date: dateObj.date, 
+  };
+  console.log('EventDisplayPage state --> ', state);
+  this.setState(state);
+}
 */
 
-  // fix this, not good strategy
-  /*componentWillUpdate(nextProps, nextState) {
-    if(this.props.evt) {
-      const start = new Date(this.props.evt.start);
-      const end = new Date(this.props.evt.end);
-      this.setState({...this.formatDate(start, end)});
-    }
-  }*/
+// fix this, not good strategy
+/*
+componentWillUpdate(nextProps, nextState) {
+  if(this.props.evt) {
+    const start = new Date(this.props.evt.start);
+    const end = new Date(this.props.evt.end);
+    this.setState({...this.formatDate(start, end)});
+  }
+}
+*/
 
 
 /* OLD

@@ -72,7 +72,6 @@ export default (server) => {
       })
 
       socket.on('client:leave', ({ key }) => {
-        
         // clear intervals
         for(let i of intervals) {
           clearInterval(i);
