@@ -18,8 +18,8 @@ import WizardPage from '../../Utilities/Wizard/page';
 import { createGroup, searchGroups } from '../GroupActions';
 //import { createAlbum } from '../../Album/AlbumActions';
 
-import { autocompleteRequest, } from '../../Utilities/OSM/GeolocationActions';
-import { getLocation, getAutocomplete, getGeojson, } from '../../Utilities/OSM/GeolocationReducer';
+import { autocompleteRequest, clearAutocomplete, reverseRequest } from '../../Utilities/OSM/GeolocationActions';
+import { getLocation, getAutocomplete, getGeojson,  } from '../../Utilities/OSM/GeolocationReducer';
 import { getGroups, getGroupCount, getLastGroup } from '../GroupReducer';
 import { getCurrentUser, } from '../../User/AccountReducer';
 
@@ -83,10 +83,11 @@ export class GroupCollectionPage extends React.Component {
     if(isEmpty(prevProps.location) && !isEmpty(this.props.location)) {
       this.searchGroups();
     }
+    // add logic case to re-search if location is changed
   }
 
 
-                                    /* SERVER REQUESTS */
+                                    /* SEARCH FUNCTIONS */
 
   // search database for Groups
   searchGroups = (q={}) => {
@@ -112,9 +113,16 @@ export class GroupCollectionPage extends React.Component {
     });
   }
 
+  handleLocationChanged = (loc) => {
+    const coords = {
+      lat: Number.parseFloat(loc.lat),
+      lon: Number.parseFloat(loc.lon), 
+    };
+    this.props.dispatch(reverseRequest(coords));
+  }
 
 
-  /* CREATE GROUP */
+                                      /* CREATE GROUP */
 
   // add new Group to database
   addGroup = (name, locData) => {
@@ -132,8 +140,14 @@ export class GroupCollectionPage extends React.Component {
 
   // query OSM for location suggestions
   getSuggestions = (query) => {
+    console.log('getSuggestions query --> ', query);
     const country_code = this.props.location.address.country_code;
     this.props.dispatch(autocompleteRequest({ location: query, country_code }));
+  }
+
+  // ideal solution --> load suggestions into component-specific localStorage + clear Redux
+  clearSuggestions = () => {
+    this.props.dispatch(clearAutocomplete());
   }
 
                                     /* STATE HANDLERS */
@@ -184,8 +198,9 @@ export class GroupCollectionPage extends React.Component {
         </div>
 
         {/* Search Bar */}
-        <GroupSearchBar search={this.handleSearch} displayType={this.state.displayType} changeDisplayType={this.changeDisplayType} 
-          address={this.props.location.address} distance={this.state.search.dispatch} changeQuery={this.handleQueryChanged} />
+        <GroupSearchBar search={this.handleQueryChanged} displayType={this.state.displayType} changeDisplayType={this.changeDisplayType} 
+          address={this.props.location.address} distance={this.state.search.dispatch} changeQuery={this.handleQueryChanged}
+          suggestions={this.props.suggestions} getSuggestions={this.getSuggestions} changeAddress={this.handleLocationChanged} />
 
         {/* Group List */}
         <GroupList groups={this.props.groups} displayType={this.state.displayType}/>
@@ -242,7 +257,6 @@ function mapStateToProps(state) {
     location: getLocation(state),
     geojson: getGeojson(state),
     suggestions: getAutocomplete(state), 
-
   };
 }
 

@@ -19,8 +19,8 @@ export function Header(props, context) {
     lang => <li key={lang} onClick={() => props.switchLanguage(lang)} className={lang === props.intl.locale ? styles.selected : ''}>{lang}</li>
   );*/
   const isLoggedIn = props.authStatus === 'authenticated'; //isEmpty(props.currentUser) ? true : false;
-  console.log('isLoggedIn? --> ', isLoggedIn);
-  console.log('currentUser --> ', props.currentUser);
+  //console.log('isLoggedIn? --> ', isLoggedIn);
+  //console.log('currentUser --> ', props.currentUser);
 
   const header = `${styles['header']}`;
 
@@ -50,29 +50,29 @@ export function Header(props, context) {
           </LinkContainer>
           {!isLoggedIn &&
             <LinkContainer to="/users/login">
-              <NavItem eventKey={2}>Login</NavItem>
+              <NavItem eventKey={2}> Login </NavItem>
             </LinkContainer>
           }
           {!isLoggedIn &&
             <LinkContainer to="/users/new">
-              <NavItem eventKey={3}>Create Account</NavItem>
+              <NavItem eventKey={3}> Create Account </NavItem>
             </LinkContainer>
           }
           {isLoggedIn &&
             <LinkContainer to="/groups">
-              <NavItem eventKey={4}>Explore</NavItem>
+              <NavItem eventKey={4}> Explore </NavItem>
             </LinkContainer>
           }
           {isLoggedIn &&
             <NavDropdown eventKey={7} title="Profile" id="basic-nav-dropdown">
               <LinkContainer to={`/users/${props.currentUser._id}`}>
-                <MenuItem eventKey={7.1}>My Page</MenuItem>
+                <MenuItem eventKey={7.1}> My Page </MenuItem>
               </LinkContainer>
               <LinkContainer to={`/users/${props.currentUser._id}/settings`}>
-                <MenuItem eventKey={7.2}>Settings</MenuItem>
+                <MenuItem eventKey={7.2}> Settings </MenuItem>
               </LinkContainer>
               <MenuItem divider />
-              <MenuItem eventKey={7.3} onClick={handleClick}>Log Out</MenuItem>
+              <MenuItem eventKey={7.3} onClick={handleClick}> Log Out </MenuItem>
             </NavDropdown>
           }
           <NavItem>

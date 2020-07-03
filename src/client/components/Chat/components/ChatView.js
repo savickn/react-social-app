@@ -149,6 +149,7 @@ class ChatView extends React.Component {
   // used to close a connection
   handleClose = (e) => {
     e.preventDefault();
+    socket.emit('client:leave', { key: this.state.roomKey });
     this.props.close(this.props.user._id);
   }
 

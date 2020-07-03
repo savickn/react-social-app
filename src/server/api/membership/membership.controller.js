@@ -18,7 +18,7 @@ export const searchMemberships = (req, res) => {
 
   const userQuery = {};
 
-  if(searchString.length > 0) {
+  if(searchString && searchString.length > 0) {
     const regex = new RegExp(searchString, 'i');
     userQuery['name'] = regex;
   }

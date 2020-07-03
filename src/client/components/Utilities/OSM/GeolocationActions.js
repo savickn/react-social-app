@@ -4,9 +4,12 @@ export const GEOCODING_SUCCESS = 'GEOCODING_SUCCESS';
 
 export const AUTOCOMPLETE_REQUEST = 'ADDRESS_AUTOCOMPLETE_REQUEST'; 
 export const AUTOCOMPLETE_SUCCESS = 'ADDRESS_AUTOCOMPLETE_SUCCESS'; 
+export const CLEAR_AUTOCOMPLETE = 'CLEAR_AUTOCOMPLETE';
+
 
 export const REVERSE_REQUEST = 'REVERSE_REQUEST';
 export const REVERSE_SUCCESS = 'REVERSE_SUCCESS';
+
 
 
 /* ADDRESS AUTOCOMPLETE */
@@ -25,7 +28,13 @@ export const autocompleteSuccess = (data) => {
   }
 }
 
-/* GEOCODING */
+export const clearAutocomplete = () => {
+  return {
+    type: CLEAR_AUTOCOMPLETE,
+  }
+}
+
+/* GEOCODING --> convert name like 'Toronto' into 'lat/long' coords */
 
 export const geocodeRequest = (queryString) => {
   return {
@@ -41,7 +50,7 @@ export const geocodeSuccess = (coords) => {
   }
 }
 
-/* REVERSE GEOCODING */
+/* REVERSE GEOCODING -->  */
 
 export const reverseRequest = (coords) => {
   return {

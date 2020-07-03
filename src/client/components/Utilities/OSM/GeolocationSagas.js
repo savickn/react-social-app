@@ -26,6 +26,8 @@ function* reverseHandler(action) {
   try {
     const res = yield call(reverseGeocode, action.coords);
     //console.log('reverse res --> ', res);
+
+    localStorage.setItem('currentLocation', JSON.stringify(res.features[0]));
     yield put(reverseSuccess(res.features[0]));
   } catch(err) {
     console.error('geocode err --> ', err);

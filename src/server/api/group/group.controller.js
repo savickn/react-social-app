@@ -11,8 +11,9 @@ const handleError = util.handleError;
 /* SEARCH GROUPS */
 
 export const searchGroups = (req, res) => {
-  console.log('searchGroups --> ', req.query);
-  var query = {};
+  console.log('req.query --> ', req.query);
+  const { searchString } = req.query;
+  let query = {};
 
   const coords = JSON.parse(req.query.coords);
 
@@ -23,6 +24,13 @@ export const searchGroups = (req, res) => {
   const pageSize = Number.parseInt(req.query.pageSize) || 5; // used for pagination
   const page = req.query.currentPage - 1 || 0; // used to set 'offset' for pagination
   const offset = page * pageSize;
+
+  if(searchString && searchString.length > 0) {
+    const regex = new RegExp(searchString, 'i');
+    query['name'] = regex;
+  }
+
+  console.log('query --> ', query);
 
   Group.aggregate([
     { $geoNear: {
@@ -54,7 +62,7 @@ export const searchGroups = (req, res) => {
   .then(data => {
     console.log('searchGroups success --> ', data);
     const { paginatedResults, totalCount, } = data[0];
-    return res.status(200).json({groups: paginatedResults, count: totalCount[0].count, });
+    return res.status(200).json({ groups: paginatedResults, count: totalCount[0].count });
   })
   .catch(err => {
     return handleError(res, err);

@@ -6,6 +6,8 @@ import redis_client from './redis';
 
 //import * as chat from './sockets/chat';
 
+const intervals = [];
+
 export default (server) => {
   const io = SocketIO(server, { origins: '*:*' });
 
@@ -58,13 +60,7 @@ export default (server) => {
 
       // used to consistently broadcast currentUser status to all other users
       socket.on('client:broadcastStatusChange', ({ key, userId, socketId }) => {
-        let i;
-        
-        if(i) {
-          clearInterval(i);
-        }
-
-        i = setInterval(() => {
+        const i = setInterval(() => {
           console.log(socket.adapter.rooms);
           console.log(key);
           console.log(socketId);
@@ -72,9 +68,19 @@ export default (server) => {
           const connected = socket.adapter.rooms[key].sockets[socketId]; // eventually change to be more detailed (e.g. away/etc)
           socket.emit('server:broadcastStatus', { userId, socketId, connected }); 
         }, 10000);
+        intervals.push(i);
       })
 
+      socket.on('client:leave', ({ key }) => {
+        
+        // clear intervals
+        for(let i of intervals) {
+          clearInterval(i);
+        }
 
+        // leave room
+        socket.leave(key);
+      })
 
       /* SUBSCRIPTIONS */
 
@@ -82,13 +88,7 @@ export default (server) => {
       // send list of users to all connected clients 
       // should prob create on 'requestUser' setInterval when Room is created that broadcasts to all clients
       socket.on('client:requestUsers', ({ key }) => {
-        let i;
-        
-        if(i) {
-          clearInterval(i);
-        }
-
-        setInterval(async () => {
+        const i = setInterval(async () => {
           const sockets = socket.adapter.rooms[key].sockets;
           console.log('sockets --> ', sockets);
 
@@ -105,14 +105,16 @@ export default (server) => {
 
           socket.emit('server:sendUsers', { users });
         }, 10000);
+        intervals.push(i);
       });
 
       // request Messages from a particular Room (via 'key')
       socket.on('client:requestMessages', ({ key }/* options */) => {
-        setInterval(async () => {
+        const i = setInterval(async () => {
           const messages = await redis_client.lrange(key, 0, -1);
           socket.emit('server:sendMessages', { messages });
         }, 1000);
+        intervals.push(i);
       });
 
       // send currentUser status to all other users

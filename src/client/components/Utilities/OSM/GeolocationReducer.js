@@ -3,6 +3,7 @@ import {
   GEOCODING_SUCCESS,
   AUTOCOMPLETE_SUCCESS, 
   REVERSE_SUCCESS, 
+  CLEAR_AUTOCOMPLETE, 
 } from './GeolocationActions';
 
 const initialState = {
@@ -29,6 +30,11 @@ const GeolocationReducer = (state=initialState, action) => {
         ...state, 
         location: action.data.properties, 
         geoJSON: action.data.geometry, 
+      }
+    case CLEAR_AUTOCOMPLETE:
+      return {
+        ...state, 
+        autocomplete: [], 
       }
     default:
       return state;

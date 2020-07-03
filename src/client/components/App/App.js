@@ -16,10 +16,11 @@ import ChatContainer from '../Chat/components/ChatContainer';
 
 //import { switchLanguage } from '../../modules/Intl/IntlActions';
 import { logOut } from '../User/AccountActions';
-import { reverseRequest } from '../Utilities/OSM/GeolocationActions';
+import { reverseRequest, reverseSuccess } from '../Utilities/OSM/GeolocationActions';
 
 import { getCurrentUser, getAccountStatus } from '../User/AccountReducer';
 import { isLoading } from './AppReducer';
+//import { getLocation } from '../Utilities/OSM/GeolocationReducer';
 
 export class App extends React.Component {
 
@@ -29,10 +30,19 @@ export class App extends React.Component {
     // get user location
     navigator.geolocation.getCurrentPosition((loc) => {
       console.log('coords --> ', loc);
-      this.props.dispatch(reverseRequest({
-        lat: loc.coords.latitude,
-        lon: loc.coords.longitude, 
-      }))
+      
+      const currentLocation = localStorage.getItem('currentLocation');
+
+      // localStorage check for location
+      // NOTE: add expiry for location ??? (e.g. 1 day)
+      if(currentLocation) {
+        this.props.dispatch(reverseSuccess(JSON.parse(currentLocation)));
+      } else {
+        this.props.dispatch(reverseRequest({
+          lat: loc.coords.latitude,
+          lon: loc.coords.longitude, 
+        }));
+      }
     });
 
     // attempt user auth from localStorage

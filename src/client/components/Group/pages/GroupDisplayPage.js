@@ -56,6 +56,7 @@ export class GroupDisplayPage extends React.Component {
     this.setState({ role });
   }
 
+
                                       /* Image Handlers */
 
 
@@ -84,7 +85,7 @@ export class GroupDisplayPage extends React.Component {
     this.props.dispatch(deleteMembership(id));
   }
 
-  /* Render Logic */
+                                    /* Render Logic */
 
   render() {
     const { group } = this.props;

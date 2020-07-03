@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Nav, NavItem, NavDropdown, MenuItem } from 'react-bootstrap';
+import { debounce } from 'lodash';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 
-
 import styles from './GroupSearchBar.scss';
 //console.log('searchbar styles --> ', styles);
+
 
 export class GroupSearchBar extends Component {
   constructor() {
@@ -17,10 +18,11 @@ export class GroupSearchBar extends Component {
       location: 'Toronto, Ontario', // should auto-detect if possible
       distance: 50, // should default to 10 miles
       dropdownState: false, 
+      changeLocation: false, 
     };
   }
 
-  /* FORM HANDLERS */
+                          /* FORM HANDLERS */
 
   // change search text
 
@@ -58,25 +60,36 @@ export class GroupSearchBar extends Component {
     }
   };
 
-  // open manual location form
+  // open manual location form... why does e.stopPropagation not work here??
   changeMyLocation = (e) => {
-    console.log(e);
+    //console.log(e);
     //e.preventDefault();
-    e.stopPropagation();
+    //e.stopPropagation();
 
-    //this.setState({ changeLocation: true });
+    this.setState({ changeLocation: true });
   }
 
   // used to manually change your location (if not auto-detected/etc)
-  handleMyLocChange = () => {
-
-  }
+  handleMyLocChange = debounce((loc) => {
+    //console.log('handleloc --> ', loc);
+    this.props.getSuggestions(loc);
+  }, 1000)
 
 
   /* DROPDOWN LOGIC */
 
   toggleDropdown = (state) => {
     this.setState({ dropdownState: state });
+  }
+
+  // lazy hack
+  stopDropdownSelect = (e) => {
+    e.preventDefault();
+  }
+
+  selectLocation = (loc) => {
+    //console.log(loc);
+    this.props.changeAddress(loc);
   }
 
 
@@ -93,7 +106,8 @@ export class GroupSearchBar extends Component {
   }
 
   render() {
-    const { dropdownState } = this.state;
+    const { dropdownState, changeLocation } = this.state;
+    const { suggestions } = this.props;
 
     const hasQuery = this.hasQuery();
     const location = this.parseLocation();
@@ -132,11 +146,18 @@ export class GroupSearchBar extends Component {
             <MenuItem eventKey="500">500</MenuItem>
           </NavDropdown>
            kilometers of
-          <NavDropdown id='location-dropdown' className={styles['inline']} title={location} defaultOpen={dropdownState} noCaret >
+          <NavDropdown id='location-dropdown' className={styles['inline']} title={location} 
+            defaultOpen={dropdownState} onSelect={this.stopDropdownSelect} noCaret >
             <MenuItem eventKey="5" onClick={this.changeMyLocation}> Change Your Location? </MenuItem>
+            { changeLocation && 
               <MenuItem>
-                <input type='text' className='form-control' />
+                <input type='text' className='form-control' onChange={(e) => this.handleMyLocChange(e.target.value)} />
               </MenuItem> 
+            }
+            { suggestions.map(loc => {
+                return <MenuItem onSelect={() => this.selectLocation(loc)}>{loc.display_name}</MenuItem>
+              })
+            }
           </NavDropdown>
         </div>
       </div>
@@ -146,11 +167,16 @@ export class GroupSearchBar extends Component {
 
 GroupSearchBar.propTypes = {
   address: PropTypes.object.isRequired, 
+  changeAddress: PropTypes.func, 
 
-  search: PropTypes.func.isRequired,
   displayType: PropTypes.string.isRequired,
   changeDisplayType: PropTypes.func.isRequired,
+  
+  search: PropTypes.func.isRequired,
   changeQuery: PropTypes.func.isRequired, 
+
+  suggestions: PropTypes.array, 
+  getSuggestions: PropTypes.func, 
 };
 
 export default GroupSearchBar;
