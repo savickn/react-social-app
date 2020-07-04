@@ -1,5 +1,5 @@
 
-import env from '../../../../server/config/local.env';
+import env from '../../../../server/config/environment';
 console.log(env);
 
 import React from 'react';
@@ -222,7 +222,7 @@ class EventPage extends React.Component {
               <div className='grid-list-elem'><FontAwesomeIcon icon={faMap} className='list-icon' /> <span className='list-content'> {evt.geoJSON.location} </span></div>
               <iframe width="250"
                       height="250" 
-                      src={`https://www.google.com/maps/embed/v1/place?key=${env.googleAPI}
+                      src={`https://www.google.com/maps/embed/v1/place?key=${env.secrets.googleAPI}
                         &q=${evt.geoJSON.location}`}
                       allowFullScreen>
               </iframe>
