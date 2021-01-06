@@ -42,7 +42,7 @@
     "@loadable/component": "~5.0.1",
     "@loadable/server": "~5.1.0",
     "async-redis": "^1.1.7",
-    "axios": "0.18.1",
+    "axios": "0.21.1",
     "body-parser": "1.18.2",
     "bootstrap": "3.3.7",
     "composable-middleware": "0.3.0",
