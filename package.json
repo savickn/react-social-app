@@ -84,7 +84,7 @@
     "redux": "4.0.5",
     "redux-saga": "0.16.2",
     "rosie": "2.0.1",
-    "sanitize-html": "1.19.3",
+    "sanitize-html": "2.3.2",
     "sequelize": "~5.2.11",
     "serve-favicon": "2.5.0",
     "socket.io": "2.3.0",
