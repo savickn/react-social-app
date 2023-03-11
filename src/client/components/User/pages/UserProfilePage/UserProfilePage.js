@@ -44,6 +44,10 @@ export class UserProfilePage extends React.Component {
     return this.props.currentUser.bio || <Link to=''>Add a bio</Link> 
   }
 
+  getLocation = () => {
+    return (<div>{this.props.currentUser.name}</div>) || <Link to=''>Add location</Link>  ; 
+  }
+
   render() {
     const { currentUser } = this.props;
     console.log('profilePage currentUser --> ', currentUser);
@@ -64,15 +68,12 @@ export class UserProfilePage extends React.Component {
             />
           <div>{currentUser.name}</div>
           <div>{currentUser.location}</div>
-          <div>bio</div>
-        
-          <h3>Interests:</h3>
-          { currentUser.interests.map((i) => {
-            <div>{i}</div>
-          })}
         </div>
 
+        { /* maybe add your Events ... but not publically */ }
+
         <div className={styles.userGroups}>
+          <h3> Your Groups </h3>
           <div className={styles.groupContainer}>
             { currentUser.groups.map((m) => {
               const imgSrc = m.group.profile ? m.group.profile.image.path : noPic;
@@ -83,6 +84,12 @@ export class UserProfilePage extends React.Component {
                 </Link>
               )
             })}
+          </div>
+        </div>
+        <div className={styles.userInterests}>
+          <h3> Your Interests </h3>
+          <div className={styles.interestsContainer}>
+            {this.getInterests()}
           </div>
         </div>
       </div>
@@ -222,3 +229,13 @@ export default connect(mapStateToProps)(UserProfilePage);
 </div>
 
 */
+
+/*
+
+          <div>bio</div>
+        
+          <h3>Interests:</h3>
+          { currentUser.interests.map((i) => {
+            <div>{i}</div>
+          })}
+          */

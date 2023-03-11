@@ -18,6 +18,10 @@ export const InviteSchema = new Schema({
     enum: ['Admin', 'User'],
     required: true, 
   },
+  status: { // ['waitlist', 'attending', 'notAttending', 'pending']
+    type: String,
+    required: true
+  }, 
 
   accepted: { // used to track whether the User has accepted the Invite (if issued by Admin)
     type: Boolean,
@@ -28,18 +32,6 @@ export const InviteSchema = new Schema({
     required: true,  
   },
 
-  attending: { // tracks who is Attending or Not Attending
-    type: Boolean,
-    default: false, 
-  },
-  waitlist: { // tracks who is on the Waitlist
-    type: Boolean,
-    default: false,  
-  },
-  notAttending: {
-    type: Boolean, 
-    default: false, 
-  }, 
 }, {
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at', },
 });
@@ -95,3 +87,21 @@ InviteSchema.pre('remove', true, function(next, done) {
 InviteSchema.set('toJSON', { virtuals: true });
 
 export default mongoose.model('Invite', InviteSchema);
+
+
+/* old 
+
+attending: { // tracks who is Attending or Not Attending
+    type: Boolean,
+    default: false, 
+  },
+  waitlist: { // tracks who is on the Waitlist
+    type: Boolean,
+    default: false,  
+  },
+  notAttending: {
+    type: Boolean, 
+    default: false, 
+  },
+
+*/

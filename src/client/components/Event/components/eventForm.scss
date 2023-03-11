@@ -15,8 +15,11 @@
   border: 3px solid lighten($color: #000000, $amount: 50);
 }
 
-
 /* custom form styling */
+
+.eventForm {
+  padding: 2% 10% 0% 10%;
+}
 
 .field {
   padding: 0.5rem 0rem;

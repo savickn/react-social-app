@@ -88,6 +88,17 @@ export const updateInvite = (req, res) => {
   // lots of validation
 
   Invite.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true, })
+    .populate({
+      path: 'user',
+      select: '_id name profile',
+      populate: {
+        path: 'profile',
+        populate: {
+          path: 'image',
+        }
+      }
+    })
+    .exec()
     .then(invite => res.status(200).json({ invite }))
     .catch(err => handleError(res, err))
 }

@@ -43,6 +43,10 @@ const EventSchema = new Schema({
     type: Number,
     default: 0,
   },
+  canceled: {
+    type: Boolean,
+    default: false,
+  },
 
   /* REFERENCES */
   creator: {

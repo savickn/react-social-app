@@ -8,7 +8,7 @@ import account from './components/User/AccountReducer';
 //import todos from './components/ToDo/todoReducer';
 import events from './components/Event/EventReducer';
 import memberships from './components/Group/MembershipReducer';
-import invites from './components/Event/InviteReducer';
+import invites from './components/Invite/InviteReducer';
 import upload from './components/Upload/UploadReducer';
 import comments from './components/Comment/CommentReducer';
 import profiles from './components/Profile/ProfileReducer';

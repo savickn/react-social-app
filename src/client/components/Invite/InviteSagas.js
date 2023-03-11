@@ -90,8 +90,9 @@ function* updateInviteWatcher() {
 
 function* updateInviteHandler(action) {
   try {
-    const res = yield call(updateInvite, action.data);
+    const res = yield call(updateInvite, action.data, action.id);
     console.log('updateInvite res --> ', res);
+    yield put(updateInviteSuccess(res.invite));
   } catch(err) {
     console.error('updateInvite err --> ', err);
   }

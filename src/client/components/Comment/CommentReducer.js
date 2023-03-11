@@ -26,7 +26,7 @@ const CommentReducer = (state = initialState, action) => {
       return {
         data: [...state.data, action.comment], 
       }
-    case TOGGLE_UPVOTE_SUCCESS:
+    case TOGGLE_UPVOTE_SUCCESS: // basically updateCommentSuccess
       return {
         data: updateByObjectId(state.data, action.comment), 
       }

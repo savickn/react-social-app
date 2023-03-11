@@ -28,7 +28,12 @@
   background-color: lighten(lightgray, 10%); 
 }
 
-
+.noEvent {
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+  background-color: white;
+}
 
 
 // container for both the Sidebar and EventList

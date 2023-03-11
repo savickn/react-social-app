@@ -17,7 +17,7 @@ import { getEvents, getEventCount } from '../EventReducer';
 import { getCurrentUser } from '../../User/AccountReducer';
 import { getAutocomplete, getLocation, getGeojson } from '../../Utilities/OSM/GeolocationReducer';
 import { autocompleteRequest, } from '../../Utilities/OSM/GeolocationActions';
-import { createInviteRequest } from '../InviteActions';
+import { createInviteRequest } from '../../Invite/InviteActions';
 
 import styles from './EventCollectionPage.scss';
 
@@ -31,14 +31,14 @@ class EventCollectionPage extends React.Component {
     //console.log('EventCollectionPage props --> ', props);
     this.state = {
       modalVisibility: false, 
-      searchMode: 'Upcoming', 
+      searchMode: 'Upcoming', // filter for Events... either 'Past' or 'Upcoming'
       listMode: 'List', 
       pageSize: 5,
     };
   }
 
   componentDidMount() {
-    this.queryEvents();
+    this.queryEvents(); 
   }
 
                                 /* Component logic */
@@ -78,6 +78,7 @@ class EventCollectionPage extends React.Component {
     });
   }
 
+  // change between list and calender modes... NOT IMPLEMENTED
   changeListMode = (se) => {
     this.setState({listMode: se.target.innerText});
   }
@@ -90,8 +91,8 @@ class EventCollectionPage extends React.Component {
     const { currentUser, } = this.props;
     if(!currentUser) return false;
 
-    const userArr = evt.invites.map((a) => a.user ? a.user._id : null);
-    //console.log(userArr);
+    const userArr = evt.invites.map((inv) => inv.user ? inv.user._id : null);
+    console.log(userArr);
 
     return !userArr.includes(currentUser._id);
   }
@@ -104,16 +105,16 @@ class EventCollectionPage extends React.Component {
       event: evt._id,
       user: currentUser._id, 
       issueType: 'User',
+      status: 'Attending',
       accepted: true, 
       verified: !evt.inviteOnly, // either automatically verify... or send to verification queue 
-
-      attending: true, // for testing purposes... remove later
     };
 
     console.log('attendEvent inviteObj --> ', invite);
 
     if(this.canAttend(evt)) {
       this.props.dispatch(createInviteRequest(invite));
+      this.queryEvents();
     }
   }
 
@@ -125,11 +126,10 @@ class EventCollectionPage extends React.Component {
                                   /* Event Form Logic */
 
   addEvent = (eventData) => {
-    // guard against already expired Events
-    if(eventData.start < new Date()) {
+    // guard against already expired Events && end dates that are before start dates
+    if(eventData.start < new Date() || eventData.start >= eventData.end) {
       return;
     }
-
 
     console.log('eventDate --> ', eventData);
     const locData = eventData.location;
@@ -148,7 +148,6 @@ class EventCollectionPage extends React.Component {
     this.closeModal();
   }
 
-
   // query OSM for location suggestions
   getSuggestions = (query) => {
     const country_code = this.props.location.address.country_code;
@@ -159,11 +158,11 @@ class EventCollectionPage extends React.Component {
                                   /* Modal Logic */
 
   openModal = () => {
-    this.setState({modalVisibility: true});
+    this.setState({ modalVisibility: true });
   }
 
   closeModal = () => {
-    this.setState({modalVisibility: false});
+    this.setState({ modalVisibility: false });
   }
 
                                   /* Styling logic */
@@ -194,13 +193,12 @@ class EventCollectionPage extends React.Component {
     return (
       <div className={styles.eventsContainer}>
         <div className={styles.banner}>
-          <div className={styles.listSelector}>
+          {/*<div className={styles.listSelector}>
             <span className={this.styleListSelector('List')} onClick={this.changeListMode}>List</span>
             <span className={this.styleListSelector('Calender')} onClick={this.changeListMode}>Calender</span>  
-          </div>
+          </div>*/}
           <button className={`${styles.addEventBtn} btn btn-default`} onClick={this.openModal}> Add Event </button>
         </div>
-
 
         <div className={`background full-width`}>
           <div className={`${styles.listAndSidebar} container`}>
@@ -223,6 +221,9 @@ class EventCollectionPage extends React.Component {
 
             {/* renders list of events from this.props.events */}
             <div className={styles.eventList}>
+              { this.props.events.length < 1 && 
+                <div className={styles.noEvent}>There are no events at this time.</div>
+              }
               {this.props.events.map((evt) => {
                 const canAttend = this.canAttend(evt);
                 return <EventInfo key={evt._id} evt={evt} groupId={this.props.groupId} 
@@ -238,8 +239,9 @@ class EventCollectionPage extends React.Component {
         
         {/* conditionally render EventForm within Modal */}
         <Modal isVisible={this.state.modalVisibility} close={this.closeModal}>
-          <EventForm creatorId={this.props.currentUser._id} groupId={this.props.groupId} createEvent={this.addEvent}
-            getSuggestions={this.getSuggestions} locationSuggestions={this.props.suggestions}  />
+          <EventForm creatorId={this.props.currentUser._id} groupId={this.props.groupId} 
+            createEvent={this.addEvent} getSuggestions={this.getSuggestions} 
+            locationSuggestions={this.props.suggestions} />
         </Modal>
       </div>
     );

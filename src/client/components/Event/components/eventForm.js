@@ -76,18 +76,21 @@ class EventForm extends React.Component {
     return datetime;
   }
 
+  // used to remove saved form data when clicking reset
   emptyLocalStorage = () => {
     if(typeof window !== undefined) {
       localStorage.removeItem(`${this.props.creatorId}-${this.props.groupId}-event`);
     }
   }
 
+  // used to load saved form data 
   getFromLocalStorage = () => {
     if(typeof window !== undefined) {
       return JSON.parse(localStorage.getItem(`${this.props.creatorId}-${this.props.groupId}-event`));
     } 
   }
 
+  // used to save form data when creating or leaving form ??
   saveToLocalStorage = () => {
     if(typeof window !== undefined) {
       localStorage.setItem(`${this.props.creatorId}-${this.props.groupId}-event`, JSON.stringify(this.state));
@@ -114,8 +117,10 @@ class EventForm extends React.Component {
   };
 
   // used to reset state
-  resetState() {
-    this.setState(defaultState);
+  reset = () => {
+    this.setState(defaultState, () => {
+      this.emptyLocalStorage();
+    });
   };
 
   // used to run validation for eventForm
@@ -126,14 +131,15 @@ class EventForm extends React.Component {
 
   render() {
     return (
-      <div id="eventForm">
+      <div id="eventForm" className={styles.eventForm}>
         <div className={styles.field}>
           <label htmlFor="title"> Title: </label>
           <input type='text' id='title' className='form-control' value={this.state.title} onChange={this.handleTitleChange} />
         </div>
         <div className={styles.field}>
           <label htmlFor="description"> Description: </label>
-          <textarea id='description' className='form-control' value={this.state.description} onChange={this.handleDescriptionChange} />
+          <textarea id='description' className={`form-control vert-resize-only`} rows='3'
+            value={this.state.description} onChange={this.handleDescriptionChange} />
         </div>
         
         { /*
@@ -157,7 +163,6 @@ class EventForm extends React.Component {
         })}
 
 
-
         <div className={styles.field}>
           <label htmlFor='startTime'> Start Time: </label>
           <input type='date' id='startDate' className='form-control' value={this.state.startDate} onChange={this.handleStartDateChange} />
@@ -169,6 +174,7 @@ class EventForm extends React.Component {
           <input type='time' id='endTime' className='form-control' value={this.state.endTime} onChange={this.handleEndTimeChange} />
         </div>
         <div className={styles.submit}>
+          <button className={`btn btn-md btn-default`} onClick={this.reset}> Reset </button>
           <button className={`btn btn-md btn-default`} onClick={this.handleSubmit}> Create Event </button>
         </div>
       </div>
@@ -177,6 +183,8 @@ class EventForm extends React.Component {
 }
 
 EventForm.propTypes = {
+  evt: PropTypes.object, // for updating existing objects
+
   creatorId: PropTypes.string.isRequired,
   groupId: PropTypes.string.isRequired, 
   createEvent: PropTypes.func.isRequired, 

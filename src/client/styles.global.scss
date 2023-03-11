@@ -14,6 +14,20 @@
 }
 
 
+/* Typography */
+
+* {
+  font-size: 16pt;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/*input,
+input::placeholder {
+    font: 20px/3 sans-serif;
+}*/
+
+
+
 .click-cursor {
   cursor: pointer;
 }
@@ -46,6 +60,16 @@
   }
 }
 
+// used to make text look like hyperlink
+.simple-link {
+  color: #3366CC;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 // used to create button-like styles for other elements (e.g. span)
 .minimal-btn {
   font-size: 14pt;
@@ -69,6 +93,10 @@
   }
 }
 
+.vert-resize-only {
+  resize: vertical;
+}
+
 // used to add link-like styling to regular text (e.g. similar font but has hover effect/etc)
 .action-text {
 
@@ -87,6 +115,10 @@ span.left-padded {
 span.pull-right {
 
 } 
+
+.left-margin {
+  margin-left: 5px;
+}
 
 // used to create a large Button that looks like an image
 .addIcon {

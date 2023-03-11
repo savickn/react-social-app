@@ -68,19 +68,24 @@
 }
 
 .searchInput {
+  width: calc(100% - 4rem);
   padding: 1rem;
 
   border: none;
   
   position: relative;
-  left: 1.5rem;
+  left: 3rem;
+
+  .searchInput > :focus {
+    outline: none;
+  }
 }
 
 .leftIcon {
   content: "";
   position: absolute;
 
-  left: 2rem;
+  left: 3rem;
   top: 50%;
   transform: translate(-50%, -50%);
 

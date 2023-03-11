@@ -7,10 +7,15 @@ import bg from './footer-bk.png';
 
 export function Footer() {
   return (
-    <div style={{ backgroundImage: `url(${bg})` }} className={styles.footer}>
-      <p>&copy; 2020</p>
-    </div>
+    <div></div>
   );
 }
 
 export default Footer;
+
+
+/*
+<div style={{ backgroundImage: `url(${bg})` }} className={styles.footer}>
+      <p>&copy; 2022</p>
+    </div>
+*/

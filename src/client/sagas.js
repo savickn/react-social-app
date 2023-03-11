@@ -7,7 +7,7 @@ import GroupSagas from './components/Group/GroupSagas';
 import MembershipSagas from './components/Group/MembershipSagas';
 
 import EventSagas from './components/Event/EventSagas';
-import InviteSagas from './components/Event/InviteSagas';
+import InviteSagas from './components/Invite/InviteSagas';
 import CommentSagas from './components/Comment/CommentSagas';
 
 import UploadSagas from './components/Upload/UploadSagas';

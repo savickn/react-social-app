@@ -1,9 +1,16 @@
 
+.center {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+
 .flex-gallery {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: stretch;
 }
 

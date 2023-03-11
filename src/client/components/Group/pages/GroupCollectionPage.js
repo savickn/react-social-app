@@ -92,14 +92,19 @@ export class GroupCollectionPage extends React.Component {
   // search database for Groups
   searchGroups = (q={}) => {
     const { location, geojson, } = this.props;
+    console.log('search --> ', location, geojson);
 
     const query = {
       ...q,
+      searchString: this.state.search.query,
       maxDistance: this.state.search.distance,
       coords: geojson, 
       currentPage: this.state.pagination.currentPage,
       pageSize: this.state.pagination.pageSize,
     };
+
+    console.log('query --> ', query);
+
     this.props.dispatch(searchGroups(query));
   };
 
@@ -136,7 +141,10 @@ export class GroupCollectionPage extends React.Component {
     };
 
     this.props.dispatch(createGroup({ name, geoJSON, admin }));
+    this.closeModal();
   };
+
+                                        /* LOCATION */
 
   // query OSM for location suggestions
   getSuggestions = (query) => {
@@ -149,6 +157,7 @@ export class GroupCollectionPage extends React.Component {
   clearSuggestions = () => {
     this.props.dispatch(clearAutocomplete());
   }
+
 
                                     /* STATE HANDLERS */
 
@@ -198,16 +207,29 @@ export class GroupCollectionPage extends React.Component {
         </div>
 
         {/* Search Bar */}
-        <GroupSearchBar search={this.handleQueryChanged} displayType={this.state.displayType} changeDisplayType={this.changeDisplayType} 
-          address={this.props.location.address} distance={this.state.search.dispatch} changeQuery={this.handleQueryChanged}
-          suggestions={this.props.suggestions} getSuggestions={this.getSuggestions} changeAddress={this.handleLocationChanged} />
+        <GroupSearchBar 
+          address={this.props.location.address} 
+          distance={this.state.search.dispatch} 
+          displayType={this.state.displayType}
+          suggestions={this.props.suggestions}
+          changeDisplayType={this.changeDisplayType} 
+          
+          search={this.handleQueryChanged} 
+          changeQuery={this.handleQueryChanged}
+          changeAddress={this.handleLocationChanged}
+          getSuggestions={this.getSuggestions}  
+          clearSuggestions={this.clearSuggestions}/>
 
         {/* Group List */}
         <GroupList groups={this.props.groups} displayType={this.state.displayType}/>
 
         {/* Modal */}
         <Modal isVisible={this.state.showModal} close={this.closeModal}>
-          <GroupCreateWidget addGroup={this.addGroup} getSuggestions={this.getSuggestions} locationSuggestions={this.props.suggestions} />
+          <GroupCreateWidget 
+            addGroup={this.addGroup} 
+            getSuggestions={this.getSuggestions} 
+            clearSuggestions={this.clearSuggestions}
+            locationSuggestions={this.props.suggestions} />
         </Modal>
         <div className={styles.modalBtn}>
           <button className={`btn btn-default`} onClick={this.openModal}><span className='glyphicon glyphicon-plus click-cursor'></span></button>

@@ -62,10 +62,11 @@ export const deleteInviteSuccess = (id) => {
 
 /* UPDATE */
 
-export const updateInviteRequest = (data) => {
+export const updateInviteRequest = (id, data) => {
   return {
     type: UPDATE_INVITE_REQUEST,
     data, 
+    id,
   }
 }
 

@@ -18,14 +18,26 @@ class Modal extends React.Component {
       this.props.close();
     }
   }
+
+  buildStyles() {
+    const { contentWidth, maxWidth, } = this.props;
+    let res = {};
+    if(contentWidth) res['width'] = contentWidth;
+    if(maxWidth) res['max-width'] = maxWidth;
+    return res;
+  }
   
   render() {
     //const modalCss = this.props.isVisible ? '' : '';
+    const { contentWidth, } = this.props;
+
+    const propsStyles = this.buildStyles();
+
     return (
       <div>
         { this.props.isVisible && 
           <div className={styles['modal']} ref={this.modalRef} onClick={this.hideModal}>
-            <div className={styles['modal-content']}>
+            <div className={styles['modal-content']} style={propsStyles}>
               {this.props.children}
             </div>
           </div>
@@ -39,6 +51,7 @@ Modal.propTypes = {
   children: PropTypes.object.isRequired,
   isVisible: PropTypes.bool.isRequired,
   close: PropTypes.func.isRequired,
+  contentWidth: PropTypes.string, // controls the contentArea width (defaults to 80%)
 };
 
 export default Modal;

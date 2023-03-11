@@ -42,7 +42,7 @@ export const searchEvents = (req, res) => {
       .populate({
         path: 'invites',
         match: { 
-          attending: true, 
+          status: 'Attending', 
           verified: true, 
           accepted: true, 
         },
@@ -119,7 +119,6 @@ export const addEvent = (req, res) => {
   };
 
   let event = new Event(req.body);
-  event.attendees = [req.body.creator];
   console.log('addEvent event --> ', event);
 
   event.save((err, event) => {
@@ -140,8 +139,6 @@ export const updateEvent = (req, res) => {
   if(req.body.attendee) {
 
   }
-
-  
 
   Event.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true, runValidators: true }, (err, evt) => {
     if(err) return handleError(res, err);

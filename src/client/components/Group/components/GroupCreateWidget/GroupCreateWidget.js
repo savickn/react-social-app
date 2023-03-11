@@ -5,10 +5,10 @@ import { debounce } from 'lodash';
 
 import styles from './GroupCreateWidget.scss';
 
-export class GroupCreateWidget extends Component {
-  constructor(props) {
+export class GroupCreateWidget extends Component { 
+  constructor(props) { 
     super(props);
-    this.state = {
+    this.state = { 
       name: '',
       location: { 
         display_name: '', 
@@ -16,23 +16,31 @@ export class GroupCreateWidget extends Component {
     };
   }
 
+  componentDidMount() {
+    this.props.clearSuggestions(); // to clear suggestions from other components
+  }
+
                               /* EVENT HANDLERS */
 
+  // change 'name' input value
   handleNameChange = (se) => {
     this.setState({ name: se.target.value });
   };
 
-  selectLocation = (loc) => {
-    console.log('select location --> ', loc);
-    this.setState({ location: loc });
-  }
-
+  // used to refresh location suggestions when query is changed
   handleLocationChange = debounce((location) => {
     this.props.getSuggestions(location);
   }, 500);
 
+  // used to select a location in the search form
+  selectLocation = (loc) => {
+    this.setState({ location: loc }, () => { 
+      //this.props.clearSuggestions();
+    });
+  };
+
+  // submit form to create group
   handleSubmit = (se) => {
-    //se.preventDefault();
     const { name, location } = this.state;
 
     if(this.canBeSubmitted()) {
@@ -41,6 +49,7 @@ export class GroupCreateWidget extends Component {
   };
 
                               /* RENDER LOGIC */
+                            
 
   canBeSubmitted = () => {
     const { name, location } = this.state;
@@ -56,24 +65,27 @@ export class GroupCreateWidget extends Component {
     //const locationString = location.address ? `${location.display_name.split(', ')[0]}, ${location.address.state}, ${location.address.country}`: '';
 
     return (
-      <div id="groupForm">
+      <div id="groupForm" className={styles.groupForm}>
         <div className='form-group'>
           <label htmlFor="name"> Group Name:</label>
-          <input type='text' value={this.name} onChange={this.handleNameChange} id="name" className='form-control' />
+          <input type='text' value={name} onChange={this.handleNameChange} id="name" className='form-control' />
         </div>
         <div className='form-group'>
           <label htmlFor='location'> Location:</label>
-          <input type='text' value={this.location} onChange={(e) => this.handleLocationChange(e.target.value)} id="location" className='form-control' />
+          <input type='text' onChange={(e) => this.handleLocationChange(e.target.value)} id="location" className='form-control' />
         </div>
-        {this.props.locationSuggestions.map((l, idx) => {
+        {this.props.locationSuggestions.map((loc, idx) => {
           return (
-            <div className={`${styles.suggestion} ${this.state.location.place_id === l.place_id ? styles.selected : ''}`} 
-              onClick={() => this.selectLocation(l)}>
-                {l.display_name}
+            <div 
+              className={`${styles.suggestion} ${this.state.location.place_id === loc.place_id ? styles.selected : ''}`} 
+              onClick={() => this.selectLocation(loc)}>
+                {loc.display_name}
             </div>
           );
         })}
-        <button className='btn btn-md btn-default' onClick={this.handleSubmit} disabled={!isEnabled}>Add Group</button>
+        <div className={styles.centerBtn}>
+          <button className='btn btn-md btn-default' onClick={this.handleSubmit} disabled={!isEnabled}>Add Group</button>
+        </div>
       </div>
     );
   }
@@ -84,6 +96,7 @@ GroupCreateWidget.propTypes = {
   addGroup: PropTypes.func.isRequired,
 
   getSuggestions: PropTypes.func.isRequired, // func to query osm for suggestions when user input changes
+  clearSuggestions: PropTypes.func.isRequired,
   locationSuggestions: PropTypes.array.isRequired, // an array of osm objects
 };
 

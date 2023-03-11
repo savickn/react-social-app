@@ -61,12 +61,17 @@ export class CommentHub extends React.Component {
 
     console.log('createComment --> ', comment);
     this.props.dispatch(addCommentRequest(comment));
+    this.clearReply();
   }
 
   // used to select which comment to reply to
-  setReply = (commentId) => {
-    const reply = this.props.comments.filter(c => c._id === commentId)[0];
-    this.setState({ reply })
+  setReply = (reply) => {
+    //const reply = this.props.comments.filter(c => c._id === commentId)[0];
+    this.setState({ reply });
+  }
+
+  clearReply = () => {
+    this.setState({ reply: null });
   }
 
   // used to quote another user's comment
@@ -108,7 +113,8 @@ export class CommentHub extends React.Component {
           return <CommentElement key={comment._id} comment={comment} setReply={this.setReply} embedText={this.embedText} 
             toggleUpvote={this.toggleUpvote} hasLiked={hasLiked} getReplies={this.fetchComment} />
         })}
-        <CommentForm handleSubmit={this.createComment} userImg={myImg} reply={this.state.reply} />
+        <CommentForm handleSubmit={this.createComment} userImg={myImg} 
+          reply={this.state.reply} cancelReply={this.clearReply} />
       </div>
     )
   }

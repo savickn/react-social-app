@@ -13,6 +13,13 @@ import styles from './eventInfo.scss';
 // NOTE: meant to be embedded within another page (e.g. via list)
 class EventInfo extends React.Component {
 
+
+  /* Render logic */ 
+
+
+
+
+
   /* Event Handlers */
 
   // used to create an Invite
@@ -46,13 +53,16 @@ class EventInfo extends React.Component {
         <div className={`${styles.eventContainer} unstyled-link`} onClick={this.navigateToPage}>
           <div className={styles.eventGrid}>
             <div className={styles.eventDetails}>
-              <div>{startDate.toDateString()}</div>
+              <div>
+                {startDate.toDateString()}
+                { }
+              </div>
               <div className={styles.titleText}>{evt.title}</div>
               <div>{evt.geoJSON.location}</div>
             </div>
-            <div className={styles.eventImage}>
+            {/*<div className={styles.eventImage}>
               <img src={dp} />
-            </div>
+            </div>*/}
             <div className={styles.eventDescription}>
               {evt.description}
             </div>

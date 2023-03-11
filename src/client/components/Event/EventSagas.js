@@ -8,7 +8,7 @@ import {
 
 import {
   createInviteRequest, 
-} from './InviteActions';
+} from '../Invite/InviteActions';
 
 import {
   createEventSuccess,
@@ -87,7 +87,7 @@ function* createEventHandler(action) {
       issueType: 'Admin', 
       accepted: true,
       verified: true, 
-      attending: true,
+      status: 'Attending'
     };
     event.invites.push(initialInvite) // for optimistic loading 
     yield put(createEventSuccess(event));

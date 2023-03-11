@@ -59,7 +59,7 @@ class GroupMemberView extends React.Component {
     this.setState({ searchString: text }, () => {
       this.fetchMembers();
     })
-  }, 1000)
+  }, 500)
 
 
   // open ChatView with Member

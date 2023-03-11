@@ -38,7 +38,7 @@ class CommentComponent extends React.Component {
   // select this comment to reply to
   handleReply = () => {
     console.log('handleReply');
-    this.props.setReply(this.props.comment._id);
+    this.props.setReply(this.props.comment);
   }
 
   // embed this comment within CommentForm... NOT WORKING
@@ -109,7 +109,7 @@ class CommentComponent extends React.Component {
             <div className={`action-text`} onClick={this.handleReply}>Reply</div>
             <div className={`action-text`} onClick={this.handleEmbed}>Embed</div>
             <div className={styles.aux}>
-              <div className={styles.date}>{Moment(comment.created_at, "YYYYMMDD").fromNow()}</div>
+              <div className={styles.date}>{Moment(comment.created_at).fromNow()}</div>
               <div className={styles.likes}>
                 <UpvoteControl score={comment.score} hasLiked={this.props.hasLiked} toggleUpvote={this.toggleUpvote} />
               </div>
@@ -132,7 +132,9 @@ class CommentComponent extends React.Component {
           }
           { areRepliesLoaded && showReplies ? 
             comment.comments.map((c) => {
-              return <CommentComponent comment={c} />
+              return <CommentComponent comment={c} getReplies={this.props.getReplies}
+                hasLiked={this.props.hasLiked} setReply={this.props.setReply}
+                toggleUpvote={this.props.toggleUpvote} embedText={this.props.embedText}/>
             }) : null
           }
         </div>

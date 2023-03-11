@@ -2,8 +2,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlay, } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlay, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { Image } from 'react-bootstrap';
 
 import styles from './CommentForm.scss';
@@ -38,6 +38,7 @@ class CommentForm extends React.Component {
       content: this.contentRef.current.value, 
     };
     this.props.handleSubmit(comment);
+    this.contentRef.current.value = '';
   }
 
   getReplyText = () => {
@@ -58,11 +59,16 @@ class CommentForm extends React.Component {
         </div>
         
         <div className={styles.commentBox}>
+          <textarea className='form-control vert-resize-only' ref={this.contentRef} 
+            placeholder='Comment...' resize='vertical'/>
           { this.props.reply ? 
-            <p>{this.getReplyText()}</p>
+            <p>
+              {this.getReplyText()}
+              <FontAwesomeIcon icon={faTimes} onClick={this.props.cancelReply}
+                className='left-margin'/>
+            </p>
             : null
           }  
-          <textarea className='form-control' ref={this.contentRef} placeholder='Comment...'/>
         </div>
 
         <div className='click-cursor' onClick={this.createComment}>
@@ -77,6 +83,7 @@ CommentForm.propTypes = {
   handleSubmit: PropTypes.func.isRequired, 
   userImg: PropTypes.string, 
   reply: PropTypes.object, 
+  cancelReply: PropTypes.func, 
 };
 
 export default CommentForm;

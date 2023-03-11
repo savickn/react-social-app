@@ -14,13 +14,13 @@ const CommentSchema = new Schema({
     type: String,
     required: true
   },
-  comments: [{
+  comments: [{ // embedded comments? 
     type: Schema.Types.ObjectId,
     ref: 'Comment',
   }],
   upvotes: [UpvoteSchema],
 
-  parent: {
+  parent: { // embedded under this element
     type: Schema.Types.ObjectId,
     //ref: 'Commentable', ??? 
     required: true, 

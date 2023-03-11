@@ -79,14 +79,14 @@ class Profile extends React.Component {
   }
 
   render() {
+    const { pWidth, pHeight, } = this.props;
+
     const dp = this.getPic();
 
     return (
       <React.Fragment>
         <Upload handleUpload={this.createProfile} multiple={false}>
-          <div>
-            <img src={dp} width='150' height='150' className={styles.profilePic} />
-          </div>
+          <img src={dp} width={pWidth || '150'} height={pHeight || '150'} className={styles.profilePic} />
         </Upload>
       </React.Fragment>
     )
@@ -100,7 +100,9 @@ Profile.propTypes = {
   profileId: PropTypes.string.isRequired,
   // createProfile: PropTypes.func.isRequired, // --> used to create Profile if not exists 
   imageableId: PropTypes.string.isRequired, 
-  imageableType: PropTypes.string.isRequired, //e.g. Group, User  
+  imageableType: PropTypes.string.isRequired, //e.g. Group, User
+  pWidth:   PropTypes.string,
+  pHeight:  PropTypes.string,
 };
 
 function mapStateToProps(state, props) {

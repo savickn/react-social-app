@@ -1,0 +1,19 @@
+
+.tabs {
+  display: flex;
+
+  & > * {
+    width: 33%;
+  }
+
+}
+
+.inviteList {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+
+  padding: 10px;
+}
+

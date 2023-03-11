@@ -16,10 +16,13 @@ class UserCard extends React.Component {
 
     //console.log('usercard user --> ', user);
 
+    const contentWidth = Number.parseInt(this.props.contentWidth) || 100;
+    const contentHeight = Number.parseInt(this.props.contentHeight) || 100;
+
     return (
-      <Link to={`/users/${user._id}`} className={`${styles.cardContainer} unstyled-link`}>
+      <Link to={`/users/${user._id}`} className={`${styles.cardContainer}`}>
         <div>
-          <img src={pic} width='75' height='75' />
+          <img src={pic} width={0.75*contentWidth} height={0.75*contentHeight} />
         </div>
         <div className={styles.name}>{user.name}</div>
         { 
@@ -38,7 +41,9 @@ UserCard.propTypes = {
     _id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,  
     profile: PropTypes.string.isRequired, 
-  })
+  }),
+  contentWidth: PropTypes.string,
+  contentHeight: PropTypes.string,
 };
 
 export default UserCard;

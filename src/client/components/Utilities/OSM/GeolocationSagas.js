@@ -10,6 +10,7 @@ import axios from '../../../util/axiosCaller';
 
 /* Reverse Geocoding */
 
+// turns coords into location
 function reverseGeocode(coords) {
   const templateStr = `https://nominatim.openstreetmap.org/reverse?lat=${coords.lat}&lon=${coords.lon}&format=geojson`;
   //console.log(templateStr);
@@ -37,6 +38,7 @@ function* reverseHandler(action) {
 /* Autocomplete */
 
 // WORKING (more or less)
+// suggestions based on user input string
 function autocomplete(query) {
   const restrictions = query.country_code ? `&countrycodes=${query.country_code}` : '';
 
@@ -66,6 +68,7 @@ function* autocompleteHandler(action) {
 
 /* GEOCODING */
 
+// turns location into coords
 function geocode(data) {
   const templateStr = `https://nominatim.openstreetmap.org/search?q=${query.location}&format=json`;
 

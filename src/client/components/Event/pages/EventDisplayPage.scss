@@ -36,6 +36,9 @@
   flex: 3;
 
   .groupSidebar {
+    color: black;
+    text-decoration: none;
+
     padding: 15px;
     margin-top: 15px;
     margin-bottom: 15px;
@@ -70,7 +73,18 @@
 
                                                     /* HEADER */
 
+.eventColumns {
+  display: grid;
+  grid-template-columns: 75% 25%;
+  grid-template-rows: 100%;
+  grid-template-areas: 
+    "i1 i2";
+
+}
+
 .eventHeader {
+  display: flex;
+
   padding-top: 15px;
   padding-bottom: 15px;
 
@@ -78,11 +92,13 @@
   top: -1px;
 }
 
-.flexHeader {
+// to align some header content to the left
+.flexHeaderLeft {
   display: flex;
   justify-content: flex-start;
 
   .date {
+    width: 60px;
     padding: 5px;
     display: flex;
     flex-direction: column;
@@ -109,6 +125,14 @@
     }
   }
 }
+
+// to align some header content to the right
+.flexHeaderRight {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
 
 
                                                   /* FOOTER */
@@ -153,13 +177,31 @@
   display: grid;
   grid-template-columns: 25%;
   grid-column-gap: 10px;
-  grid-template-rows: 50% 50%;
+  grid-template-rows: 100%;
   grid-template-areas: 
-    "i1 i2 i3 i4"
-    "i5 i6 i7 i8";
+    "i1 i2 i3 i4";
 
-  
+  & > * {
+    color: black;
+    text-decoration: none;
 
+    &:hover {
+      color: black;
+      text-decoration: none;
+      box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
+      transition: all 0.3s ease 0s;
+      border-radius: 1rem;
+    }
+  }
+
+}
+
+.viewAllAttendeesBtn {
+  color: black;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 

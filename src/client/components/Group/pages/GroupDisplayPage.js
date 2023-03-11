@@ -105,7 +105,7 @@ export class GroupDisplayPage extends React.Component {
         {/* BANNER */}
         <div className={styles.groupBanner}>
           <div className={styles.groupImg}>
-            <Profile profileId={profileId} imageableId={group._id} imageableType='Group' />
+            <Profile profileId={profileId} imageableId={group._id} imageableType='Group' pWidth='450' pHeight='250' />
           </div>
           <div className={styles.groupInfo}>
             <div className={styles.groupName}>{this.props.group.name}</div>
@@ -122,9 +122,6 @@ export class GroupDisplayPage extends React.Component {
             </LinkContainer>
             <LinkContainer to={`/groups/${this.props.group._id}/members`}>
               <NavItem eventKey={2}>Members</NavItem>
-            </LinkContainer>
-            <LinkContainer to={`/groups/${this.props.group._id}/settings`}>
-              <NavItem eventKey={3}>Settings</NavItem>
             </LinkContainer>
             {isNone ?
               <NavItem eventKey={4}>

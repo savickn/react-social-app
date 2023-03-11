@@ -22,6 +22,10 @@ export class GroupSearchBar extends Component {
     };
   }
 
+  componentDidMount() {
+    this.props.clearSuggestions();
+  }
+
                           /* FORM HANDLERS */
 
   // change search text
@@ -55,9 +59,11 @@ export class GroupSearchBar extends Component {
   };
 
   handleSubmit = (se) => {
-    if (this.hasQuery()) {
-      this.props.search(this.query);
-    }
+    this.props.search({ 
+      query: this.state.query,
+      distance: this.state.distance,
+    });
+    //if (this.hasQuery()) {}
   };
 
   // open manual location form... why does e.stopPropagation not work here??
@@ -130,16 +136,16 @@ export class GroupSearchBar extends Component {
           <FontAwesomeIcon icon={faSearch} /> 
         </div>
 
-        <div className={styles.searchInput}>
+
         { /* add 'x' FontAwesome button} */ }
 
-          <input type='search' name='search' onChange={this.handleQueryChange} value={this.state.query}
-            placeholder='Text Search' className='form-control' aria-describedby='basic-addon1' />
-        </div>
+        <input type='search' name='search' onChange={this.handleQueryChange} value={this.state.query}
+          placeholder='Text Search' className={`${styles.searchInput}`} aria-describedby='basic-addon1' />
 
         <div className={styles['location-input']}>
            within
-          <NavDropdown id='distance-dropdown' className={styles['inline']} title={this.state.distance} activeKey={this.state.distance} onSelect={this.handleDistanceChange} noCaret>
+          <NavDropdown id='distance-dropdown' className={styles['inline']} title={this.state.distance} activeKey={this.state.distance} 
+              onSelect={this.handleDistanceChange} noCaret>
             <MenuItem eventKey="10">10</MenuItem>
             <MenuItem eventKey="25">25</MenuItem>
             <MenuItem eventKey="50">50</MenuItem>
@@ -177,6 +183,7 @@ GroupSearchBar.propTypes = {
 
   suggestions: PropTypes.array, 
   getSuggestions: PropTypes.func, 
+  clearSuggestions: PropTypes.func, 
 };
 
 export default GroupSearchBar;

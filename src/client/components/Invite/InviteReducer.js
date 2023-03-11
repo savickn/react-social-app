@@ -20,6 +20,13 @@ const InviteReducer = (state=initialState, action) => {
       return {
         data: [...state.data, action.invite], 
       }
+    case UPDATE_INVITE_SUCCESS:
+      console.log(action);
+      return {
+        data: state.data.map(i => {
+          return i._id === action.invite._id ? action.invite : i;
+        }),
+      }
     case DELETE_INVITE_SUCCESS:
       return {
         data: state.data.filter(i => i._id !== action.id)
@@ -29,7 +36,10 @@ const InviteReducer = (state=initialState, action) => {
   }
 }
 
-export const getInvites = (state) => state.invites.data;
-export const getAttendees = (state, id) => state.invites.data.filter(i => i.event === id);
+export const getInvites = (state, id) => state.invites.data.filter(i => i.event === id);
+export const getAttendees = (state, id) => state.invites.data.filter(i => {
+  return i.event === id && i.status === "Attending";
+});
+//export const getMyInvite = (state, evtId, userId) => state.invites.data.filter(i => i.event === evtId && i.user === userId);
 
 export default InviteReducer;

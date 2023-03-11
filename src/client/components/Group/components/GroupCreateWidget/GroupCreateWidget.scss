@@ -17,6 +17,16 @@
 }
 
 
+.centerBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.groupForm {
+  padding: 2% 10% 0% 10%;
+}
+
 /* OLD */
 
 .form-content {

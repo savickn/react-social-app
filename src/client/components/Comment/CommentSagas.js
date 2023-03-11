@@ -1,5 +1,5 @@
 
-import { takeLatest, put, call, fork } from 'redux-saga/effects';
+import { takeLatest, put, call, fork, select } from 'redux-saga/effects';
 
 import axios from '../../util/axiosCaller';
 
@@ -10,6 +10,8 @@ import {
   TOGGLE_UPVOTE_REQUEST, toggleUpvoteSuccess,
   fetchCommentSuccess, FETCH_COMMENT_REQUEST, 
 } from './CommentActions';
+
+import { getCommentById, } from './CommentReducer';
 
 /* FETCH ONE */
 
@@ -75,7 +77,14 @@ function* addCommentHandler(action) {
   try {
     const res = yield call(addComment, action.data);
     console.log('addComment res --> ', res);
-    yield put(addCommentSuccess(res.comment));
+    if(res.comment.parentType === 'Comment') {
+      const oldComment = yield select(getCommentById, res.comment.parent);
+      oldComment.comments.push(res.comment);
+      console.log('oldComment --> ', oldComment);
+      yield put(toggleUpvoteSuccess(oldComment));
+    } else {
+      yield put(addCommentSuccess(res.comment));
+    }
   } catch(err) {
     console.log('addComment error --> ', err);
   }

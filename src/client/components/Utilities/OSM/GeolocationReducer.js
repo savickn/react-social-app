@@ -4,6 +4,7 @@ import {
   AUTOCOMPLETE_SUCCESS, 
   REVERSE_SUCCESS, 
   CLEAR_AUTOCOMPLETE, 
+  AUTOCOMPLETE_REQUEST, 
 } from './GeolocationActions';
 
 const initialState = {
@@ -20,6 +21,12 @@ const GeolocationReducer = (state=initialState, action) => {
         ...state, 
         lookup: action.coords, 
       }
+    case AUTOCOMPLETE_REQUEST:
+      return {
+        ...state, 
+        autocomplete: [], 
+      }
+
     case AUTOCOMPLETE_SUCCESS:
       return {
         ...state, 
