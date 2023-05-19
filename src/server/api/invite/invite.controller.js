@@ -50,6 +50,14 @@ export const createInvite = async (req, res) => {
     }
 
     const invite = await Invite.create(req.body);
+    await invite.populate({
+      path: 'user',
+      select: '_id name profile',
+      populate: {
+        path: 'profile',
+        populate: { path: 'image' }
+      }
+    }).execPopulate();
     
     return res.status(201).json({ invite });
 

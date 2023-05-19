@@ -87,7 +87,7 @@ export const getEvent = (req, res) => {
         }
       }
     })
-    /*.populate({
+    .populate({
       path: 'invites',
       //match: { attending: true },
       //perDocumentLimit: 4,
@@ -101,7 +101,7 @@ export const getEvent = (req, res) => {
           }
         }
       }
-    })*/
+    })
     .then((event) => {
       console.log('getEvent --> ', event);
       return res.status(200).json({event});
@@ -121,10 +121,32 @@ export const addEvent = (req, res) => {
   let event = new Event(req.body);
   console.log('addEvent event --> ', event);
 
-  event.save((err, event) => {
-    if (err) return handleError(res, err);
-    return res.json({ event });
-  });
+  Event.create(req.body)
+    .then(async (event) => {
+      await event.populate({
+        path: 'invites',
+        match: { 
+          status: 'Attending', 
+          verified: true, 
+          accepted: true, 
+        },
+        populate: {
+          path: 'user',
+          select: '_id name profile',
+          populate: {
+            path: 'profile',
+            populate: { path: 'image' }
+          }
+        }
+      })
+      .populate({
+        path: 'profile', 
+        populate: { path: 'image' }
+      }).execPopulate();
+      console.log('event --> ', event);
+      return res.status(201).json({ event })
+    })
+    .catch(err => handleError(res, err)) 
 }
 
 /*

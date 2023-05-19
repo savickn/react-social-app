@@ -112,7 +112,7 @@ class EventForm extends React.Component {
       group: this.props.groupId,
       creator: this.props.creatorId, 
     };
-    this.saveToLocalStorage();
+    //this.saveToLocalStorage();
     this.props.createEvent(eventArgs);
   };
 
@@ -130,8 +130,22 @@ class EventForm extends React.Component {
   };
 
   render() {
+    const { errors } = this.props;
+
     return (
       <div id="eventForm" className={styles.eventForm}>
+        { errors && 
+          (<div className='errors'>
+            { errors.length > 0 && errors.map((err) => {
+              return (
+              <div className={styles.error}>
+                {err}
+              </div>
+              );
+            })
+            }
+          </div>)
+        }
         <div className={styles.field}>
           <label htmlFor="title"> Title: </label>
           <input type='text' id='title' className='form-control' value={this.state.title} onChange={this.handleTitleChange} />
@@ -191,6 +205,8 @@ EventForm.propTypes = {
 
   getSuggestions: PropTypes.func.isRequired, // func to query osm for suggestions when user input changes
   locationSuggestions: PropTypes.array.isRequired, // an array of osm objects
+
+  errors: PropTypes.array, 
 };
 
 export default EventForm;

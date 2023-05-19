@@ -34,6 +34,7 @@ class EventCollectionPage extends React.Component {
       searchMode: 'Upcoming', // filter for Events... either 'Past' or 'Upcoming'
       listMode: 'List', 
       pageSize: 5,
+      errors: [], 
     };
   }
 
@@ -50,7 +51,7 @@ class EventCollectionPage extends React.Component {
       group: this.props.groupId, 
       searchMode: this.state.searchMode, 
       pageSize: this.state.pageSize 
-    }));
+    }, true));
   }
 
   // used to load more events based on current search criteria, WORKING
@@ -61,11 +62,12 @@ class EventCollectionPage extends React.Component {
       pageSize: this.state.pageSize, 
       offset: this.props.events.length,
     };
-    this.props.dispatch(searchEventsRequest(query));
+    console.log('loadMore query --> ', query);
+    this.props.dispatch(searchEventsRequest(query, false));
   }
 
-  // used to change the 'searchMode', should refactor to only send HTTP request when necessary
-  changeSearchMode = (se) => {
+  // used to change the 'searchMode' (aka Past or Upcoming), should refactor to only send HTTP request when necessary
+  changeSearchMode = (se) => { 
     console.log(se.target);
     const previousSearchMode = localStorage.getItem('EventSearchMode');
     //if(previousSearchMode === se.target.innerText) return; // NOT WORKING PROPERLY
@@ -79,7 +81,7 @@ class EventCollectionPage extends React.Component {
   }
 
   // change between list and calender modes... NOT IMPLEMENTED
-  changeListMode = (se) => {
+  changeListMode = (se) => { 
     this.setState({listMode: se.target.innerText});
   }
 
@@ -87,7 +89,7 @@ class EventCollectionPage extends React.Component {
   /* EVENT ATTENDANCE */
 
   // determines whether to show/hide Attend button... WORKING
-  canAttend = (evt) => {
+  canAttend = (evt) => { 
     const { currentUser, } = this.props;
     if(!currentUser) return false;
 
@@ -98,7 +100,7 @@ class EventCollectionPage extends React.Component {
   }
 
   // used by external User to create an Invite object (basically request to attend)
-  attendEvent = (evt) => {
+  attendEvent = (evt) => { 
     const { currentUser } = this.props;
 
     const invite = {
@@ -128,7 +130,7 @@ class EventCollectionPage extends React.Component {
   addEvent = (eventData) => {
     // guard against already expired Events && end dates that are before start dates
     if(eventData.start < new Date() || eventData.start >= eventData.end) {
-      return;
+      return this.setState({errors: ["Invalid dates!"]});
     }
 
     console.log('eventDate --> ', eventData);
@@ -144,8 +146,10 @@ class EventCollectionPage extends React.Component {
     eventData.geoJSON = geoJSON;
     delete eventData.location;
 
-    this.props.dispatch(createEventRequest(eventData));
-    this.closeModal();
+    this.setState({errors: []}, () => {
+      this.props.dispatch(createEventRequest(eventData));
+      this.closeModal();
+    })
   }
 
   // query OSM for location suggestions
@@ -241,7 +245,7 @@ class EventCollectionPage extends React.Component {
         <Modal isVisible={this.state.modalVisibility} close={this.closeModal}>
           <EventForm creatorId={this.props.currentUser._id} groupId={this.props.groupId} 
             createEvent={this.addEvent} getSuggestions={this.getSuggestions} 
-            locationSuggestions={this.props.suggestions} />
+            locationSuggestions={this.props.suggestions} errors={this.state.errors} />
         </Modal>
       </div>
     );

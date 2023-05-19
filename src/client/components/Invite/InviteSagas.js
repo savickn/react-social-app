@@ -50,6 +50,7 @@ function* createInviteHandler(action) {
   try {
     const res = yield call(createInvite, action.data);
     console.log('createInvite res --> ', res);
+    yield put(createInviteSuccess(res.invite));
   } catch(err) {
     console.error('createInvite err --> ', err);
   }

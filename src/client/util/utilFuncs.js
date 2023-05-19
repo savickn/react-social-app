@@ -41,7 +41,7 @@ export const mergeArrays = (originalArr, newArr) => {
 
   let copyArr = [...originalArr];
   let ids = new Set(originalArr.map(o => o._id)); // list of original IDs
-  return newArr.filter(n => !ids.has(n._id)).concat(copyArr);
+  return copyArr.concat(newArr.filter(n => !ids.has(n._id)));
 }
 
 // used to only add non-existing values to array

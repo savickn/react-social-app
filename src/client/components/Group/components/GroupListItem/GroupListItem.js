@@ -16,13 +16,15 @@ function GroupListItem(props) {
   //console.log('groupitem dp --> ', dp);
   const bgd = { 
     //backgroundImage: `url(${dp})`,
-    backgroundColor: '#d3d3d3',
+    backgroundColor: '#ebeced',
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'contain', 
+
+    borderRadius: '50px',
   };
 
-  let linkStyle = `unstyled-link ${styles['flex-group-element']}`;
+  let linkStyle = `unstyled-link`;
 
   return (
     <Link className={linkStyle} to={`/groups/${props.group._id}/events`} >

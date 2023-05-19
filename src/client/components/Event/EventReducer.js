@@ -6,6 +6,7 @@ import {
   SEARCH_EVENTS_REQUEST, SEARCH_EVENTS_SUCCESS, 
   UPDATE_EVENT_REQUEST, UPDATE_EVENT_SUCCESS, 
   DELETE_EVENT_REQUEST, DELETE_EVENT_SUCCESS, 
+  LOAD_MORE_EVENTS_SUCCESS,
 } from './EventActions';
 
 import { updateByObjectId, removeByObjectId, mergeArrays, insertByObjectId } from '../../util/utilFuncs';
@@ -73,17 +74,23 @@ const EventReducer = (state = initialState, action) => {
     case SEARCH_EVENTS_REQUEST:
       return {
         ...state,
-        collection: [],
         status: 'pending',
       };
     case SEARCH_EVENTS_SUCCESS:
       return {
         status: 'idle',
+        //collection: [...state.collection, ...action.payload.events],
         collection: action.payload.events,
-        //collection: mergeArrays(state.collection, action.payload.events),
         len: action.payload.count, 
         errors: null, 
       };
+    case LOAD_MORE_EVENTS_SUCCESS:
+      return {
+        status: 'idle',
+        collection: mergeArrays(state.collection, action.payload.events),
+        len: action.payload.count, 
+        errors: null, 
+      }
 
     /* UPDATING EVENTS */
 

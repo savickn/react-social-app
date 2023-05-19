@@ -35,6 +35,14 @@ class Profile extends React.Component {
     }
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if(!prevProps.profileId && this.props.profileId) {
+      this.props.dispatch(fetchProfileRequest(this.props.profileId));
+    }
+  }
+
+
+
                       /* API Requests */
 
   // used to upload a new Profile picture

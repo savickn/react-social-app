@@ -78,12 +78,24 @@ export class GroupCollectionPage extends React.Component {
   };
 
   componentDidUpdate(prevProps, prevState) {
-    //console.log('componentDidUpdate', prevProps);
+    console.log('componentDidUpdate', prevProps);
+
     // populate 'this.props.groups' after 'this.props.location' is resolved
-    if(isEmpty(prevProps.location) && !isEmpty(this.props.location)) {
+    /*if(isEmpty(prevProps.location) && !isEmpty(this.props.location)) {
       this.searchGroups();
+    }*/
+
+    // used to refresh Groups if searchBar state is changed
+    if(prevProps.location && this.props.location) {
+
+      if(prevProps.location.osm_id !== this.props.location.osm_id) {
+        console.log('osm_id changed');
+        this.searchGroups();
+      }
+
     }
-    // add logic case to re-search if location is changed
+
+
   }
 
 

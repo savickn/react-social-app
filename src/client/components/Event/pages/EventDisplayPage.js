@@ -91,14 +91,14 @@ class EventPage extends React.Component {
 
   // determines whether to show/hide Attend button (by checking if currentUser has an existing Invite)
   canAttend = () => {
-    const { currentUser, attendees, evt } = this.props;
+    const { currentUser, invites, } = this.props;
     if(!currentUser || this.isCanceled()) return false;
-    return evt.invites.filter((i) => i === currentUser._id).length > 0;
+    return invites.filter((i) => i.user._id && i.user._id === currentUser._id).length === 0;
   }
 
   // determines whether currentUser is currently attending
   isAttending = () => {
-    const { currentUser, attendees, evt } = this.props;
+    const { currentUser, attendees, } = this.props;
     if(!currentUser) return false;
     return attendees.filter((a) => a.user._id === currentUser._id).length > 0;
   }
@@ -186,6 +186,7 @@ class EventPage extends React.Component {
   render() {
     const { evt, group, attendees, currentUser, invites } = this.props;
     console.log(evt);
+    console.log(currentUser._id);
     console.log('attendees --> ', attendees);
     console.log('invites --> ', invites);
     if(!evt || !group) return <div></div> 

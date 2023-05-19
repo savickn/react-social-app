@@ -208,8 +208,25 @@ class ChatView extends React.Component {
 
             <div className={styles.chatBody}>
               { messages.map((msg, idx) => {
-                const prev = JSON.parse(messages[Math.max(0, idx - 1)]);
-                const m = JSON.parse(msg);
+                console.log('message --> ', msg);
+                
+                let prev; 
+                let m;
+                
+                try {
+                  prev = JSON.parse(messages[Math.max(0, idx - 1)]);
+                } catch(e) {
+                  prev = {};
+                  console.log('error --> ', e);
+                }
+
+                try {
+                  m = JSON.parse(msg);
+                } catch(e) {
+                  m = {};
+                  console.log('error --> ', e);
+                }
+                
                 const isCurrentUser = m.userId === currentUser._id; 
                 const prevDate = new Date(prev.date);
                 const currentDate = new Date(m.date)

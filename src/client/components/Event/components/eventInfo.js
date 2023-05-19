@@ -26,7 +26,7 @@ class EventInfo extends React.Component {
   attendEvent = (e) => {
     e.cancelBubble = true;
     if(e.stopPropagation) e.stopPropagation();
-    this.props.handleAttend(this.props.evt);
+    //this.props.handleAttend(this.props.evt);
   }
 
   // used to navigate to EventDisplayPage
@@ -75,7 +75,7 @@ class EventInfo extends React.Component {
                 <div> {evt.invites.length} Attendees</div>
               </div>
             </div>
-            { this.props.canAttend &&  
+            { this.props.canAttend && false &&   
               <button className={`btn btn-md btn-default ${styles.btnAttend}`} onClick={this.attendEvent}> Attend </button>
             }
           </div>

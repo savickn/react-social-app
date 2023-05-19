@@ -22,16 +22,15 @@ export class GroupSearchBar extends Component {
     };
   }
 
-  componentDidMount() {
-    this.props.clearSuggestions();
-  }
 
                           /* FORM HANDLERS */
 
   // change search text
 
-  handleQueryChange = (se) => {
-    this.setState({ query: se.target.value });
+  handleQueryChange = (val) => {
+    this.setState({ query: val }, debounce(() => {
+      this.handleSubmit();
+    }), 1000);
   }
 
   handleClearQuery = (se) => {
@@ -50,6 +49,12 @@ export class GroupSearchBar extends Component {
     });
   }
 
+  // select location for query
+  selectLocation = (loc) => {
+    //console.log(loc);
+    this.props.changeAddress(loc);
+  }
+
 
   /* EVENT HANDLERS */
 
@@ -58,13 +63,13 @@ export class GroupSearchBar extends Component {
     this.props.changeDisplayType(type);
   };
 
-  handleSubmit = (se) => {
+  handleSubmit = debounce((e) => {
     this.props.search({ 
       query: this.state.query,
       distance: this.state.distance,
     });
     //if (this.hasQuery()) {}
-  };
+  }, 500);
 
   // open manual location form... why does e.stopPropagation not work here??
   changeMyLocation = (e) => {
@@ -72,7 +77,10 @@ export class GroupSearchBar extends Component {
     //e.preventDefault();
     //e.stopPropagation();
 
-    this.setState({ changeLocation: true });
+    this.setState({ changeLocation: true }, () => {
+      // clear Location suggestions for searchBar... should be moved elsewhere
+      this.props.clearSuggestions();
+    });
   }
 
   // used to manually change your location (if not auto-detected/etc)
@@ -85,24 +93,19 @@ export class GroupSearchBar extends Component {
   /* DROPDOWN LOGIC */
 
   toggleDropdown = (state) => {
+    console.log('toggle')
     this.setState({ dropdownState: state });
   }
 
-  // lazy hack
+  // lazy hack to prevent dropdown from closing after 'click'
   stopDropdownSelect = (e) => {
     e.preventDefault();
   }
 
-  selectLocation = (loc) => {
-    //console.log(loc);
-    this.props.changeAddress(loc);
-  }
-
-
   /* RENDER LOGIC */
 
   hasQuery = () => {
-    return (this.state.query.length > 0) ? true : false;
+    return this.state.query.length > 0;
   }
 
   // converts OSM location object to String
@@ -139,7 +142,7 @@ export class GroupSearchBar extends Component {
 
         { /* add 'x' FontAwesome button} */ }
 
-        <input type='search' name='search' onChange={this.handleQueryChange} value={this.state.query}
+        <input type='search' name='search' onChange={(e) => this.handleQueryChange(e.target.value)} value={this.state.query}
           placeholder='Text Search' className={`${styles.searchInput}`} aria-describedby='basic-addon1' />
 
         <div className={styles['location-input']}>
@@ -147,8 +150,8 @@ export class GroupSearchBar extends Component {
           <NavDropdown id='distance-dropdown' className={styles['inline']} title={this.state.distance} activeKey={this.state.distance} 
               onSelect={this.handleDistanceChange} noCaret>
             <MenuItem eventKey="10">10</MenuItem>
-            <MenuItem eventKey="25">25</MenuItem>
             <MenuItem eventKey="50">50</MenuItem>
+            <MenuItem eventKey="100">100</MenuItem>
             <MenuItem eventKey="500">500</MenuItem>
           </NavDropdown>
            kilometers of
@@ -160,7 +163,7 @@ export class GroupSearchBar extends Component {
                 <input type='text' className='form-control' onChange={(e) => this.handleMyLocChange(e.target.value)} />
               </MenuItem> 
             }
-            { suggestions.map(loc => {
+            { changeLocation && suggestions.map(loc => {
                 return <MenuItem onSelect={() => this.selectLocation(loc)}>{loc.display_name}</MenuItem>
               })
             }

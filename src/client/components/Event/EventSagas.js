@@ -59,7 +59,15 @@ export function* searchEventsWatcher() {
 function* searchEventsHandler(action) {
   try {
     const response = yield call(searchEventsAjax, action.query);
-    yield put(searchEventsSuccess(response.events, response.count));
+    console.log('events res --> ', response);
+
+    // either replace all Events or append to existing collection of Events
+    if(action.replace) {
+      yield put(searchEventsSuccess(response.events, response.count));
+    } else {
+      yield put(loadMoreEventsSuccess(response.events, response.count));
+    }
+    
   } catch (err) {
     console.log('searchEvents err --> ', err);
     yield put(eventError(err));

@@ -112,7 +112,7 @@ export class App extends React.Component {
               {routes}
             </div>
             <ChatContainer currentUser={this.props.currentUser} />
-            {/* <DevTools /> */}
+            <DevTools />
             <Footer />
           </div>
         }

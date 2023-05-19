@@ -40,7 +40,6 @@ export class GroupDisplayPage extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     if(prevProps.membership !== this.props.membership) {
-      console.log('props.membership updated!')
       this.setRole();
     }
   }
@@ -90,8 +89,6 @@ export class GroupDisplayPage extends React.Component {
   render() {
     const { group } = this.props;
     if(!group) return(<div></div>);
-
-    //console.log('groupDisplay state --> ', this.state);
 
     //const dp = this.props.group.displayPicture ? this.props.group.displayPicture.path : this.state.altImg;
     const profileId = group.profile ? group.profile._id : null;

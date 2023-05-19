@@ -12,7 +12,7 @@ import noPic from '../../../../shared/missing_avatar.png';
 
 
 // used to display a single Comment
-class CommentComponent extends React.Component {
+class CommentElement extends React.Component {
 
   constructor(props) {
     super(props);
@@ -38,7 +38,7 @@ class CommentComponent extends React.Component {
   // select this comment to reply to
   handleReply = () => {
     console.log('handleReply');
-    this.props.setReply(this.props.comment);
+    this.props.setReply(this.props.comment._id);
   }
 
   // embed this comment within CommentForm... NOT WORKING
@@ -70,7 +70,6 @@ class CommentComponent extends React.Component {
   shouldShowReplies = () => {
     return this.state.showReplies;
   }
-
 
   showReplies = () => {
     this.setState({ showReplies: true });
@@ -132,7 +131,7 @@ class CommentComponent extends React.Component {
           }
           { areRepliesLoaded && showReplies ? 
             comment.comments.map((c) => {
-              return <CommentComponent comment={c} getReplies={this.props.getReplies}
+              return <CommentElement comment={c} getReplies={this.props.getReplies}
                 hasLiked={this.props.hasLiked} setReply={this.props.setReply}
                 toggleUpvote={this.props.toggleUpvote} embedText={this.props.embedText}/>
             }) : null
@@ -144,7 +143,7 @@ class CommentComponent extends React.Component {
 }
 
 
-CommentComponent.propTypes = {
+CommentElement.propTypes = {
   comment: PropTypes.shape({
     content: PropTypes.string.isRequired, 
     author: PropTypes.shape({
@@ -163,4 +162,4 @@ CommentComponent.propTypes = {
   embedText: PropTypes.func.isRequired, 
 };
 
-export default CommentComponent;
+export default CommentElement;

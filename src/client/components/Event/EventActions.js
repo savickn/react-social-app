@@ -17,6 +17,7 @@ export const FETCH_EVENT_FAILURE = 'FETCH_EVENT_FAILURE';
 export const SEARCH_EVENTS_REQUEST = 'SEARCH_EVENTS_REQUEST';
 export const SEARCH_EVENTS_SUCCESS = 'SEARCH_EVENTS_SUCCESS';
 export const SEARCH_EVENTS_FAILURE = 'SEARCH_EVENTS_FAILURE';
+export const LOAD_MORE_EVENTS_SUCCESS = 'LOAD_MORE_EVENTS_SUCCESS';
 
 export const UPDATE_EVENT_REQUEST = 'UPDATE_EVENT_REQUEST';
 export const UPDATE_EVENT_SUCCESS = 'UPDATE_EVENT_SUCCESS';
@@ -63,7 +64,7 @@ export function createEventSuccess(event) {
 export function fetchEventRequest(id) {
   return {
     type: FETCH_EVENT_REQUEST,
-    id,
+    id
   }
 }
 
@@ -76,10 +77,11 @@ export function fetchEventSuccess(event) {
 
 /* SEARCH EVENTS */
 
-export function searchEventsRequest(query) {
+export function searchEventsRequest(query, replace) {
   return {
     type: SEARCH_EVENTS_REQUEST,
     query,
+    replace,
   }
 }
 
@@ -92,6 +94,17 @@ export function searchEventsSuccess(events, count) {
     }
   }
 }
+
+export function loadMoreEventsSuccess(events) {
+  return {
+    type: LOAD_MORE_EVENTS_SUCCESS,
+    payload: {
+      events, 
+      count, 
+    }
+  }
+}
+
 
 /* UPDATE EVENT */
 

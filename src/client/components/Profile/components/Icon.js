@@ -13,7 +13,7 @@ class Icon extends React.Component {
   render() {
     const myImg = this.props.path || noPic;
     return (
-      <img src={myImg} className={styles.img} height='35' width='35' />
+      <img src={myImg} className={styles.img} height='40' width='40' />
     );
   }
 }

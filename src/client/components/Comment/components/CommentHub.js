@@ -65,8 +65,8 @@ export class CommentHub extends React.Component {
   }
 
   // used to select which comment to reply to
-  setReply = (reply) => {
-    //const reply = this.props.comments.filter(c => c._id === commentId)[0];
+  setReply = (commentId) => {
+    const reply = this.props.comments.filter(c => c._id === commentId)[0];
     this.setState({ reply });
   }
 
@@ -92,8 +92,13 @@ export class CommentHub extends React.Component {
     /*console.log('hasLiked string --> ', currentUser._id.toString());
     console.log('hasLiked id --> ', currentUser._id);
     console.log('hasLiked typeof --> ', typeof currentUser._id);*/
-
-    return comment.upvotes.map(uv => uv.author.toString()).includes(currentUser._id.toString());
+    console.log('c --> ', comment);
+    console.log(currentUser._id);
+    
+    return comment.upvotes.filter(uv => {
+      let authorId = uv.author._id || uv.author;
+      return authorId === currentUser._id;
+    }).length > 0;
   }
 
 
@@ -101,9 +106,7 @@ export class CommentHub extends React.Component {
 
   render() {
     const { comments, currentUser } = this.props;
-
     const myImg = currentUser.profile ? currentUser.profile.image.path : noPic;
-
     console.log('state --> ', this.state);
 
     return (
