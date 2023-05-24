@@ -27,7 +27,7 @@ module.exports = function(env) {
     target: 'node',
     devtool: 'source-map',
     node: {
-      __dirname: true,
+      __dirname: false, // if true -> dirname === /, else -> directory of script
       __filename: true,
     },
     externals: NodeExternals(),

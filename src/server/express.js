@@ -14,10 +14,11 @@ import cors from 'cors';
 import config from './config/environment';
 
 import { ipTracker, } from './util/ipMiddleware';
+ 
+export default async function(app) { 
+  console.log('registering express'); 
+  let env = app.get('env'); 
 
-export default function(app) {
-  console.log('registering express');
-  let env = app.get('env');
 
                                       /* IMPORTANT MIDDLEWARE */
 
@@ -30,7 +31,7 @@ export default function(app) {
   app.use(cookieParser());
   app.use(morgan('dev'));
 
-  app.use(cors())
+  app.use(cors());
 
   /*app.use(session({
     secret: config.secrets.session,
@@ -49,19 +50,24 @@ export default function(app) {
 
   /* ASSETS */
 
+  console.log('dirname --> ', path.resolve(__dirname));
   console.log('rootDir --> ', path.resolve(config.root));
 
-  app.set('appPath', path.resolve(config.root, 'dist')); 
-  app.set('staticDir', path.resolve(config.root, 'src/server/public'));
+  //console.log('process.env --> ', process.env);
+
+  // refers to root folder of application (must contain 'index.html')
+  app.set('appPath', path.resolve(config.root));
   app.use(express.static(app.get('appPath'))); // serves static files from 'dist' dir 
+  
+  // refers to folder containing images / etc (should be different for production)
+  app.set('staticDir', path.resolve(config.root, 'src/server/public'));
   app.use(express.static(app.get('staticDir'))); // serves images from 'public dir'
 
   //console.log('appDir --> ', path.resolve(config.root));
   //console.log('staticDir --> ', path.resolve(config.root));
 
   if(env === 'production') {
-    // should probably copy favicon to 'dist' and point to the copy in production
-    app.use(favicon(path.resolve(config.root, 'dist/favicon.ico'))); 
+    app.use(favicon(path.resolve(config.root, 'favicon.ico'))); 
   }
 
   if(env === 'development') {

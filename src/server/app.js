@@ -3,6 +3,7 @@ import Express from 'express';
 import { Server } from 'http';
 import mongoose from 'mongoose';
 import Sequelize from 'sequelize';
+const { SecretManagerServiceClient } = require('@google-cloud/secret-manager');
 
 import config from './config/environment';
 
@@ -36,14 +37,37 @@ console.log(`node_env --> ${process.env.NODE_ENV}`);
 //console.log(`manifest --> ${process.env.manifest}`);
 //console.log(`loadable --> ${process.env.loadableManifest}`);
 
-mongoose.Promise = global.Promise;
 
-mongoose.connect(config.mongo.uri, (error) => {
-  if(error) {
-    console.error('Please make sure Mongodb is installed and running!'); // eslint-disable-line no-console
-    throw error;
-  };
+                                          /* GCLOUD */ 
+
+const client = new SecretManagerServiceClient();
+
+async function getSecret(name) {
+  const [ version ] = await client.accessSecretVersion({
+    name: `projects/326645683225/secrets/${name}/versions/latest`,
+  });
+  return version.payload.data.toString();
+}
+
+/* MongoDB */
+
+getSecret('mongo_uri').then((mongoURI) => {
+  console.log('secret --> ', mongoURI);
+  
+  mongoose.Promise = global.Promise;
+
+  mongoose.connect(/*config.mongo.uri*/ 
+    "mongodb+srv://nadmin:admin_omb@savick-meetup.ktdsvft.mongodb.net/meetup_clone?retryWrites=true&w=majority", (error) => {
+    if(error) {
+      console.error('Please make sure Mongodb is installed and running!'); // eslint-disable-line no-console
+      throw error;
+    };
+    console.log('Connected to MongoDB');
+  })
+}).catch((err) => {
+  console.log(err);
 })
+
 
 require('./express').default(app);
 require('./routes').default(app);
