@@ -50,14 +50,16 @@ export const createInvite = async (req, res) => {
     }
 
     const invite = await Invite.create(req.body);
-    await invite.populate({
-      path: 'user',
-      select: '_id name profile',
-      populate: {
-        path: 'profile',
-        populate: { path: 'image' }
+    await invite.populate([
+      {
+        path: 'user',
+        select: '_id name profile',
+        populate: {
+          path: 'profile',
+          populate: { path: 'image' }
+        }
       }
-    }).execPopulate();
+    ]);
     
     return res.status(201).json({ invite });
 
@@ -83,10 +85,10 @@ export const createInvite = async (req, res) => {
 
 // used to delete an Invite
 export const deleteInvite = (req, res) => {
-  Invite.findByIdAndRemove(req.params.id, (err, invite) => {
-    if(err) return res.status(501).send('Unable to cancel invite.');
-    return res.status(200).end();
-  });
+  Invite.findByIdAndRemove(req.params.id)
+    .then(invite => {
+      return res.status(200).end();
+    }).catch(err => res.status(501).send('Unable to cancel invite.'));
 } 
 
 // used to handle Accepting/Rejecting the Invite/etc
@@ -106,7 +108,6 @@ export const updateInvite = (req, res) => {
         }
       }
     })
-    .exec()
     .then(invite => res.status(200).json({ invite }))
     .catch(err => handleError(res, err))
 }

@@ -45,19 +45,26 @@ function* createProfileWatcher() {
 
 function* createProfileHandler(action) {
   try { 
-    const { formData } = action.data;
+    let { profileData, formData } = action.data;
     
     // guard against invalid args
     if(!formData.has('avatar')) {
       throw new Error('no avatar selected!');
     }
 
-    // create Profile
-    const { profile } = yield call(createProfile, action.data.profile);
-    yield put(createProfileSuccess(profile));
+    // create Profile only if not exists
+    if(!profileData._id) {
+      const { profile } = yield call(createProfile, {
+        imageableId: profileData.imageableId,
+        imageableType: profileData.imageableType
+      });
+      console.log('profile --> ', profile);
+      profileData._id = profile._id;
+      yield put(createProfileSuccess(profile));
+    }
 
     // now upload Picture that goes with Profile
-    formData.append('parentId', profile._id);
+    formData.append('parentId', profileData._id);
     formData.append('parentType', 'Profile');
     yield put(uploadRequest(formData));
   } catch(err) {

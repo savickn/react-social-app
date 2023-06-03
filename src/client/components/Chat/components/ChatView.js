@@ -10,7 +10,9 @@ import { faUpload, faWindowClose, faWindowMinimize, faCircle } from '@fortawesom
 
 import styles from './ChatView.scss';
 
-const ENDPOINT = 'http://localhost:3001/chat';
+import config from '../../../../server/config/environment';
+
+const ENDPOINT = `http://localhost:${config.port}/chat`;
 let socket;
 
 // represents a chat window between two Users

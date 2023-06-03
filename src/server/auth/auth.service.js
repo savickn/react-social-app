@@ -20,14 +20,14 @@ export function isAuthenticated() {
       validateJwt(req, res, next);
     })
     .use(function(req, res, next) { //used to attach 'user' to 'req'
-      User.findById(req.user._id, function (err, user) {
-        if (err) return next(err);
-        if (!user) return res.status(401).send('Unauthorized');
-
-        req.user = user;
-        console.log('user auth success');
-        next();
-      });
+      User.findById(req.user._id)
+        .then(user => {
+          if (!user) return res.status(401).send('Unauthorized');
+          req.user = user;
+          console.log('user auth success');
+          next();
+        })
+        .catch(err => next(err))
     });
 }
 
@@ -38,12 +38,12 @@ export function correctUser(className) {
   if (!className) throw new Error('Class name needs to be set');
   var objUser = '';
 
-  className.findById(req.params.id, function(err, obj) {
-    if (err) return next(err);
-    if (!obj.user) return res.status(401).send('Unauthorized');
-
-    objUser = obj.user;
-  })
+  className.findById(req.params.id)
+    .then(obj => {
+      if (!obj.user) return res.status(401).send('Unauthorized');
+      objUser = obj.user;
+    })
+    .catch(err => next(err));
 
   return compose()
     .use(function checkUser(req, res, next) {

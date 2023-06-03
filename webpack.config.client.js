@@ -13,7 +13,28 @@ const LoadablePlugin = require('@loadable/webpack-plugin');
 const loaders = require('./webpack.loaders'); 
 
 const prodRules = [
-  loaders.babelLoader,
+  //loaders.babelLoader,
+  {
+    test: /\.(m?js|jsx)$/,
+    resolve: {
+      fullySpecified: false,
+    },
+    exclude: [
+      /node_modules/, 
+      /\*\.config.js/,
+      path.resolve(__dirname, 'src/server')
+    ],
+    loader: 'babel-loader',
+    /*options: {
+      presets: [
+        [
+          '@babel/preset-env', 
+          { targets: "defaults" }
+        ],
+        '@babel/preset-react',
+      ]
+    }*/
+  },
   // FOR THIRD-PARTY CSS
   {
     test: /\.(css|scss|sass)$/,
@@ -60,7 +81,27 @@ const prodRules = [
 ];
 
 const devRules = [
-  loaders.babelLoader,
+  {
+    test: /\.(m?js|jsx)$/,
+    resolve: {
+      fullySpecified: false,
+    },
+    exclude: [
+      /node_modules/, 
+      /\*\.config.js/,
+      path.resolve(__dirname, 'src/server')
+    ],
+    loader: 'babel-loader',
+    /*options: {
+      presets: [
+        [
+          '@babel/preset-env', 
+          { targets: "defaults" }
+        ],
+        '@babel/preset-react',
+      ]
+    }*/
+  },
   {
     test: /\.(css|scss|sass)$/,
     include: /\.global/,
@@ -88,19 +129,24 @@ const devRules = [
 
 module.exports = function(env) {
   console.log('Webpack ENV Variables --> ', env);
+  console.log('webpack dirname --> ', __dirname);
 
-  var plugins = [];
+  var plugins = [
+    new webpack.ProvidePlugin({
+      process: 'process/browser',
+    }),
+  ];
 
   if(env.env === 'development') {
     plugins.push(new webpack.HotModuleReplacementPlugin());
-  }
+  };
 
   if(env.env === 'production') {
     plugins.push(new MiniCssExtractPlugin({
       filename: "[name].css",
       chunkFilename: "[name].[chunkhash].css"
     }));
-  }
+  };
 
   if(env.mode === 'SPA') {
     plugins.push(new HtmlWebpackPlugin({
@@ -109,12 +155,12 @@ module.exports = function(env) {
       alwaysWriteToDisk: true,
     }));
     plugins.push(new HtmlHardDiskPlugin());
-  }
+  };
 
   if(env.mode === 'SSR') {
     plugins.push(new ManifestPlugin());
     plugins.push(new LoadablePlugin());
-  }
+  };
   
   if(env.mode === 'analyze') {
     plugins.push(new BundleAnalyzerPlugin());
@@ -141,8 +187,12 @@ module.exports = function(env) {
     resolve: {
       modules: [
         './node_modules',
-        './src',
+        './src/client',
       ],
+      alias: {
+        process: "process/browser",
+        path: require.resolve("path-browserify")
+      },
       extensions: ['*', '.js', '.jsx'],
     },
     plugins,

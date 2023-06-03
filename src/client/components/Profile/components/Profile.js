@@ -50,8 +50,9 @@ class Profile extends React.Component {
     for(let [k, v] of formData.entries()) {
       console.log(k, ' --- ', v);
     }
-
-    const profile = {
+    
+    const profileData = {
+      _id: this.props.profileId, 
       imageableId: this.props.imageableId,
       imageableType: this.props.imageableType, 
     };
@@ -65,7 +66,7 @@ class Profile extends React.Component {
     reader.readAsDataURL(file);
 
     // save to server
-    this.props.dispatch(createProfileRequest(profile, formData));
+    this.props.dispatch(createProfileRequest(profileData, formData));
   }
 
                       /*  RENDER LOGIC */
@@ -77,7 +78,7 @@ class Profile extends React.Component {
 
     if(upload) return upload;
 
-    if(profile) {
+    if(profile && profile.image) {
       return profile.image.path;
     } else if(preview) {
       return preview;

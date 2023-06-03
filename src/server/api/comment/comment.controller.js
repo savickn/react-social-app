@@ -24,8 +24,8 @@ export function searchComments(req, res) {
         }
       }
     })
-      .then((comments) => res.status(200).json({ comments }))
-      .catch(err => handleError(res, err))
+    .then((comments) => res.status(200).json({ comments }))
+    .catch(err => handleError(res, err))
 }
 
 /*
@@ -56,8 +56,8 @@ export function getComment(req, res) {
         }
       }
     })
-      .then(comment => res.status(200).json({ comment }))
-      .catch(err => handleError(res, err))
+    .then(comment => res.status(200).json({ comment }))
+    .catch(err => handleError(res, err))
 }
 
 
@@ -73,16 +73,18 @@ export function createComment(req, res) {
   
   Comment.create(data)
     .then(async (comment) => {
-      await comment.populate({
-        path: 'author',
-        select: '_id name profile',
-        populate: {
-          path: 'profile',
+      await comment.populate([
+        {
+          path: 'author',
+          select: '_id name profile',
           populate: {
-            path: 'image',
+            path: 'profile',
+            populate: {
+              path: 'image',
+            }
           }
         }
-      }).execPopulate();
+      ]);
       console.log('comment --> ', comment);
       return res.status(201).json({ comment })
     })
@@ -98,16 +100,18 @@ export const toggleUpvote = async (req, res) => {
     const c = await Comment.findById(req.params.id);
     c.toggleUpvote(req.body.authorId);
     const comment = await c.save();
-    await comment.populate({
-      path: 'author',
-      select: '_id name profile',
-      populate: {
-        path: 'profile',
+    await comment.populate([
+      {
+        path: 'author',
+        select: '_id name profile',
         populate: {
-          path: 'image',
+          path: 'profile',
+          populate: {
+            path: 'image',
+          }
         }
       }
-    }).execPopulate();
+    ]);
     return res.status(200).json({ comment });
   } catch(err) {
     return handleError(res, err);

@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 
 if(process.env.NODE_ENV === 'production') {
   console.log('serving from ./dist in production');
@@ -10,7 +11,6 @@ if(process.env.NODE_ENV === 'production') {
   console.log('registering babel');
   require('@babel/register')({
     plugins: [
-      "dynamic-import-node",
       [
         "css-modules-transform", {
           "preprocessCss": "./config/sassPreprocessor.js",

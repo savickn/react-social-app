@@ -9,7 +9,7 @@ import User from './user.model';
 
 
 /* Search for users */
-export const getUsers = (req, res) => {
+export const getUsers = async (req, res) => {
   console.log('getUsers query --> ', req.query);
   let query = req.query || {};
 
@@ -17,8 +17,8 @@ export const getUsers = (req, res) => {
   // if eventId
 
   try {
-    const count = User.count(query);
-    const users = User.find(query)
+    const count = await User.count(query);
+    const users = await User.find(query)
                     .select('-salt -hashedPassword -provider');
     return res.status(200).json({ users, count });
   } catch(err) {
@@ -79,10 +79,30 @@ export const getUser = (req, res) => {
 *  Name
 *  Email
 */
-export const addUser = (req, res) => {
+export const addUser = async (req, res) => {
   /* should perform validation of 'req.body' fields (e.g. must have Name/Email/Password) */
 
-  User.count(function(err, count) {
+  try {
+    let count = await User.count();
+    let userObj = {
+      provider: 'local',
+      role: 'user'
+    };
+    if(count < 1) {
+      userObj.role = 'admin';
+    };
+    let newUser = _.merge(userObj, req.body);
+    console.log('newUser --> ', newUser);
+    let user = await User.create(newUser);
+    console.log('user --> ', user);
+    let token = jwt.sign({_id: user._id }, config.secrets.session, { expiresIn: '5h' });
+    return res.status(201).json({ token, user });
+  } catch(err) {
+    console.log(err);
+    return res.status(500).send(err);
+  }
+
+  /*User.count(function(err, count) {
     if (err) return res.status(500).send(err);
     let userObj = {
       provider: 'local',
@@ -99,7 +119,7 @@ export const addUser = (req, res) => {
       let token = jwt.sign({_id: user._id }, config.secrets.session, { expiresIn: '5h' });
       return res.status(201).json({ token, user });
     });
-  });
+  });*/
 };
 
 // used to retrieve the currently logged-in user via JSON token 
@@ -130,8 +150,7 @@ export const getMe = (req, res) => {
         path: 'image'
       }
     })
-    .exec(function(err, user) { // don't ever give out the password or salt
-      if (err) return res.status(500).send(err);
+    .then((user) => { // don't ever give out the password or salt
       if (!user) return res.status(401).send('Unauthorized');
       //console.log('getMe --> ', user);
 
@@ -148,15 +167,15 @@ export const getMe = (req, res) => {
       }
 
       return res.status(200).json(user);
-    });
+    }).catch((err) => res.status(500).send(err))
 };
 
 /* delete a User */
 export const deleteUser = (req, res) => {
-  User.findOneAndRemove({_id: req.params._id}, function(err, user) {
-    if (err) return res.status(500).send(err);
+  User.findOneAndRemove({_id: req.params._id})
+  .then((user) => {
     return res.status(200).end();
-  });
+  }).catch((err) => res.status(500).send(err))
 };
 
 function handleError(res, err) {

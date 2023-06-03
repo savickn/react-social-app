@@ -7,6 +7,7 @@ export const ProfileSchema = new Schema({
   image: {
     type: Schema.Types.ObjectId,
     ref: 'Picture', 
+    //required: true,
   }, 
   imageableType: { //parentType
     type: String, 

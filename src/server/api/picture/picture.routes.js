@@ -30,7 +30,7 @@ router.get('/:id', controller.getPicture);
 router.post('/profile', upload.single('avatar'), controller.saveImageToDisk);
 router.post('/profile1', upload.single('avatar'), controller.createProfile);
 
-router.post('/', fileUploadMiddleware(), /*controller.createLocal*/ controller.createPicture);
+router.post('/', fileUploadMiddleware(), /*controller.createPicture*/ controller.saveToCloud);
 router.delete('/:id', controller.deletePicture);
 
 export default router;

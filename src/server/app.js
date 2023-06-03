@@ -5,10 +5,12 @@ import mongoose from 'mongoose';
 import Sequelize from 'sequelize';
 const { SecretManagerServiceClient } = require('@google-cloud/secret-manager');
 
+import { setSecrets } from './config/environment';
 import config from './config/environment';
 
 const app = new Express();
 const server = Server(app);
+
 
 if (process.env.NODE_ENV === 'development') {
   console.log('using webpack-dev-middleware');
@@ -42,47 +44,62 @@ console.log(`node_env --> ${process.env.NODE_ENV}`);
 
 const client = new SecretManagerServiceClient();
 
-async function getSecret(name) {
+const loadSecrets = async () => {
+  let secrets = {};
+  let list = ['mongo_uri', 'maps_api_key', 'session_secret'];
+
+  for(let l of list) {
+    secrets[l] = await getSecret(l);
+  }
+  return secrets;
+}
+
+const getSecret = async (name) => {
   const [ version ] = await client.accessSecretVersion({
     name: `projects/326645683225/secrets/${name}/versions/latest`,
   });
   return version.payload.data.toString();
 }
 
-/* MongoDB */
+// retrieve secrets from Google Cloud
+loadSecrets().then((secrets) => {
+  //console.log('secrets --> ', secrets);
+  setSecrets(secrets);
 
-getSecret('mongo_uri').then((mongoURI) => {
-  console.log('secret --> ', mongoURI);
-  
+  //console.log('config --> ', config.secrets);
+
+  /* MongoDB */
+
   mongoose.Promise = global.Promise;
 
-  mongoose.connect(/*config.mongo.uri*/ 
-    "mongodb+srv://nadmin:admin_omb@savick-meetup.ktdsvft.mongodb.net/meetup_clone?retryWrites=true&w=majority", (error) => {
-    if(error) {
+  mongoose.connect(config.secrets.mongoURI)
+    .then(() => {
+      console.log('Connected to MongoDB');
+    })
+    .catch((error) => {
       console.error('Please make sure Mongodb is installed and running!'); // eslint-disable-line no-console
       throw error;
-    };
-    console.log('Connected to MongoDB');
-  })
-}).catch((err) => {
-  console.log(err);
-})
+    })
 
 
-require('./express').default(app);
-require('./routes').default(app);
-require('./socket').default(server);
+  require('./express').default(app);
+  require('./routes').default(app);
+  require('./socket').default(server);
 
 
-if(process.env.NODE_MODE === 'SSR') {
-  require('./ssr').default(app);
-}
-
-server.listen(config.port, (error) => {
-  if(!error) {
-    console.log(`Express is running on port ${config.port}`);
+  if(process.env.NODE_MODE === 'SSR') {
+    require('./ssr').default(app);
   }
-});
+
+  server.listen(config.port, (error) => {
+    if(!error) {
+      console.log(`Express is running on port ${config.port}`);
+    }
+  });
+
+}).catch((err) => {
+  console.log('Unable to load secrets --> ', err);
+})
 
 export default app;
 

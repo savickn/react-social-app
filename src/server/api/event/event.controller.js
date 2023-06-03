@@ -3,7 +3,7 @@ import Event from './event.model';
 
 // used to retrieve one or more Event entries based on a custom query
 // should be able to search 'by Group', 'by Upcoming', 'by Past', 'by Proposed', 'by Suggested'
-export const searchEvents = (req, res) => {
+export const searchEvents = async (req, res) => {
   console.log('searchEvents query --> ', req.query);
   var query = {};
 
@@ -34,9 +34,9 @@ export const searchEvents = (req, res) => {
   console.log('offset --> ', offset);
   console.log('pageSize --> ', pageSize);
 
-  Event.count(query, function(err, count) {
-    if(err) return handleError(res, err);
-    Event.find(query)
+  try {
+    let count = await Event.count(query);
+    let events = await Event.find(query)
       .skip(Number.parseInt(offset))
       .limit(Number.parseInt(pageSize))
       .populate({
@@ -59,15 +59,13 @@ export const searchEvents = (req, res) => {
       .populate({
         path: 'profile', 
         populate: { path: 'image' }
-      })
-      //.populate('invites')
-      //.populate('group')
-      .exec(function(err, events) {
-        if(err) return handleError(res, err)
-        console.log('searchEvents results --> ', events);
-        return res.status(200).header('total-events', count).json({ events, count });
       });
-  });
+    
+    console.log('searchEvents results --> ', events);
+    return res.status(200).header('total-events', count).json({ events, count });
+  } catch(err) {
+    return handleError(res, err);
+  }
 }
 
 /*
@@ -102,7 +100,7 @@ export const getEvent = (req, res) => {
         }
       }
     })
-    .then((event) => {
+    .then(event => {
       console.log('getEvent --> ', event);
       return res.status(200).json({event});
     })
@@ -123,26 +121,29 @@ export const addEvent = (req, res) => {
 
   Event.create(req.body)
     .then(async (event) => {
-      await event.populate({
-        path: 'invites',
-        match: { 
-          status: 'Attending', 
-          verified: true, 
-          accepted: true, 
-        },
-        populate: {
-          path: 'user',
-          select: '_id name profile',
+      await event.populate([
+        {
+          path: 'invites',
+          match: { 
+            status: 'Attending', 
+            verified: true, 
+            accepted: true, 
+          },
           populate: {
-            path: 'profile',
-            populate: { path: 'image' }
+            path: 'user',
+            select: '_id name profile',
+            populate: {
+              path: 'profile',
+              populate: { path: 'image' }
+            }
           }
+        },
+        {
+          path: 'profile', 
+          populate: { path: 'image' }
         }
-      })
-      .populate({
-        path: 'profile', 
-        populate: { path: 'image' }
-      }).execPopulate();
+      ]);
+
       console.log('event --> ', event);
       return res.status(201).json({ event })
     })
@@ -162,22 +163,23 @@ export const updateEvent = (req, res) => {
 
   }
 
-  Event.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true, runValidators: true }, (err, evt) => {
-    if(err) return handleError(res, err);
-    console.log('updatedEvent --> ', evt);
-    return res.status(200).json({ event: evt });
-  })
+  Event.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true, runValidators: true })
+    .then(evt => {
+      console.log('updatedEvent --> ', evt);
+      return res.status(200).json({ event: evt });
+    })
+    .catch(err => handleError(res, err));
 }
 
 /*
 ** delete Event
 */
 export const deleteEvent = (req, res) => {
-  Event.findOneAndRemove({ _id: req.params.id }, (err, res) => {
-    if (err) return handleError(res, err);
-    return res.status(204).end();
-  });
+  Event.findOneAndRemove({ _id: req.params.id })
+    .then(response => res.status(204).end())
+    .catch(err => handleError(res, err));
 }
+
 
 function handleError(res, err) {
   console.log('event handleError --> ', err);

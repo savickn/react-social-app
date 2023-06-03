@@ -59,11 +59,11 @@ export const fetchAlbum = (req, res) => {
         path: 'image'
       }
     })
-      .then(album => {
-        console.log('fetchAlbum --> ', album);
-        return res.status(200).json({ album });
-      })
-      .catch(err => handleError(res, err))
+    .then(album => {
+      console.log('fetchAlbum --> ', album);
+      return res.status(200).json({ album });
+    })
+    .catch(err => handleError(res, err))
 }
 
 // used to create a new Album entry (e.g. 'POST /albums')

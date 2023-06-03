@@ -94,13 +94,15 @@ UserSchema
   .path('email')
   .validate(function(email) {
     //console.log('email --> ', email);
-    mongoose.model('User').findOne({email: email}, (err, user) => {
-      //console.log('email dup validation --> ', err, user);
-      if(err) throw err;
-      const outcome = !user;
-      //console.log('validation outcome --> ', outcome);
-      return outcome;
-    });
+    mongoose.model('User')
+      .findOne({email: email})
+      .then((user) => {
+        const outcome = !user;
+        //console.log('validation outcome --> ', outcome);
+        return outcome;
+      }).catch((err) => {
+        throw err;
+      });
 }, 'The specified email address is already in use.');
 
 

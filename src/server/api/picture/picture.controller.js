@@ -5,6 +5,7 @@ import _ from 'lodash';
 import fs from 'fs-extra';
 import mkdirp from 'mkdirp';
 import mongoose from 'mongoose';
+import { Storage } from '@google-cloud/storage';
 
 import config from '../../config/environment';
 import Picture from './picture.model';
@@ -98,11 +99,72 @@ export const createProfile = (req, res) => {
   console.log('createProfile req.body --> ', req.body);
   const pic = [new Picture(req.file)];
   mongoose.model(req.body.resourceName)
-    .findByIdAndUpdate(req.body.resourceId, { $set: { displayPicture: pic }}, (err, r) => {
-      if(err) return res.status(500).send(err);
-      return res.status(200).send('Profile Updated!');
-    })
+    .findByIdAndUpdate(req.body.resourceId, { $set: { displayPicture: pic }})
+      .then(response => {
+        return res.status(200).send('Profile Updated!');
+      })
+      .catch(err => res.status(500).send(err));
 }
+
+
+// save Image file to cloud
+export const saveToCloud = async (req, res) => {
+  const { parentId, parentType } = req.body;
+
+  if(!parentId || !parentType) {
+    return res.status(500).send('Invalid Arguments!');
+  }
+
+  // Creates a client
+  const storage = new Storage();
+
+  try {
+    for(let f in req.files) {
+      let file = req.files[f];
+      console.log('file --> ', file);
+
+      let bucketName = 'savick-meetup-bucket';
+      let destFileName = `${parentType}s/${parentId}/${file.name}`;
+      //path.join(`/${parentType}s/${parentId}`, file.name);
+      const options = {
+        destination: destFileName,
+        //preconditionOpts: {ifGenerationMatch: generationMatchPrecondition},
+      };
+
+      let bucket = storage.bucket(bucketName);
+      let data = new Uint8Array(file.data);
+      let upload = bucket.file(destFileName);
+      await upload.save(data, { resumable: true });
+    
+      console.log(`${file.name} uploaded to ${bucketName}${destFileName}`);
+
+      let body = {
+        filename: file.name, 
+        size: file.data.length, 
+        contentType: file.mimetype,
+        path: `https://storage.googleapis.com/${bucketName}/${parentType}s/${parentId}/${file.name}`,
+        parentId,
+        parentType, 
+      };
+      console.log('picture obj --> ', body);
+
+      // save picture to database
+      const picture = await Picture.create(body);
+
+      const pictureObj = {
+        _id: picture._id,
+        contentType: picture.contentType,
+        path: picture.path
+      };
+    }
+    return res.status(201).send('Upload Successful!');
+  } catch(err) {
+    console.log('upload err --> ', err);
+    return handleError(res, err);
+  }
+};
+
+
 
 
 /* Creates a DB entry for a Picture and saves the image file locally, WORKING
@@ -133,17 +195,16 @@ export const createLocal = (req, res) => {
         album: albumId, 
       };
       console.log('picture obj --> ', body);
-      Picture.create(body, function(err, picture) {
-        if(err) return handleError(res, err);
-  
-        const pictureObj = {
-          _id: picture._id,
-          contentType: picture.contentType,
-          path: picture.path
-        };
-        
-        return res.status(201).json({picture});
-      });
+      Picture.create(body)
+        .then(picture => {
+          const pictureObj = {
+            _id: picture._id,
+            contentType: picture.contentType,
+            path: picture.path
+          };
+          return res.status(201).json({picture});
+        })
+        .catch(err => handleError(res, err));
     });
   });
 };
@@ -227,22 +288,23 @@ export const createPicture = async (req, res) => {
 
 // Get a single picture
 export function getPicture(req, res) {
-  Picture.findById(req.params.id, '_id contentType path', function (err, picture) {
-    if(err) return handleError(res, err);
-    if(!picture) return res.status(404).send('Not Found');
-
-    res.contentType(picture.contentType);
-    return res.json(picture);
-  });
+  Picture.findById(req.params.id, '_id contentType path')
+    .then(picture => {
+      if(!picture) return res.status(404).send('Not Found');
+      res.contentType(picture.contentType);
+      return res.json(picture);
+    })
+    .catch(err => handleError(res, err));
 };
 
 // Deletes a picture from the DB, WORKING
 export function deletePicture(req, res) {
-  Picture.findByIdAndRemove(req.params.id, function (err, picture) {
-    if(err) return handleError(res, err);
-    fs.unlinkSync('server/public/' + picture.path);
-    return res.status(204).send('No Content');
-  });
+  Picture.findByIdAndRemove(req.params.id)
+    .then(picture => {
+      fs.unlinkSync('server/public/' + picture.path);
+      return res.status(204).send('No Content');
+    })
+    .catch(err => handleError(res, err));
 };
 
 
@@ -250,10 +312,6 @@ function handleError(res, err) {
   console.log('err --> ', err);
   return res.status(500).send(err);
 }
-
-
-
-
 
 
 

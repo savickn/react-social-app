@@ -69,10 +69,8 @@ PictureSchema.pre('save', function(next) {
 
   mongoose.model(this.parentType)
     .findByIdAndUpdate(this.parentId, updateObj)
-    .exec(function(err, res) {
-      if(err) return next(err);
-      next();
-    });
+    .then(updated => next())
+    .catch(err => next(err));
 });
 
 // data consistency by removing Picture from Album when deleted
@@ -93,10 +91,8 @@ PictureSchema.pre('remove', function(next) {
 
   mongoose.model(this.parentType)
     .findByIdAndUpdate(this.parentId, updateObj)
-    .exec(function(err, res) {
-      if(err) return next(err);
-      next();
-    });
+    .then(updated => next())
+    .catch(err => next(err));
 });
 
 /* VIRTUALS */

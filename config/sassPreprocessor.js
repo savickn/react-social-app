@@ -1,4 +1,4 @@
-var sass = require('node-sass');
+var sass = require('sass');
 var path = require('path');
 
 module.exports = function processSass(data, filename) {

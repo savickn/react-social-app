@@ -64,9 +64,7 @@ export const searchGroups = (req, res) => {
     const { paginatedResults, totalCount, } = data[0];
     return res.status(200).json({ groups: paginatedResults, count: totalCount[0].count });
   })
-  .catch(err => {
-    return handleError(res, err);
-  })
+  .catch(err => handleError(res, err))
 }
 
 /*
@@ -86,10 +84,11 @@ export const addGroup = async (req, res) => {
   group.admins = [req.body.admin];
   console.log('addGroup group --> ', group);
 
-  group.save((err, group) => {
-    if(err) return util.handleError(res, err);
-    return res.json({ group });
-  });
+  group.save()
+    .then(group => {
+      return res.json({ group })
+    })
+    .catch(err => util.handleError(res, err))
 }
 
 
@@ -98,14 +97,14 @@ export const addGroup = async (req, res) => {
 
 export const getGroup = (req, res) => {
   Group.findById(req.params.id)
-    .populate({ path: 'admins', populate: { path: 'user' }})
+    //.populate({ path: 'admins', populate: { path: 'user' }})
     .populate({ path: 'members', populate: { path: 'user' }})
     .populate({ path: 'profile', populate: { path: 'image' }})
-    .exec((err, group) => {
-      if(err) return handleError(res, err);
+    .then(group => {
       //console.log('getGroup --> ', group);
       return res.status(200).json({group});
-  });
+    })
+    .catch(err => handleError(res, err))
 }
 
 /* UPDATE */
@@ -116,62 +115,57 @@ export const updateGroup = (req, res) => {
     .populate('admins', '_id name displayPicture')
     .populate('members', '_id name displayPicture')
     .populate('displayPicture')
-    .exec((err, group) => {
-      if(err) return handleError(res, err);
+    .then(group => {
       console.log('updatedGroup --> ', group);
       return res.status(200).json({ group });
-  });
+    })
+    .catch(err => handleError(res, err));
 }
 
 /* DELETE */
 
 export const deleteGroup = (req, res) => {
-  Group.findOneAndRemove({ _id: req.params.id }, (err, res) => {
-    if (err) return handleError(res, err);
-    return res.status(204).end();
-  });
+  Group.findOneAndRemove({ _id: req.params.id })
+    .then(response => res.status(204).end())
+    .catch(err => handleError(res, err));
 }
 
 /* Custom Endpoints */
 
 // used to join group
 // req.body.memberId
-export const joinGroup = (req, res) => {
+export const joinGroup = async (req, res) => {
   if(!req.body.memberId) return res.status(501).send("Invalid request arguments");
   const { memberId } = req.body;
 
-  Group.findByIdAndUpdate(req.params.id, { members: { $addToSet: memberId }}, { new: true, runValidators: true })
-    .populate('admins', '_id name displayPicture')
-    .populate('members', '_id name displayPicture')
-    .populate('displayPicture')
-    .exec((err, group) => {
-      if(err) return handleError(res, err);
-
-      User.findByIdAndUpdate(memberId, { groups: { $addToSet: group._id }}, (err, user) => {
-        if(err) { console.log('could not update user') };
-      });
-
-      return res.status(200).json({ group });
-  });
+  try {
+    let group = Group.findByIdAndUpdate(req.params.id, { members: { $addToSet: memberId }}, { new: true, runValidators: true })
+      .populate('admins', '_id name displayPicture')
+      .populate('members', '_id name displayPicture')
+      .populate('displayPicture');
+    let user = User.findByIdAndUpdate(memberId, { groups: { $addToSet: group._id }});
+    return res.status(200).json({ group });
+  } catch(err) {
+    console.log('could not update user');
+    return handleError(res, err);
+  }
 }
 
-export const leaveGroup = (req, res) => {
+export const leaveGroup = async (req, res) => {
   if(!req.body.memberId) return res.status(501).send("Invalid request arguments");
   const { memberId } = req.body;
 
-  Group.findByIdAndUpdate(req.params.id, { members: { $pull: memberId }}, { new: true, runValidators: true })
-    .populate('admins', '_id name displayPicture')
-    .populate('members', '_id name displayPicture')
-    .populate('displayPicture')
-    .exec((err, group) => {
-      if(err) return handleError(res, err);
-
-      User.findByIdAndUpdate(memberId, { groups: { $pull: group._id }}, (err, user) => {
-        if(err) { console.log('could not update user') };
-      });
-
-      return res.status(200).json({ group });
-  });
+  try {
+    let group = await Group.findByIdAndUpdate(req.params.id, { members: { $pull: memberId }}, { new: true, runValidators: true })
+      .populate('admins', '_id name displayPicture')
+      .populate('members', '_id name displayPicture')
+      .populate('displayPicture');
+    let user = await User.findByIdAndUpdate(memberId, { groups: { $pull: group._id }});
+    return res.status(200).json({ group });
+  } catch(err) {
+    console.log('could not update user');
+    return handleError(res, err);
+  }
 }
 
 

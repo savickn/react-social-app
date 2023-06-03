@@ -54,10 +54,6 @@ export default async function(app) {
   console.log('rootDir --> ', path.resolve(config.root));
 
   //console.log('process.env --> ', process.env);
-
-  // refers to root folder of application (must contain 'index.html')
-  app.set('appPath', path.resolve(config.root));
-  app.use(express.static(app.get('appPath'))); // serves static files from 'dist' dir 
   
   // refers to folder containing images / etc (should be different for production)
   app.set('staticDir', path.resolve(config.root, 'src/server/public'));
@@ -67,11 +63,20 @@ export default async function(app) {
   //console.log('staticDir --> ', path.resolve(config.root));
 
   if(env === 'production') {
+    app.set('appPath', path.resolve(config.root));
     app.use(favicon(path.resolve(config.root, 'favicon.ico'))); 
   }
 
   if(env === 'development') {
+    app.set('appPath', path.resolve(config.root, 'dist'));
     app.use(favicon(path.resolve(config.root, 'src/favicon.ico'))); 
+  }
+
+  // refers to root folder of application (must contain 'index.html')
+  // app.set('appPath', path.resolve(config.root));
+  app.use(express.static(app.get('appPath'))); // serves static files from 'dist' dir 
+
+  if(env === 'development') {
     app.use(errorHandler()); // must be last
   }
 

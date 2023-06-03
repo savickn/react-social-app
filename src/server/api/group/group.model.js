@@ -118,7 +118,8 @@ GroupSchema.methods = {
 
 GroupSchema.statics = {
   getAdminsByGroup: function(groupId) {
-    return this.findById(groupId).populate('admins').exec();
+    return this.findById(groupId)
+      .populate('admins');
   },
 }
 

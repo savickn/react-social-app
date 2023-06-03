@@ -65,7 +65,7 @@ export default (server) => {
           console.log(key);
           console.log(socketId);
           console.log(userId)
-          const connected = socket.adapter.rooms[key].sockets[socketId]; // eventually change to be more detailed (e.g. away/etc)
+          const connected = socket.adapter.rooms[key] ? socket.adapter.rooms[key].sockets[socketId] : {}; // eventually change to be more detailed (e.g. away/etc)
           socket.emit('server:broadcastStatus', { userId, socketId, connected }); 
         }, 10000);
         intervals.push(i);
@@ -88,7 +88,7 @@ export default (server) => {
       // should prob create on 'requestUser' setInterval when Room is created that broadcasts to all clients
       socket.on('client:requestUsers', ({ key }) => {
         const i = setInterval(async () => {
-          const sockets = socket.adapter.rooms[key].sockets;
+          const sockets = socket.adapter.rooms[key] ? socket.adapter.rooms[key].sockets : {};
           console.log('sockets --> ', sockets);
 
           const users = {};

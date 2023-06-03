@@ -76,7 +76,10 @@ module.exports = function(env) {
         },
         {
           test: /\.(png|jp(e)?g|svg|gif)$/i,
-          loader: 'url-loader?limit=10000',
+          loader: 'url-loader',
+          options: {
+            limit: '10000',
+          }
         },
         {
           test: /\.(json)$/,
